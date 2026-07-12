@@ -1,0 +1,509 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Venus Edición Limitada — Design system
+ * Tema claro y sensorial. Fondo blanco con secciones crema y verde bosque.
+ * Acentos en rojo vino, terracota y oro envejecido.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ink: var(--ink);
+  --color-cream: var(--cream);
+  --color-forest: var(--forest);
+  --color-wine: var(--wine);
+  --color-clay: var(--clay);
+  --color-gold: var(--gold);
+  --color-silk-gold: var(--silk-gold);
+  
+  /* Registro de colores previamente huérfanos */
+  --color-verdecito: var(--verdecito);
+  --color-doradoSeda: var(--doradoSeda);
+  --color-verdeseda: var(--verdeseda);
+  --color-blancoroto: var(--blancoroto);
+  --color-doradojoya: var(--doradojoya);
+  --color-sandy: var(--sandy);
+  --color-tierra: var(--tierra);
+  --color-granate: var(--granate);
+  --color-verdejoya: var(--verdejoya);
+  --color-marco: var(--marco);
+  --color-fonde: var(--fondo);
+  --color-titulo: var(--titulo);
+  --color-subtitulo: var(--subtitulo);
+
+  --font-display: "Playfair Display", "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Montserrat", system-ui, -apple-system, sans-serif;
+}
+
+:root {
+  --radius: 0.25rem;
+
+  /* Base limpia: blanco */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.22 0.025 30);
+
+  /* Tarjetas con leve tinte crema */
+  --card: oklch(0.97 0.012 80);
+  --card-foreground: oklch(0.22 0.025 30);
+
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.025 30);
+
+  /* Rojo vino como primario (acento principal) */
+  --primary: oklch(0.40 0.11 25);
+  --primary-foreground: oklch(0.97 0.012 80);
+
+  --secondary: oklch(0.94 0.018 80);
+  --secondary-foreground: oklch(0.22 0.025 30);
+
+  --muted: oklch(0.95 0.012 80);
+  --muted-foreground: oklch(0.45 0.025 30);
+
+  --accent: oklch(0.93 0.025 75);
+  --accent-foreground: oklch(0.22 0.025 30);
+
+  --destructive: oklch(0.55 0.18 28);
+  --destructive-foreground: oklch(0.97 0.012 80);
+
+  --border: oklch(0.22 0.025 30 / 14%);
+  --input: oklch(0.22 0.025 30 / 22%);
+  --ring: oklch(0.55 0.10 60);
+
+  /* Tokens de paleta */
+  --ink: oklch(0.22 0.025 30);        /* tinta cálida — texto principal */
+  --cream: oklch(0.95 0.018 82);      /* crema seda — secciones cálidas */
+  --forest: oklch(0.33 0.045 160);    /* verde bosque — secciones místicas */
+  --wine: oklch(0.40 0.12 25);        /* rojo vino — acento */
+  --clay: oklch(0.62 0.10 45);        /* terracota */
+  --gold: oklch(0.58 0.085 75);       /* oro envejecido legible sobre claro */
+  --silk-gold: oklch(87.458% 0.10945 109.057);   /* dorado seda — fondo suave o detalles */
+  --verdecito: oklch(91.24% 0.05913 161.851);    /* verde bosque — secciones místicas */
+
+  /* colors */
+  --doradoSeda: oklch(92.696% 0.0823 100.325);  
+  --verdeseda: oklch(51.13% 0.045 158.45);
+  --blancoroto: oklch(93.18% 0.012 94.67);
+  --doradojoya: oklch(73.3% 0.073 83.2);
+  --sandy: oklch(89.799% 0.04983 77.965);
+  --tierra: oklch(48.51% 0.111 62.43);
+  --granate: oklch(23.199% 0.09018 25.117);
+  --verdejoya: oklch(24.71% 0.034 163.48);
+
+  /* color yoga */
+  --marco: oklch(56.32% 0.038 3.51);  
+  --fondo: oklch(88.296% 0.04891 77.197);
+  --titulo: oklch(26.65% 0 0);
+  --subtitulo: oklch(34.82% 0 0);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+
+  /* Etiqueta tipo "EDICIÓN LIMITADA" */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    font-size: 0.7rem;
+  }
+}
+
+ /* section colores */
+
+@utility section-cream {
+  background-color: var(--cream);
+  color: var(--ink);
+}
+
+@utility section-creamwine {
+  background-color: var(--cream);
+  color: var(--wine);
+}
+
+@utility section-sandy {
+  background-color: var(--sandy);
+  color: var(--tierra);
+}
+
+@utility section-doradojoya {
+  background-color: var(--doradojoya);
+  color: var(--granate);
+}
+
+/* section seccion con tarjetas (yoga-diario-astrologia) */
+
+@utility section-gold {
+  background-color: var(--gold);
+  color: var(--granate);  
+
+  /* Capa de transparencia de la tarjeta y borde base */
+  & .group {
+    background-color: oklch(from var(--color-cream) l c h / 5%); /* bg-cream/5 */
+    border-color: oklch(from var(--color-cream) l c h / 30%);   /* border-cream/30 */
+    transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);     /* transition-colors */
+    
+    &:hover {
+      border-color: var(--gold); /* hover:border-gold */
+    }
+  }
+
+  /* Título con efecto hover al pasar el cursor sobre la tarjeta */
+  & .font-display {
+    color: var(--granate); 
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  & .group:hover .font-display {
+    color: var(--cream); /* Ahora cambia a dorado al hacer hover junto con el marco */
+  }
+
+  /* Texto base o subtítulo (Extracto) */
+  & .font-sans, & p {
+    color: var(--ink); /* El color ink no cambia */
+    opacity: 0.85;     /* opacity-85 */
+  }
+
+  /* Enlaces (Leer publicación) */
+  & a {
+    color: var(--granate); /* El texto se mantiene granate */
+    border-bottom-color: rgba(128, 0, 32, 0.4); /* Línea con transparencia inicial */
+    transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      border-bottom-color: var(--granate); /* Pierde la transparencia aplicada en el hover */
+    }
+  }
+
+  /* Componentes externos de fecha (Color forest en todas) */
+  & .date-label, & .date-secondary-label {
+    color: var(--forest);
+    opacity: 1;
+  }
+
+  /* Tags de los componentes externos */
+  & .tag-label {
+    color: var(--wine);
+  }
+
+  & .tag-secondary-label {
+    color: var(--granate);
+  }
+}
+
+/* section seccion con tarjetas (yoga-diario-astrologia) */
+
+@utility section-card-forest {
+  background-color: var(--forest);
+  color: var(--cream);
+  
+  /* Capa de transparencia de la tarjeta y borde base con oklch */
+  & .group {
+    background-color: oklch(from var(--color-cream) l c h / 5%); /* Fuerza el 5% de opacidad sobre tu color crema */
+    border-color: oklch(from var(--color-cream) l c h / 20%);    /* Fuerza el 20% de opacidad para el border-cream/20 */
+    transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    &:hover {
+      border-color: var(--gold); /* hover:border-gold */
+    }
+  }
+
+  /* Título con efecto hover al pasar el cursor sobre la tarjeta */
+  & .font-display {
+    color: var(--gold); 
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  & .group:hover .font-display {
+    color: var(--doradojoya); /* El cursor cambia el título a doradojoya */
+  }
+
+  /* Texto base o subtítulo (Extracto) */
+  & .font-sans, & p {
+    color: var(--cream); 
+    opacity: 0.85;     /* opacity-85 */
+  }
+
+  /* Enlaces (Leer publicación) */
+  & a {
+    color: var(--gold); 
+    border-bottom: 1px solid rgba(212, 175, 55, 0.4); /* Línea con transparencia inicial basada en oro */
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+      color: var(--doradoSeda);
+      border-bottom-color: var(--doradoSeda);
+    }
+  }
+
+  /* Al pasar el cursor por la tarjeta, la línea cambia a doradojoya */
+  & .group:hover a {
+    border-bottom-color: var(--doradojoya);
+  }
+
+  /* Al posarse directamente sobre el enlace, se activa el doradoSeda */
+  & .group:hover a:hover {
+    color: var(--doradoSeda);
+    border-bottom-color: var(--doradoSeda);
+  }
+
+  /* Componentes externos de fecha y tags debajo de la tarjeta principal */
+  & .tag-label, & .tag-secondary-label {
+    color: var(--gold);
+  }
+  
+  & .date-label, & .date-secondary-label {
+    color: var(--cream);
+    opacity: 0.60;
+  }
+}
+
+/* section yoga */
+
+@utility section-yoga {
+  background-color: var(--fondo); 
+  color: var(--titulo);
+  
+  /* Capa de transparencia de la tarjeta y borde base */
+  & .group {
+    background-color: oklch(from var(--cream) l c h / 25%); 
+    border-color: oklch(from var(--marco) l c h / 25%);   
+    transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);    
+    
+    &:hover {
+      border-color: var(--marco); 
+    }
+  }
+
+  /* Título con efecto hover al pasar el cursor sobre la tarjeta */
+  & .font-display {
+    color: var(--titulo); 
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  & .group:hover .font-display {
+    color: var(--wine); 
+  }
+
+  /* Texto base o subtítulo (Extracto) */
+  & .font-sans, & p {
+    color: var(--subtitulo); 
+    opacity: 0.85;     
+  }
+
+  /* Enlaces (Leer publicación) */
+  & a {
+    color: var(--titulo); 
+    border-bottom: 1px solid oklch(from var(--titulo) l c h / 30%); 
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Al pasar el cursor por la tarjeta, la línea se tiñe del color de yoga */
+  & .group:hover a {
+    border-bottom-color: var(--marco);
+    color: var(--wine);
+  }
+
+  /* Al posarse directamente sobre el enlace, se activa el granate de acento */
+  & .group:hover a:hover {
+    color: var(--granate);
+    border-bottom-color: var(--granate);
+  }
+
+  /* Componentes externos de fecha */
+  & .date-label, & .date-secondary-label {
+    color: var(--subtitulo);
+    opacity: 0.70;
+  }
+
+  /* Tags de los componentes externos */
+  & .tag-label, & .tag-secondary-label {
+    color: var(--marco);
+  }
+}
+
+@utility section-diario {
+  background-color: var(--doradojoya);
+  color: var(--ink);
+  
+  /* Capa de transparencia de la tarjeta y borde base */
+  & .group {
+    background-color: oklch(from var(--color-cream) l c h / 5%); 
+    border-color: oklch(from var(--color-cream) l c h / 30%);   
+    transition: border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);    
+    
+    &:hover {
+      border-color: var(--gold); 
+    }
+  }
+
+  /* Título con efecto hover al pasar el cursor sobre la tarjeta */
+  & .font-display {
+    color: var(--granate); 
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  & .group:hover .font-display {
+    color: var(--cream); 
+  }
+
+  /* Texto base o subtítulo (Extracto) */
+  & .font-sans, & p {
+    color: var(--ink); 
+    opacity: 0.85;     
+  }
+
+  /* Enlaces (Leer publicación) */
+  & a {
+    color: var(--gold); 
+    border-bottom: 1px solid oklch(from var(--gold) l c h / 40%); 
+    transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Al pasar el cursor por la tarjeta, el texto del enlace y la línea pasan a gold */
+  & .group:hover a {
+    color: var(--granate);
+    border-bottom-color: var(--granate);
+  }
+
+  /* Al posarse directamente sobre el enlace, salta al tono vino de acento */
+  & .group:hover a:hover {
+    color: var(--granate);
+    border-bottom-color: var(--doradoSeda);
+  }
+
+  /* Componentes externos de fecha y tags */
+  & .date-label, & .date-secondary-label {
+    color: var(--ink);
+    opacity: 0.65;
+  }
+
+  & .tag-label, & .tag-secondary-label {
+    color: var(--granate);
+  }
+}
+
+
+
+@utility section-doradoSeda {
+  background-color: var(--doradoSeda);
+  color: var(--forest);
+}
+
+@utility section-verdeseda {
+  background-color: var(--verdeseda);
+  color: var(--forest);
+}
+
+@utility section-forest {
+  background-color: var(--forest);
+  color: var(--cream);
+}
+
+@utility section-wine {
+  background-color: var(--wine);
+  color: var(--cream);
+}
+
+@utility section-granate {
+  background-color: var(--granate);
+  color: var(--cream);
+}
+
+ /* section degradados */
+
+@utility section-degradado-oro {
+  background-image: linear-gradient(to bottom, var(--cream), var(--silk-gold));
+  color: var(--ink);
+}
+
+@utility section-degradado-oro-inv {
+  background-image: linear-gradient(to bottom, var(--silk-gold), var(--cream));
+  color: var(--ink);
+}
+
+@utility section-degradado-sandy {
+  background-image: linear-gradient(to bottom, transparent 35%, var(--sandy) 100%);
+}
+
+@utility section-degradado-sandy-inv {
+  background-image: linear-gradient(to bottom, var(--sandy), var(--cream));
+  color: var(--ink);
+}
+
+@utility section-degradado-sandy {
+  background-image: linear-gradient(in oklch to bottom, var(--cream), var(--sandy));
+  color: var(--ink);
+}
+
+ /* section tarjetas */
+
+@utility card-cream {
+  background-color: var(--cream);
+  color: var(--ink);
+  border-color: var(--border);
+}
+
+@utility card-forest {
+  background-color: var(--forest);
+  color: var(--cream);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+@utility card-sandy {
+  background-color: var(--sandy);
+  color: var(--ink);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+@utility card-wine {
+  background-color: var(--wine);
+  color: var(--verdejoya);
+  border-color: var(--wine);
+}
