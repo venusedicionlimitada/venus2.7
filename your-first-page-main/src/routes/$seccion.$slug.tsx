@@ -4,29 +4,43 @@ import { SiteHeader } from "../components/SiteHeader";
 
 type Entry = {
   id: string; slug: string; date_label: string; title: string;
-  description: string; body: string | null; cover_image_url: string | null;
+  subtitle: string | null; description: string; body: string | null; 
+  cover_image_url: string | null; tarjetas: string | null;
+  categoria_emocional: string | null;
 };
 
 async function fetchEntry(seccion: string, slug: string): Promise<{ entry: Entry; related: Entry[] }> {
   const tablaMapeo: Record<string, string> = {
-  diario: "diary_entries",
-  astrologia: "astrology_articles",
-  yoga: "yoga_articles"
-};
+    diario: "diary_entries",
+    astrologia: "astrology_articles",
+    yoga: "yoga_articles"
+  };
   const nombreTabla = tablaMapeo[seccion] || "diary_entries";
+  const campoTarjeta = seccion === "diario" ? "tarjeta" : "tarjetas";
 
   const { data, error } = await supabase
     .from(nombreTabla)
-    .select("id, slug, date_label, title, description, body, cover_image_url")
+    .select(`id, slug, date_label, title, subtitle, description, body, cover_image_url, ${campoTarjeta}, categoria_emocional`)
     .eq("slug", slug).eq("published", true).maybeSingle();
   if (error) throw error;
   if (!data) throw notFound();
 
   const { data: rel } = await supabase
     .from(nombreTabla)
-    .select("id, slug, date_label, title, description, body, cover_image_url")
+    .select(`id, slug, date_label, title, subtitle, description, body, cover_image_url, ${campoTarjeta}, categoria_emocional`)
     .eq("published", true).neq("slug", slug).order("sort_order").limit(2);
-  return { entry: data as Entry, related: (rel ?? []) as Entry[] };
+
+  const entryNormalizada = {
+    ...data,
+    tarjetas: (data as any)[campoTarjeta]
+  } as Entry;
+
+  const relNormalizada = (rel ?? []).map(r => ({
+    ...r,
+    tarjetas: (r as any)[campoTarjeta]
+  })) as Entry[];
+
+  return { entry: entryNormalizada, related: relNormalizada };
 }
 
 export const Route = createFileRoute("/$seccion/$slug")({
@@ -68,50 +82,130 @@ export const Route = createFileRoute("/$seccion/$slug")({
 
 function DiaryDetail() {
   const { entry, related } = Route.useLoaderData();
+  const { seccion } = Route.useParams();
+
+  const clasesSeccion: Record<string, string> = {
+    yoga: "section-card-yoga",
+    diario: "section-card-diario",
+    astrologia: "section-forest"
+  };
+
+  const claseActiva = clasesSeccion[seccion] || "";
 
   return (
     <>
       <SiteHeader />
-      <article className="mx-auto max-w-3xl px-6 py-20 md:py-28">
-        <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="eyebrow text-gold hover:text-wine">← {Route.useParams().seccion}</Link>
-        <header className="mt-8">
-          <p className="eyebrow text-clay">{entry.date_label}</p>
-          <h1 className="mt-4 font-display text-4xl leading-tight text-ink md:text-6xl">{entry.title}</h1>
-          <p className="mt-6 text-lg leading-relaxed text-ink/75">{entry.description}</p>
-        </header>
-
-        {entry.cover_image_url && (
-          <img src={entry.cover_image_url} alt="" className="mt-12 w-full object-cover" />
-        )}
-
-        {entry.body && (
-          <div
-            className="prose prose-lg mt-12 max-w-none text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink"
-            dangerouslySetInnerHTML={{ __html: entry.body }}
-          />
-        )}
-
-        <hr className="mt-20 border-border/50" />
-
-        <div className="mt-12">
-          <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="eyebrow text-wine hover:text-gold">← Volver al diario</Link>
-        </div>
-
-        {related.length > 0 && (
-          <section className="mt-20">
-            <p className="eyebrow text-gold">Sigue leyendo</p>
-            <div className="mt-6 grid gap-6 md:grid-cols-2">
-              {related.map((r: Entry) => (
-                <Link key={r.id} to="/$seccion/$slug" params={{ seccion: Route.useParams().seccion, slug: r.slug }} className="group block border border-border p-6 transition-colors hover:border-gold">
-                  <p className="eyebrow text-gold/80">{r.date_label}</p>
-                  <h3 className="mt-3 font-display text-xl text-ink group-hover:text-wine">{r.title}</h3>
-                  <p className="mt-2 text-sm text-ink/70 line-clamp-3">{r.description}</p>
-                </Link>
-              ))}
+      <div className={claseActiva}>
+        <article className="mx-auto max-w-5xl px-6 py-20">
+          
+          {entry.cover_image_url ? (
+            <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-12 items-start mt-8">
+              <div className="w-full">
+                <img 
+                  src={entry.cover_image_url} 
+                  alt="" 
+                  className="object-cover block w-full h-auto" 
+                  style={{
+                    width: "300px",
+                    height: "auto"
+                  }}
+                />
+              </div>
+              
+              <header className="w-full flex flex-col">
+                <div className="w-full flex justify-between items-center">
+                  <span className="eyebrow text-gold">{entry.tarjetas}</span>
+                  <span className="eyebrow text-clay" style={{ textAlign: "right" }}>{entry.date_label}</span>
+                </div>
+                <h1 
+                  className="mt-4 font-display leading-tight text-ink w-full break-words"
+                  style={{ fontSize: "60px" }}
+                >
+                  {entry.title}
+                </h1>
+                {entry.subtitle && (
+                  <p 
+                    className="mt-4 font-sans leading-relaxed text-ink w-full"
+                    style={{ fontSize: "22px" }}
+                  >
+                    {entry.subtitle}
+                  </p>
+                )}
+                <p 
+                  className="mt-6 leading-relaxed text-ink/75 w-full"
+                  style={{ fontSize: "18px" }}
+                >
+                  {entry.description}
+                </p>
+              </header>
             </div>
-          </section>
-        )}
-      </article>
+          ) : (
+            <header className="mt-8 w-full flex flex-col">
+              <div className="w-full flex justify-between items-center">
+                <span className="eyebrow text-gold">{entry.tarjetas}</span>
+                <span className="eyebrow text-clay" style={{ textAlign: "right" }}>{entry.date_label}</span>
+              </div>
+              <h1 
+                className="mt-4 font-display leading-tight text-ink w-full break-words"
+                style={{ fontSize: "60px" }}
+              >
+                {entry.title}
+              </h1>
+              {entry.subtitle && (
+                <p 
+                  className="mt-4 font-sans leading-relaxed text-ink w-full"
+                  style={{ fontSize: "22px" }}
+                >
+                  {entry.subtitle}
+                </p>
+              )}
+              <p 
+                className="mt-6 leading-relaxed text-ink/75 w-full"
+                style={{ fontSize: "18px" }}
+              >
+                {entry.description}
+              </p>
+            </header>
+          )}
+
+          {entry.body && (
+            <div
+              className="prose prose-lg mt-12 max-w-none text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink w-full"
+              style={{ fontSize: "16px" }}
+              dangerouslySetInnerHTML={{ __html: entry.body }}
+            />
+          )}
+
+          {entry.categoria_emocional && (
+            <p className="eyebrow text-gold mt-16 mb-2 block">
+              {entry.categoria_emocional}
+            </p>
+          )}
+
+          <hr className={entry.categoria_emocional ? "mt-2 border-border/50" : "mt-20 border-border/50"} />
+
+          <div className="mt-12">
+            <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="eyebrow text-gold hover:text-wine">
+              ← {Route.useParams().seccion}
+            </Link>
+          </div>
+
+          {related.length > 0 && (
+            <section className="mt-20">
+              <p className="eyebrow text-gold">Sigue leyendo</p>
+              <div className="mt-6 grid gap-6 md:grid-cols-2">
+                {related.map((r: Entry) => (
+                  <Link key={r.id} to="/$seccion/$slug" params={{ seccion: Route.useParams().seccion, slug: r.slug }} className="group block border border-border p-6 transition-colors hover:border-gold">
+                    <p className="eyebrow text-gold/80">{r.date_label}</p>
+                    <h3 className="mt-3 font-display text-xl text-ink group-hover:text-wine">{r.title}</h3>
+                    <p className="mt-2 text-sm text-ink/70 line-clamp-3">{r.description}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+        </article>
+      </div>
     </>
   );
 }

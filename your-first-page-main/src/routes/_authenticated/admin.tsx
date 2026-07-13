@@ -139,9 +139,19 @@ async function uploadResourceFile(file: File): Promise<string> {
 /* ---------- Diario ---------- */
 
 type DiaryRow = {
-  id: string; title: string; date_label: string; description: string;
-  body: string | null; cover_image_url: string | null; published: boolean; sort_order: number;
-  tags: string | null; tarjeta: string | null; categoria_emocional: string | null;
+  id: string;
+  slug: string;
+  title: string;
+  subtitle: string | null;
+  date_label: string;
+  description: string;
+  body: string | null;
+  cover_image_url: string | null;
+  published: boolean;
+  sort_order: number;
+  tags: string | null;
+  tarjeta: string | null;
+  categoria_emocional: string | null;
 };
 
 function DiarySection() {
@@ -149,7 +159,11 @@ function DiarySection() {
   const [editing, setEditing] = useState<Partial<DiaryRow> | null>(null);
 
   async function load() {
-    const { data } = await supabase.from("diary_entries").select("*").order("sort_order", { ascending: false });
+    const { data, error } = await supabase.from("diary_entries").select("*").order("sort_order", { ascending: false });
+    if (error) {
+      console.error("Error cargando diary_entries:", error);
+      return;
+    }
     setItems((data ?? []) as DiaryRow[]);
   }
   useEffect(() => { load(); }, []);
@@ -157,6 +171,7 @@ function DiarySection() {
   async function save(form: Partial<DiaryRow>) {
     const payload = {
       title: form.title ?? "",
+      subtitle: form.subtitle ?? null,
       slug: (form.slug && form.slug.trim()) || slugify(form.title ?? ""),
       date_label: form.date_label ?? "",
       description: form.description ?? "",
@@ -225,6 +240,7 @@ function DiaryForm({ initial, onSubmit, onCancel }: {
       </div>
       <div><Label>Fecha (texto)</Label><TextInput required value={v.date_label ?? ""} onChange={(e) => setV({ ...v, date_label: e.target.value })} placeholder="Mayo 2026" /></div>
       <div><Label>Título</Label><TextInput required value={v.title ?? ""} onChange={(e) => setV({ ...v, title: e.target.value, slug: v.slug && v.slug.trim() ? v.slug : slugify(e.target.value) })} /></div>
+      <div><Label>Subtítulo</Label><TextInput value={v.subtitle ?? ""} onChange={(e) => setV({ ...v, subtitle: e.target.value })} placeholder="Escribe el subtítulo aquí..." /></div>
       <div><Label>URL (slug)</Label><TextInput value={v.slug ?? ""} onChange={(e) => setV({ ...v, slug: e.target.value })} placeholder="mi-entrada" /><p className="mt-1 text-xs text-ink/50">Se usará en la dirección: /diario/{v.slug || "…"}</p></div>
       <div><Label>Extracto</Label><TextArea required rows={2} value={v.description ?? ""} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
       <div><Label>Texto completo (opcional)</Label><RichTextEditor value={v.body ?? ""} onChange={(html) => setV({ ...v, body: html })} /></div>
@@ -280,6 +296,7 @@ function AstrologySection() {
       slug: (form.slug && form.slug.trim()) || slugify(form.title ?? ""),
       date_label: form.date_label ?? "",
       title: form.title ?? "",
+      subtitle: form.subtitle ?? null,
       description: form.description ?? "",
       body: form.body ?? null,
       cover_image_url: form.cover_image_url ?? null,
@@ -340,6 +357,7 @@ function AstroForm({ initial, onSubmit, onCancel }: {
       </div>
       <div><Label>Fecha (texto)</Label><TextInput required value={v.date_label ?? ""} onChange={(e) => setV({ ...v, date_label: e.target.value })} placeholder="10 Jun 2026" /></div>
       <div><Label>Título</Label><TextInput required value={v.title ?? ""} onChange={(e) => setV({ ...v, title: e.target.value, slug: v.slug && v.slug.trim() ? v.slug : slugify(e.target.value) })} /></div>
+      <div><Label>Subtítulo</Label><TextInput value={v.subtitle ?? ""} onChange={(e) => setV({ ...v, subtitle: e.target.value })} placeholder="Escribe el subtítulo aquí..." /></div>
       <div><Label>URL (slug)</Label><TextInput value={v.slug ?? ""} onChange={(e) => setV({ ...v, slug: e.target.value })} placeholder="mi-articulo" /><p className="mt-1 text-xs text-ink/50">Se usará en la dirección: /astrologia/{v.slug || "…"}</p></div>
       <div><Label>Extracto</Label><TextArea required rows={2} value={v.description ?? ""} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
       <div><Label>Texto completo (opcional)</Label><RichTextEditor value={v.body ?? ""} onChange={(html) => setV({ ...v, body: html })} /></div>
@@ -370,6 +388,7 @@ type YogaRow = {
   tarjetas: string;
   date_label: string;
   title: string;
+  subtitle: string | null;
   description: string;
   body: string | null;
   cover_image_url: string | null;
@@ -395,6 +414,7 @@ function YogaSection() {
       slug: (form.slug && form.slug.trim()) || slugify(form.title ?? ""),
       date_label: form.date_label ?? "",
       title: form.title ?? "",
+      subtitle: form.subtitle ?? null,
       description: form.description ?? "",
       body: form.body ?? null,
       cover_image_url: form.cover_image_url ?? null,
@@ -455,6 +475,7 @@ function YogaForm({ initial, onSubmit, onCancel }: {
       </div>
       <div><Label>Fecha (texto)</Label><TextInput required value={v.date_label ?? ""} onChange={(e) => setV({ ...v, date_label: e.target.value })} placeholder="Mayo 2026" /></div>
       <div><Label>Título</Label><TextInput required value={v.title ?? ""} onChange={(e) => setV({ ...v, title: e.target.value, slug: v.slug && v.slug.trim() ? v.slug : slugify(e.target.value) })} /></div>
+      <div><Label>Subtítulo</Label><TextInput value={v.subtitle ?? ""} onChange={(e) => setV({ ...v, subtitle: e.target.value })} placeholder="Escribe el subtítulo aquí..." /></div>
       <div><Label>URL (slug)</Label><TextInput value={v.slug ?? ""} onChange={(e) => setV({ ...v, slug: e.target.value })} placeholder="mi-practica" /><p className="mt-1 text-xs text-ink/50">Se usará en la dirección: /yoga/{v.slug || "…"}</p></div>
       <div><Label>Extracto</Label><TextArea required rows={2} value={v.description ?? ""} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
       <div><Label>Texto completo (opcional)</Label><RichTextEditor value={v.body ?? ""} onChange={(html) => setV({ ...v, body: html })} /></div>
