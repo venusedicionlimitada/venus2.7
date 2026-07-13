@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/use-auth";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { ContentForm } from "@/components/ContentForm";
 
 function slugify(v: string): string {
   return v.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -210,56 +211,23 @@ function DiarySection() {
       )}
       modal={editing && (
         <EditorModal title={editing.id ? "Editar entrada" : "Nueva entrada"} onClose={() => setEditing(null)}>
-          <DiaryForm initial={editing} onSubmit={save} onCancel={() => setEditing(null)} />
+          <ContentForm 
+            initial={editing} 
+            onSubmit={save} 
+            onCancel={() => setEditing(null)} 
+            tarjetaFieldName="tarjeta"
+            tarjetaOptions={["Reflexión", "Proceso", "Integración"]}
+            Label={Label}
+            TextInput={TextInput}
+            TextArea={TextArea}
+            GhostButton={GhostButton}
+            PrimaryButton={PrimaryButton}
+            uploadImage={uploadImage}
+            slugify={slugify}
+          />
         </EditorModal>
       )}
     />
-  );
-}
-
-function DiaryForm({ initial, onSubmit, onCancel }: {
-  initial: Partial<DiaryRow>; onSubmit: (v: Partial<DiaryRow>) => void | Promise<void>; onCancel: () => void;
-}) {
-  const [v, setV] = useState<Partial<DiaryRow>>(initial);
-  const [busy, setBusy] = useState(false);
-
-  async function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]; if (!f) return;
-    setBusy(true);
-    try { setV({ ...v, cover_image_url: await uploadImage(f) }); }
-    catch (err) { alert(err instanceof Error ? err.message : "Error subiendo imagen"); }
-    finally { setBusy(false); }
-  }
-
-  return (
-    <form onSubmit={async (e) => { e.preventDefault(); setBusy(true); await onSubmit(v); setBusy(false); }} className="space-y-4">
-      <div><Label>Etiqueta para Tarjeta</Label>
-        <select value={v.tarjeta ?? "Reflexión"} onChange={(e) => setV({ ...v, tarjeta: e.target.value })} className="mt-2 w-full border border-border bg-background/50 px-3 py-2 text-sm text-ink">
-          <option>Reflexión</option><option>Proceso</option><option>Integración</option>
-        </select>
-      </div>
-      <div><Label>Fecha (texto)</Label><TextInput required value={v.date_label ?? ""} onChange={(e) => setV({ ...v, date_label: e.target.value })} placeholder="Mayo 2026" /></div>
-      <div><Label>Título</Label><TextInput required value={v.title ?? ""} onChange={(e) => setV({ ...v, title: e.target.value, slug: v.slug && v.slug.trim() ? v.slug : slugify(e.target.value) })} /></div>
-      <div><Label>Subtítulo</Label><TextInput value={v.subtitle ?? ""} onChange={(e) => setV({ ...v, subtitle: e.target.value })} placeholder="Escribe el subtítulo aquí..." /></div>
-      <div><Label>URL (slug)</Label><TextInput value={v.slug ?? ""} onChange={(e) => setV({ ...v, slug: e.target.value })} placeholder="mi-entrada" /><p className="mt-1 text-xs text-ink/50">Se usará en la dirección: /diario/{v.slug || "…"}</p></div>
-      <div><Label>Extracto</Label><TextArea required rows={2} value={v.description ?? ""} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
-      <div><Label>Texto completo (opcional)</Label><RichTextEditor value={v.body ?? ""} onChange={(html) => setV({ ...v, body: html })} /></div>
-      <div><Label>Etiquetas (Manuales)</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. mindfulness, meditacion, conciencia" /></div>
-      <div><Label>Astrologia Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Integración, Sombra, Claridad" /></div>
-      <div>
-        <Label>Imagen de portada</Label>
-        {v.cover_image_url && <img src={v.cover_image_url} alt="" className="mt-2 max-h-40 border border-border" />}
-        <input type="file" accept="image/*" onChange={handleImage} className="mt-2 text-xs text-ink/70" />
-      </div>
-      <div className="flex items-center gap-3">
-        <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
-        <label className="ml-6 flex items-center gap-2 text-sm text-ink/80">
-          <input type="checkbox" checked={!!v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} />
-          Publicada
-        </label>
-      </div>
-      <div className="flex justify-end gap-3 pt-4"><GhostButton type="button" onClick={onCancel}>Cancelar</GhostButton><PrimaryButton type="submit" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</PrimaryButton></div>
-    </form>
   );
 }
 
@@ -271,6 +239,7 @@ type AstroRow = {
   tarjetas: string;
   date_label: string;
   title: string;
+  subtitle?: string | null;
   description: string;
   body: string | null;
   cover_image_url: string | null;
@@ -329,54 +298,23 @@ function AstrologySection() {
       )}
       modal={editing && (
         <EditorModal title={editing.id ? "Editar artículo" : "Nuevo artículo"} onClose={() => setEditing(null)}>
-          <AstroForm initial={editing} onSubmit={save} onCancel={() => setEditing(null)} />
+          <ContentForm 
+            initial={editing} 
+            onSubmit={save} 
+            onCancel={() => setEditing(null)} 
+            tarjetaFieldName="tarjetas"
+            tarjetaOptions={["Lunación", "Tránsito", "Configuración"]}
+            Label={Label}
+            TextInput={TextInput}
+            TextArea={TextArea}
+            GhostButton={GhostButton}
+            PrimaryButton={PrimaryButton}
+            uploadImage={uploadImage}
+            slugify={slugify}
+          />
         </EditorModal>
       )}
     />
-  );
-}
-
-function AstroForm({ initial, onSubmit, onCancel }: {
-  initial: Partial<AstroRow>; onSubmit: (v: Partial<AstroRow>) => void | Promise<void>; onCancel: () => void;
-}) {
-  const [v, setV] = useState<Partial<AstroRow>>(initial);
-  const [busy, setBusy] = useState(false);
-  async function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]; if (!f) return;
-    setBusy(true);
-    try { setV({ ...v, cover_image_url: await uploadImage(f) }); }
-    catch (err) { alert(err instanceof Error ? err.message : "Error"); }
-    finally { setBusy(false); }
-  }
-  return (
-    <form onSubmit={async (e) => { e.preventDefault(); setBusy(true); await onSubmit(v); setBusy(false); }} className="space-y-4">
-      <div><Label>Etiqueta para Tarjeta</Label>
-        <select value={v.tarjetas ?? "Lunación"} onChange={(e) => setV({ ...v, tarjetas: e.target.value })} className="mt-2 w-full border border-border bg-background/50 px-3 py-2 text-sm text-ink">
-          <option>Lunación</option><option>Tránsito</option><option>Configuración</option>
-        </select>
-      </div>
-      <div><Label>Fecha (texto)</Label><TextInput required value={v.date_label ?? ""} onChange={(e) => setV({ ...v, date_label: e.target.value })} placeholder="10 Jun 2026" /></div>
-      <div><Label>Título</Label><TextInput required value={v.title ?? ""} onChange={(e) => setV({ ...v, title: e.target.value, slug: v.slug && v.slug.trim() ? v.slug : slugify(e.target.value) })} /></div>
-      <div><Label>Subtítulo</Label><TextInput value={v.subtitle ?? ""} onChange={(e) => setV({ ...v, subtitle: e.target.value })} placeholder="Escribe el subtítulo aquí..." /></div>
-      <div><Label>URL (slug)</Label><TextInput value={v.slug ?? ""} onChange={(e) => setV({ ...v, slug: e.target.value })} placeholder="mi-articulo" /><p className="mt-1 text-xs text-ink/50">Se usará en la dirección: /astrologia/{v.slug || "…"}</p></div>
-      <div><Label>Extracto</Label><TextArea required rows={2} value={v.description ?? ""} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
-      <div><Label>Texto completo (opcional)</Label><RichTextEditor value={v.body ?? ""} onChange={(html) => setV({ ...v, body: html })} /></div>
-      <div><Label>Etiquetas</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. Plutón, Tránsito, Sanación" /></div>
-      <div><Label>Astrologia Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Integración, Sombra, Claridad" /></div>
-      <div>
-        <Label>Imagen</Label>
-        {v.cover_image_url && <img src={v.cover_image_url} alt="" className="mt-2 max-h-40 border border-border" />}
-        <input type="file" accept="image/*" onChange={handleImage} className="mt-2 text-xs text-ink/70" />
-      </div>
-      <div className="flex items-center gap-3">
-        <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
-        <label className="ml-6 flex items-center gap-2 text-sm text-ink/80">
-          <input type="checkbox" checked={!!v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} />
-          Publicado
-        </label>
-      </div>
-      <div className="flex justify-end gap-3 pt-4"><GhostButton type="button" onClick={onCancel}>Cancelar</GhostButton><PrimaryButton type="submit" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</PrimaryButton></div>
-    </form>
   );
 }
 
@@ -447,54 +385,23 @@ function YogaSection() {
       )}
       modal={editing && (
         <EditorModal title={editing.id ? "Editar artículo de yoga" : "Nuevo artículo de yoga"} onClose={() => setEditing(null)}>
-          <YogaForm initial={editing} onSubmit={save} onCancel={() => setEditing(null)} />
+          <ContentForm 
+            initial={editing} 
+            onSubmit={save} 
+            onCancel={() => setEditing(null)} 
+            tarjetaFieldName="tarjetas"
+            tarjetaOptions={["Práctica", "Filosofía", "Meditación"]}
+            Label={Label}
+            TextInput={TextInput}
+            TextArea={TextArea}
+            GhostButton={GhostButton}
+            PrimaryButton={PrimaryButton}
+            uploadImage={uploadImage}
+            slugify={slugify}
+          />
         </EditorModal>
       )}
     />
-  );
-}
-
-function YogaForm({ initial, onSubmit, onCancel }: {
-  initial: Partial<YogaRow>; onSubmit: (v: Partial<YogaRow>) => void | Promise<void>; onCancel: () => void;
-}) {
-  const [v, setV] = useState<Partial<YogaRow>>(initial);
-  const [busy, setBusy] = useState(false);
-  async function handleImage(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0]; if (!f) return;
-    setBusy(true);
-    try { setV({ ...v, cover_image_url: await uploadImage(f) }); }
-    catch (err) { alert(err instanceof Error ? err.message : "Error"); }
-    finally { setBusy(false); }
-  }
-  return (
-    <form onSubmit={async (e) => { e.preventDefault(); setBusy(true); await onSubmit(v); setBusy(false); }} className="space-y-4">
-      <div><Label>Etiqueta Tarjeta</Label>
-        <select value={v.tarjetas ?? "Práctica"} onChange={(e) => setV({ ...v, tarjetas: e.target.value })} className="mt-2 w-full border border-border bg-background/50 px-3 py-2 text-sm text-ink">
-          <option>Práctica</option><option>Filosofía</option><option>Meditación</option>
-        </select>
-      </div>
-      <div><Label>Fecha (texto)</Label><TextInput required value={v.date_label ?? ""} onChange={(e) => setV({ ...v, date_label: e.target.value })} placeholder="Mayo 2026" /></div>
-      <div><Label>Título</Label><TextInput required value={v.title ?? ""} onChange={(e) => setV({ ...v, title: e.target.value, slug: v.slug && v.slug.trim() ? v.slug : slugify(e.target.value) })} /></div>
-      <div><Label>Subtítulo</Label><TextInput value={v.subtitle ?? ""} onChange={(e) => setV({ ...v, subtitle: e.target.value })} placeholder="Escribe el subtítulo aquí..." /></div>
-      <div><Label>URL (slug)</Label><TextInput value={v.slug ?? ""} onChange={(e) => setV({ ...v, slug: e.target.value })} placeholder="mi-practica" /><p className="mt-1 text-xs text-ink/50">Se usará en la dirección: /yoga/{v.slug || "…"}</p></div>
-      <div><Label>Extracto</Label><TextArea required rows={2} value={v.description ?? ""} onChange={(e) => setV({ ...v, description: e.target.value })} /></div>
-      <div><Label>Texto completo (opcional)</Label><RichTextEditor value={v.body ?? ""} onChange={(html) => setV({ ...v, body: html })} /></div>
-      <div><Label>Etiquetas</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. Asanas, Nidra, Respiración" /></div>
-      <div><Label>Astrología Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Calma, Enfoque, Claridad" /></div>
-      <div>
-        <Label>Imagen</Label>
-        {v.cover_image_url && <img src={v.cover_image_url} alt="" className="mt-2 max-h-40 border border-border" />}
-        <input type="file" accept="image/*" onChange={handleImage} className="mt-2 text-xs text-ink/70" />
-      </div>
-      <div className="flex items-center gap-3">
-        <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
-        <label className="ml-6 flex items-center gap-2 text-sm text-ink/80">
-          <input type="checkbox" checked={!!v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} />
-          Publicado
-        </label>
-      </div>
-      <div className="flex justify-end gap-3 pt-4"><GhostButton type="button" onClick={onCancel}>Cancelar</GhostButton><PrimaryButton type="submit" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</PrimaryButton></div>
-    </form>
   );
 }
 
