@@ -20,10 +20,8 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AstrologiaRouteImport } from './routes/astrologia'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as YogaSlugRouteImport } from './routes/yoga.$slug'
-import { Route as DiarioSlugRouteImport } from './routes/diario.$slug'
-import { Route as AstrologiaSlugRouteImport } from './routes/astrologia.$slug'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as SeccionSlugRouteImport } from './routes/$seccion.$slug'
 
 const YogaRoute = YogaRouteImport.update({
   id: '/yoga',
@@ -79,76 +77,60 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const YogaSlugRoute = YogaSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => YogaRoute,
-} as any)
-const DiarioSlugRoute = DiarioSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => DiarioRoute,
-} as any)
-const AstrologiaSlugRoute = AstrologiaSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => AstrologiaRoute,
-} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const SeccionSlugRoute = SeccionSlugRouteImport.update({
+  id: '/$seccion/$slug',
+  path: '/$seccion/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/astrologia': typeof AstrologiaRouteWithChildren
+  '/astrologia': typeof AstrologiaRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/diario': typeof DiarioRouteWithChildren
+  '/diario': typeof DiarioRoute
   '/eventos': typeof EventosRoute
   '/recursos': typeof RecursosRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-mi': typeof SobreMiRoute
-  '/yoga': typeof YogaRouteWithChildren
+  '/yoga': typeof YogaRoute
+  '/$seccion/$slug': typeof SeccionSlugRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/astrologia/$slug': typeof AstrologiaSlugRoute
-  '/diario/$slug': typeof DiarioSlugRoute
-  '/yoga/$slug': typeof YogaSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/astrologia': typeof AstrologiaRouteWithChildren
+  '/astrologia': typeof AstrologiaRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/diario': typeof DiarioRouteWithChildren
+  '/diario': typeof DiarioRoute
   '/eventos': typeof EventosRoute
   '/recursos': typeof RecursosRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-mi': typeof SobreMiRoute
-  '/yoga': typeof YogaRouteWithChildren
+  '/yoga': typeof YogaRoute
+  '/$seccion/$slug': typeof SeccionSlugRoute
   '/admin': typeof AuthenticatedAdminRoute
-  '/astrologia/$slug': typeof AstrologiaSlugRoute
-  '/diario/$slug': typeof DiarioSlugRoute
-  '/yoga/$slug': typeof YogaSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/astrologia': typeof AstrologiaRouteWithChildren
+  '/astrologia': typeof AstrologiaRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
-  '/diario': typeof DiarioRouteWithChildren
+  '/diario': typeof DiarioRoute
   '/eventos': typeof EventosRoute
   '/recursos': typeof RecursosRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-mi': typeof SobreMiRoute
-  '/yoga': typeof YogaRouteWithChildren
+  '/yoga': typeof YogaRoute
+  '/$seccion/$slug': typeof SeccionSlugRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
-  '/astrologia/$slug': typeof AstrologiaSlugRoute
-  '/diario/$slug': typeof DiarioSlugRoute
-  '/yoga/$slug': typeof YogaSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,10 +145,8 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-mi'
     | '/yoga'
+    | '/$seccion/$slug'
     | '/admin'
-    | '/astrologia/$slug'
-    | '/diario/$slug'
-    | '/yoga/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -179,10 +159,8 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-mi'
     | '/yoga'
+    | '/$seccion/$slug'
     | '/admin'
-    | '/astrologia/$slug'
-    | '/diario/$slug'
-    | '/yoga/$slug'
   id:
     | '__root__'
     | '/'
@@ -196,24 +174,23 @@ export interface FileRouteTypes {
     | '/servicios'
     | '/sobre-mi'
     | '/yoga'
+    | '/$seccion/$slug'
     | '/_authenticated/admin'
-    | '/astrologia/$slug'
-    | '/diario/$slug'
-    | '/yoga/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AstrologiaRoute: typeof AstrologiaRouteWithChildren
+  AstrologiaRoute: typeof AstrologiaRoute
   AuthRoute: typeof AuthRoute
   ContactoRoute: typeof ContactoRoute
-  DiarioRoute: typeof DiarioRouteWithChildren
+  DiarioRoute: typeof DiarioRoute
   EventosRoute: typeof EventosRoute
   RecursosRoute: typeof RecursosRoute
   ServiciosRoute: typeof ServiciosRoute
   SobreMiRoute: typeof SobreMiRoute
-  YogaRoute: typeof YogaRouteWithChildren
+  YogaRoute: typeof YogaRoute
+  SeccionSlugRoute: typeof SeccionSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -295,33 +272,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/yoga/$slug': {
-      id: '/yoga/$slug'
-      path: '/$slug'
-      fullPath: '/yoga/$slug'
-      preLoaderRoute: typeof YogaSlugRouteImport
-      parentRoute: typeof YogaRoute
-    }
-    '/diario/$slug': {
-      id: '/diario/$slug'
-      path: '/$slug'
-      fullPath: '/diario/$slug'
-      preLoaderRoute: typeof DiarioSlugRouteImport
-      parentRoute: typeof DiarioRoute
-    }
-    '/astrologia/$slug': {
-      id: '/astrologia/$slug'
-      path: '/$slug'
-      fullPath: '/astrologia/$slug'
-      preLoaderRoute: typeof AstrologiaSlugRouteImport
-      parentRoute: typeof AstrologiaRoute
-    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/$seccion/$slug': {
+      id: '/$seccion/$slug'
+      path: '/$seccion/$slug'
+      fullPath: '/$seccion/$slug'
+      preLoaderRoute: typeof SeccionSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -337,51 +300,19 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface AstrologiaRouteChildren {
-  AstrologiaSlugRoute: typeof AstrologiaSlugRoute
-}
-
-const AstrologiaRouteChildren: AstrologiaRouteChildren = {
-  AstrologiaSlugRoute: AstrologiaSlugRoute,
-}
-
-const AstrologiaRouteWithChildren = AstrologiaRoute._addFileChildren(
-  AstrologiaRouteChildren,
-)
-
-interface DiarioRouteChildren {
-  DiarioSlugRoute: typeof DiarioSlugRoute
-}
-
-const DiarioRouteChildren: DiarioRouteChildren = {
-  DiarioSlugRoute: DiarioSlugRoute,
-}
-
-const DiarioRouteWithChildren =
-  DiarioRoute._addFileChildren(DiarioRouteChildren)
-
-interface YogaRouteChildren {
-  YogaSlugRoute: typeof YogaSlugRoute
-}
-
-const YogaRouteChildren: YogaRouteChildren = {
-  YogaSlugRoute: YogaSlugRoute,
-}
-
-const YogaRouteWithChildren = YogaRoute._addFileChildren(YogaRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AstrologiaRoute: AstrologiaRouteWithChildren,
+  AstrologiaRoute: AstrologiaRoute,
   AuthRoute: AuthRoute,
   ContactoRoute: ContactoRoute,
-  DiarioRoute: DiarioRouteWithChildren,
+  DiarioRoute: DiarioRoute,
   EventosRoute: EventosRoute,
   RecursosRoute: RecursosRoute,
   ServiciosRoute: ServiciosRoute,
   SobreMiRoute: SobreMiRoute,
-  YogaRoute: YogaRouteWithChildren,
+  YogaRoute: YogaRoute,
+  SeccionSlugRoute: SeccionSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

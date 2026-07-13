@@ -37,11 +37,11 @@ type Article = {
 
 function Astrologia() {
   const location = useLocation();
-const esLaLista = location.pathname === "/astrologia" || location.pathname === "/astrologia/";
+  const esLaLista = location.pathname === "/astrologia" || location.pathname === "/astrologia/";
 
-if (!esLaLista) {
-  return <Outlet />;
-}
+  if (!esLaLista) {
+    return <Outlet />;
+  }
 
   const [items, setItems] = useState<Article[] | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -149,8 +149,8 @@ if (!esLaLista) {
                             }}
                           >
                             <Link 
-                              to="/astrologia/$slug" 
-                              params={{ slug: a.slug }}
+                              to="/$seccion/$slug" 
+                              params={{ seccion: "astrologia", slug: a.slug }}
                               className="inline-block eyebrow border-b border-granate/40 pb-1 transition-colors"
                               style={{ letterSpacing: "1px" }}
                             >
@@ -185,7 +185,7 @@ if (!esLaLista) {
                 >
                   <img 
                     src="/src/assets/Venus_08.jpg" 
-                    alt="Contenido Recomendado" 
+                    alt="Contenido Recommended" 
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -244,8 +244,8 @@ if (!esLaLista) {
                             }}
                           >
                             <Link 
-                              to="/astrologia/$slug" 
-                              params={{ slug: a.slug }} 
+                              to="/$seccion/$slug" 
+                              params={{ seccion: "astrologia", slug: a.slug }} 
                               className="inline-block eyebrow border-b pb-1 transition-colors" 
                               style={{ fontSize: "11px" }}
                             >

@@ -149,8 +149,8 @@ if (!esLaLista) {
                             }}
                           >
                             <Link 
-                              to="/yoga/$slug" 
-                              params={{ slug: a.slug }}
+                              to="/$seccion/$slug" 
+                              params={{ seccion: "yoga", slug: a.slug }}
                               className="inline-block eyebrow border-b border-granate/40 pb-1 transition-colors"
                               style={{ letterSpacing: "1px" }}
                             >
@@ -244,8 +244,8 @@ if (!esLaLista) {
                             }}
                           >
                             <Link 
-                              to="/yoga/$slug" 
-                              params={{ slug: a.slug }} 
+                              to="/$seccion/$slug" 
+                              params={{ seccion: "yoga", slug: a.slug }} 
                               className="inline-block eyebrow border-b pb-1 transition-colors" 
                               style={{ fontSize: "11px" }}
                             >
