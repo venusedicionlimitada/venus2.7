@@ -1,122 +1,86 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "../components/SiteHeader";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-  PaginationPages,
-} from "@/components/ui/pagination";
+import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationPages } from "@/components/ui/pagination";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet"; // Nuevo componente
 
 export const Route = createFileRoute("/eventos")({
-  head: () => ({
-    meta: [
-      { title: "Eventos Lunares · Venus Edición Limitada" },
-      { name: "description", content: "Círculos, rituales y encuentros bajo el ritmo de la Luna." },
-      { property: "og:title", content: "Eventos · Venus" },
-      { property: "og:description", content: "Encuentros y rituales lunares." },
-    ],
-  }),
   component: Eventos,
 });
 
-type LunarEvent = {
-  id: string;
-  titulo: string;
-  subtitulo: string;
-  description: string;
-  cover_image_url: string | null;
-  fecha_evento: string;
-  hora_evento: string;
-};
-
 function Eventos() {
-  const [items, setItems] = useState<LunarEvent[] | null>(null);
+  const [items, setItems] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 7;
+  const postsPerPage = 6;
 
   useEffect(() => {
     supabase.from("lunar_events")
-      .select("id, titulo, subtitulo, description, cover_image_url, fecha_evento, hora_evento")
+      .select("*")
       .eq("published", true)
       .order("sort_order")
-      .then(({ data }) => setItems((data ?? []) as LunarEvent[]));
+      .then(({ data }) => setItems((data ?? [])));
   }, []);
 
-  const indexOfLastPost = currentPage * postsPerPage;
-  const indexOfFirstPost = indexOfLastPost - postsPerPage;
-  const currentItems = items ? items.slice(indexOfFirstPost, indexOfLastPost) : [];
-  const totalPages = items ? Math.ceil(items.length / postsPerPage) : 0;
+  // Lógica de Agrupación: transformamos eventos en categorías únicas
+  const categories = useMemo(() => {
+    const map = new Map();
+    items.forEach(event => {
+      if (!event.categoria_emocional) return;
+      const cats = event.categoria_emocional.split(',').map((c: string) => c.trim());
+      cats.forEach((cat: string) => {
+        if (!map.has(cat)) {
+          map.set(cat, {
+            nombre: cat,
+            representative: event // Usamos el primer evento encontrado para la foto y descripción
+          });
+        }
+      });
+    });
+    return Array.from(map.values());
+  }, [items]);
+
+  const indexOfLast = currentPage * postsPerPage;
+  const indexOfFirst = indexOfLast - postsPerPage;
+  const currentCategories = categories.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(categories.length / postsPerPage);
 
   return (
     <>
       <SiteHeader />
-
       <div className="section-forest">
         <div className="mx-auto max-w-5xl px-6 py-24 md:py-32">
           <header className="text-center">
-            <p className="eyebrow text-gold">Encuentros</p>
+            <p className="eyebrow text-gold">Astrología Emocional</p>
             <h1 className="mt-6 font-display text-5xl text-cream md:text-7xl">
               Sintonizar con el ritmo cíclico.
             </h1>
-            <p className="mx-auto mt-8 max-w-2xl text-base leading-relaxed text-cream/85">
-              Espacios compartidos, círculos y rituales programados según las configuraciones del cielo para encarnar la energía del tránsito.
-            </p>
           </header>
 
-          {items === null ? (
-            <p className="mt-20 text-center text-sm text-cream/70">Cargando…</p>
-          ) : items.length === 0 ? (
-            <p className="mt-20 text-center text-sm text-cream/70">No hay eventos programados en este momento. Pronto habrá nuevas fechas.</p>
-          ) : (
-            <>
-              <div className="mt-20 grid gap-6 md:grid-cols-2">
-                {currentItems.map((e) => (
-                  <article key={e.id} className="group flex flex-col border border-cream/20 bg-cream/5 p-8 transition-colors hover:border-gold">
-                    {e.cover_image_url && <img src={e.cover_image_url} alt="" className="mb-6 max-h-60 w-full object-cover" />}
-                    <div className="flex items-center justify-between">
-                      <span className="eyebrow text-gold">{e.subtitulo}</span>
-                      <span className="eyebrow text-cream/60">{e.fecha_evento} · {e.hora_evento}</span>
-                    </div>
-                    <h2 className="mt-6 font-display text-2xl text-cream md:text-3xl">{e.titulo}</h2>
-                    <p className="mt-4 text-sm leading-relaxed text-cream/85 whitespace-pre-wrap">{e.description}</p>
-                  </article>
-                ))}
-              </div>
+          <div className="mt-20 grid gap-6 md:grid-cols-3">
+  {currentCategories.map((cat) => (
+    <Sheet key={cat.nombre}>
+      <SheetTrigger asChild>
+        {/* Modifica los valores entre corchetes para ancho, alto y coordenadas */}
+        <div className="relative w-[100%] h-[100%] top-[0px] left-[0px]">
+          <article className="w-full h-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-8 transition-colors hover:border-gold">
+            {cat.representative.cover_image_url && (
+              <img src={cat.representative.cover_image_url} alt="" className="mb-6 max-h-60 w-full object-cover" />
+            )}
+            <span className="eyebrow text-gold">Categoría Emocional</span>
+            <h2 className="mt-6 font-display text-3xl text-cream">{cat.nombre}</h2>
+            <p className="mt-4 text-sm text-cream/85">Explorar herramientas y conexiones para esta sintonía.</p>
+          </article>
+        </div>
+      </SheetTrigger>
 
-              {totalPages > 1 && (
-                <Pagination className="mt-12 cursor-pointer">
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious 
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                      />
-                    </PaginationItem>
-                    
-                    <PaginationPages 
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      setCurrentPage={setCurrentPage}
-                    />
-
-                    <PaginationItem>
-                      <PaginationNext 
-                        currentPage={currentPage}
-                        totalPages={totalPages}
-                        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                      />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              )}
-            </>
-          )}
+      <SheetContent className="w-full sm:max-w-xl bg-background border-l border-gold/70 p-0 overflow-y-auto">
+        <CategoryDetailSheet categoria={cat.nombre} />
+      </SheetContent>
+    </Sheet>
+  ))}
+</div>
         </div>
       </div>
     </>
