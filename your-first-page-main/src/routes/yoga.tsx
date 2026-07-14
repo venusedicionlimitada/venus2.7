@@ -1,6 +1,5 @@
-import { createFileRoute, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { SiteHeader } from "../components/SiteHeader";
-import { PaginationControl } from "@/components/ui/pagination-control";
+import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
+import { ListLayout } from "@/components/layout/ListLayout";
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import { GridCard } from "@/components/cards/GridCard";
 import { useContentData } from "@/lib/hooks/useContentData";
@@ -26,44 +25,46 @@ function Yoga() {
 
   if (location.pathname !== "/yoga" && location.pathname !== "/yoga/") return <Outlet />;
 
+  // Configuraciones de escala
   const mPrincipal = 0.7; 
   const mSecundaria = 0.6;
 
   return (
-    <>
-      <SiteHeader />
-      <div className="section-yoga">
-        <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
-          {!currentItems ? (
-            <p className="mt-20 text-center text-sm opacity-70">Cargando…</p>
-          ) : (
-            <div className="flex flex-col gap-24">
-              <div className="flex flex-col md:flex-row items-start gap-8 w-full">
-                {currentItems.slice(0, 1).map((a) => (
-                  <FeatureCard key={a.id} item={a} mPrincipal={mPrincipal} themeClasses="border" linkTo="/$seccion/$slug" linkParams={{ seccion: "yoga", slug: a.slug }} tagLabel={a.tarjetas} />
-                ))}
-                <div className="hidden md:block group border p-6 transition-colors overflow-hidden" style={{ width: "370px", height: "280px", transform: "translate(-10px, 0px)" }}>
-                  <img src="/src/assets/Venus_08.jpg" alt="Contenido Recomendado" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-              {currentItems.length > 1 && (
-                <div className="grid gap-x-12 gap-y-0 md:grid-cols-3">
-                  {currentItems.slice(1).map((a, idx) => (
-                    <GridCard key={a.id} item={a} mSecundaria={mSecundaria} idx={idx} themeClasses="border" linkTo="/$seccion/$slug" linkParams={{ seccion: "yoga", slug: a.slug }} tagLabel={a.tarjetas} />
-                  ))}
-                </div>
-              )}
-
-              <PaginationControl 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                setCurrentPage={setCurrentPage} 
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </>
+    <ListLayout
+      // 1. CONFIGURACIÓN DE SECCIÓN: Clase del contenedor global
+      sectionClass="section-yoga"
+      
+      // 2. CAJA LATERAL: Clase para el borde de la imagen fija de la derecha
+      sidebarClass="border"
+      
+      items={currentItems}
+      pagination={{ currentPage, totalPages, setCurrentPage }}
+      
+      renderFeature={(a) => (
+        <FeatureCard 
+          key={a.id} 
+          item={a} 
+          mPrincipal={mPrincipal} 
+          // 3. TARJETA PRINCIPAL: Tus colores/bordes aquí
+          themeClasses="border" 
+          linkTo="/$seccion/$slug" 
+          linkParams={{ seccion: "yoga", slug: a.slug }} 
+          tagLabel={a.tarjetas} 
+        />
+      )}
+      renderSecondary={(a, idx) => (
+        <GridCard 
+          key={a.id} 
+          item={a} 
+          mSecundaria={mSecundaria} 
+          idx={idx} 
+          // 4. TARJETAS SECUNDARIAS: Tus colores/bordes aquí
+          themeClasses="border" 
+          linkTo="/$seccion/$slug" 
+          linkParams={{ seccion: "yoga", slug: a.slug }} 
+          tagLabel={a.tarjetas} 
+        />
+      )}
+    />
   );
 }

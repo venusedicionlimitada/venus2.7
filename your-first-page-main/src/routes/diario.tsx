@@ -1,6 +1,5 @@
 import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
-import { SiteHeader } from "../components/SiteHeader";
-import { PaginationControl } from "@/components/ui/pagination-control";
+import { ListLayout } from "@/components/layout/ListLayout"; // Asegúrate de que esta ruta sea correcta
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import { GridCard } from "@/components/cards/GridCard";
 import { useContentData } from "@/lib/hooks/useContentData";
@@ -26,44 +25,46 @@ function Diario() {
 
   if (location.pathname !== "/diario" && location.pathname !== "/diario/") return <Outlet />;
 
+  // Configuraciones de escala
   const mPrincipal = 0.7; 
   const mSecundaria = 0.6;
 
   return (
-    <>
-      <SiteHeader />
-      <div className="section-diario">
-        <div className="mx-auto max-w-7xl px-6 py-12 md:py-16">
-          {!currentPosts ? (
-            <p className="mt-20 text-center text-sm opacity-70">Cargando…</p>
-          ) : (
-            <div className="flex flex-col gap-24">
-              <div className="flex flex-col md:flex-row items-start gap-8 w-full">
-                {currentPosts.slice(0, 1).map((p) => (
-                  <FeatureCard key={p.id} item={p} mPrincipal={mPrincipal} themeClasses="border border-cream/30 bg-cream/5 hover:border-gold" linkTo="/diario/$slug" linkParams={{ slug: p.slug }} tagLabel="Diario" />
-                ))}
-                <div className="hidden md:block group border border-cream/30 bg-cream/5 p-6 transition-colors hover:border-gold overflow-hidden" style={{ width: "370px", height: "280px", transform: "translate(-10px, 0px)" }}>
-                  <img src="/src/assets/Venus_08.jpg" alt="Contenido Recomendado" className="w-full h-full object-cover" />
-                </div>
-              </div>
-
-              {currentPosts.length > 1 && (
-                <div className="grid gap-x-12 gap-y-0 md:grid-cols-3">
-                  {currentPosts.slice(1).map((p, idx) => (
-                    <GridCard key={p.id} item={p} mSecundaria={mSecundaria} idx={idx} themeClasses="border border-cream/20 bg-cream/5 hover:border-gold" linkTo="/diario/$slug" linkParams={{ slug: p.slug }} tagLabel="Diario" />
-                  ))}
-                </div>
-              )}
-
-              <PaginationControl 
-                currentPage={currentPage} 
-                totalPages={totalPages} 
-                setCurrentPage={setCurrentPage} 
-              />
-            </div>
-          )}
-        </div>
-      </div>
-    </>
+    <ListLayout
+      // 1. CONFIGURACIÓN DE SECCIÓN: Cambia aquí la clase global de la sección
+      sectionClass="section-diario"
+      
+      // 2. CAJA LATERAL: Cambia aquí los bordes/colores de la imagen fija de la derecha
+      sidebarClass="border border-cream/30 bg-cream/5 hover:border-gold"
+      
+      items={currentPosts}
+      pagination={{ currentPage, totalPages, setCurrentPage }}
+      
+      renderFeature={(p) => (
+        <FeatureCard 
+          key={p.id} 
+          item={p} 
+          mPrincipal={mPrincipal} 
+          // 3. TARJETA PRINCIPAL: Cambia aquí los colores/bordes de la tarjeta grande
+          themeClasses="border border-cream/30 bg-cream/5 hover:border-gold" 
+          linkTo="/diario/$slug" 
+          linkParams={{ slug: p.slug }} 
+          tagLabel="Diario" 
+        />
+      )}
+      renderSecondary={(p, idx) => (
+        <GridCard 
+          key={p.id} 
+          item={p} 
+          mSecundaria={mSecundaria} 
+          idx={idx} 
+          // 4. TARJETAS SECUNDARIAS: Cambia aquí los colores/bordes de las tarjetas pequeñas
+          themeClasses="border border-cream/20 bg-cream/5 hover:border-gold" 
+          linkTo="/diario/$slug" 
+          linkParams={{ slug: p.slug }} 
+          tagLabel="Diario" 
+        />
+      )}
+    />
   );
 }
