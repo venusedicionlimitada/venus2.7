@@ -21,7 +21,7 @@ export const Route = createFileRoute("/diario")({
 
 function Diario() {
   const location = useLocation();
-  const { currentItems: currentPosts, currentPage, totalPages, setCurrentPage } = useContentData<Post>("diary_entries", 7);
+  const { currentItems: currentPosts, currentPage, totalPages, setCurrentPage, error } = useContentData<Post>("diary_entries", 7);
 
   if (location.pathname !== "/diario" && location.pathname !== "/diario/") return <Outlet />;
 
@@ -38,6 +38,7 @@ function Diario() {
       sidebarClass="border border-cream/30 bg-cream/5 hover:border-gold"
       
       items={currentPosts}
+      error={error}
       pagination={{ currentPage, totalPages, setCurrentPage }}
       
       renderFeature={(p) => (

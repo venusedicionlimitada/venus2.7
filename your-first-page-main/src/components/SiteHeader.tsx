@@ -37,10 +37,10 @@ export function SiteHeader() {
           <motion.div 
             style={{ opacity }} 
             // Cambiamos justify-center por justify-start para evitar que el texto se "aplastara" hacia el centro
-            className="flex flex-col justify-start w-[220px] overflow-visible"
+            className="flex flex-col justify-start w-auto max-w-[180px] sm:max-w-[220px] overflow-visible"
           >
             {/* Quitamos leading-none y dejamos que el navegador gestione el espacio natural */}
-            <span className="font-display text-[2rem] text-ink truncate">
+            <span className="font-display text-xl sm:text-[2rem] text-ink truncate">
               VENUS
             </span>
             {/* Quitamos leading-none y el translate negativo que podía estar solapando */}

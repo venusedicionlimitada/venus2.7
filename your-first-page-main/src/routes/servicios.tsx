@@ -37,12 +37,12 @@ function Servicios() {
         {/* Cabecera totalmente suelta */}
 <header className="text-left">
           {/* Título independiente */}
-          <h1 className="font-display text-5xl text-ink/80 font-extralight md:text-7xl pt-14 px-18 font-light">
+          <h1 className="font-display text-3xl sm:text-5xl text-ink/80 font-extralight md:text-7xl pt-10 sm:pt-14 px-6 sm:px-12 md:px-18 font-light">
             Un ritual a tu medida
           </h1>
           
           {/* Párrafo independiente */}
-          <p className="max-w-5xl text-base leading-relaxed text-wine md:text-lg pt-4 px-20">
+          <p className="max-w-5xl text-base leading-relaxed text-wine md:text-lg pt-4 px-6 sm:px-12 md:px-20">
             Cada propuesta es un espacio sostenido. Toda reserva se gestiona de manera personal — escríbeme contándome qué buscas y conversamos.
           </p>
         </header>
@@ -95,7 +95,7 @@ function Servicios() {
                          - 'p-8 md:p-10' es el relleno interno general.
                          - 'flex flex-col justify-between' distribuye el contenido y el botón de solicitar info.
                       */}
-                      <article className="bg-background/50 backdrop-blur-sm pt-14 pb-8 px-12 md:px-16 text-left min-h-[300px] flex flex-col justify-between shadow-sm border border-gold/10 rounded-md">
+                      <article className="bg-background/50 backdrop-blur-sm pt-10 sm:pt-14 pb-6 sm:pb-8 px-6 sm:px-12 md:px-16 text-left min-h-[260px] sm:min-h-[300px] flex flex-col justify-between shadow-sm border border-gold/10 rounded-md">
                         
                         {/* BLOQUE DE CONTENIDOS SEPARADOS:
                            - 'space-y-4' añade una separación vertical automática entre el título, la duración y el cuerpo. 

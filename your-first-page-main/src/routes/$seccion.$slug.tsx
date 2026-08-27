@@ -99,70 +99,48 @@ function DiaryDetail() {
         <article className="mx-auto max-w-5xl px-6 py-20">
           
           {entry.cover_image_url ? (
-            <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-12 items-start mt-8">
-              <div className="w-full">
+            <div className="grid grid-cols-1 md:grid-cols-[minmax(0,300px)_1fr] gap-8 md:gap-12 items-start mt-8">
+              <div className="w-full max-w-[300px] mx-auto md:mx-0">
                 <img 
                   src={entry.cover_image_url} 
                   alt="" 
                   className="object-cover block w-full h-auto" 
-                  style={{
-                    width: "300px",
-                    height: "auto"
-                  }}
                 />
               </div>
               
-              <header className="w-full flex flex-col">
-                <div className="w-full flex justify-between items-center">
+              <header className="w-full flex flex-col min-w-0">
+                <div className="w-full flex flex-wrap justify-between items-center gap-2">
                   <span className="eyebrow text-gold">{entry.tarjetas}</span>
-                  <span className="eyebrow text-clay" style={{ textAlign: "right" }}>{entry.date_label}</span>
+                  <span className="eyebrow text-clay text-right">{entry.date_label}</span>
                 </div>
-                <h1 
-                  className="mt-4 font-display leading-tight text-ink w-full break-words"
-                  style={{ fontSize: "60px" }}
-                >
+                <h1 className="mt-4 font-display leading-tight text-ink w-full break-words text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
                   {entry.title}
                 </h1>
                 {entry.subtitle && (
-                  <p 
-                    className="mt-4 font-sans leading-relaxed text-ink w-full"
-                    style={{ fontSize: "22px" }}
-                  >
+                  <p className="mt-4 font-sans leading-relaxed text-ink w-full text-lg sm:text-xl md:text-[22px]">
                     {entry.subtitle}
                   </p>
                 )}
-                <p 
-                  className="mt-6 leading-relaxed text-ink/75 w-full"
-                  style={{ fontSize: "18px" }}
-                >
+                <p className="mt-6 leading-relaxed text-ink/75 w-full text-base md:text-lg">
                   {entry.description}
                 </p>
               </header>
             </div>
           ) : (
             <header className="mt-8 w-full flex flex-col">
-              <div className="w-full flex justify-between items-center">
+              <div className="w-full flex flex-wrap justify-between items-center gap-2">
                 <span className="eyebrow text-gold">{entry.tarjetas}</span>
-                <span className="eyebrow text-clay" style={{ textAlign: "right" }}>{entry.date_label}</span>
+                <span className="eyebrow text-clay text-right">{entry.date_label}</span>
               </div>
-              <h1 
-                className="mt-4 font-display leading-tight text-ink w-full break-words"
-                style={{ fontSize: "60px" }}
-              >
+              <h1 className="mt-4 font-display leading-tight text-ink w-full break-words text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
                 {entry.title}
               </h1>
               {entry.subtitle && (
-                <p 
-                  className="mt-4 font-sans leading-relaxed text-ink w-full"
-                  style={{ fontSize: "22px" }}
-                >
+                <p className="mt-4 font-sans leading-relaxed text-ink w-full text-lg sm:text-xl md:text-[22px]">
                   {entry.subtitle}
                 </p>
               )}
-              <p 
-                className="mt-6 leading-relaxed text-ink/75 w-full"
-                style={{ fontSize: "18px" }}
-              >
+              <p className="mt-6 leading-relaxed text-ink/75 w-full text-base md:text-lg">
                 {entry.description}
               </p>
             </header>
@@ -170,8 +148,7 @@ function DiaryDetail() {
 
           {entry.body && (
             <div
-              className="prose prose-lg mt-12 max-w-none text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink w-full"
-              style={{ fontSize: "16px" }}
+              className="prose prose-sm sm:prose-lg mt-12 max-w-none text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink w-full text-base"
               dangerouslySetInnerHTML={{ __html: entry.body }}
             />
           )}

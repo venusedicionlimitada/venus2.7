@@ -63,8 +63,8 @@ function Eventos() {
     <Sheet key={cat.nombre}>
       <SheetTrigger asChild>
         {/* Modifica los valores entre corchetes para ancho, alto y coordenadas */}
-        <div className="relative w-[100%] h-[100%] top-[0px] left-[0px]">
-          <article className="w-full h-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-8 transition-colors hover:border-gold">
+        <div className="relative w-full">
+          <article className="w-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-6 sm:p-8 transition-colors hover:border-gold">
             {cat.representative.cover_image_url && (
               <img src={cat.representative.cover_image_url} alt="" className="mb-6 max-h-60 w-full object-cover" />
             )}

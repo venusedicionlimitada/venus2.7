@@ -18,6 +18,7 @@ function Astrologia() {
       // CAMBIA ESTO POR LAS CLASES DE TU ESTILO:
       sidebarClass="border border-forest-green" 
       items={data.currentItems}
+      error={data.error}
       pagination={{ currentPage: data.currentPage, totalPages: data.totalPages, setCurrentPage: data.setCurrentPage }}
       renderFeature={(a) => (
         <FeatureCard 

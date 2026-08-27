@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImage from "../assets/hero-venus.jpg";
 import { SiteHeader } from "../components/SiteHeader";
-import { LunarWidget } from "../components/LunarWidget";
+import { LunarEventCard } from "../components/LunarEventCard";
+import { SideRecommendImage } from "../components/SideRecommendImage";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -19,12 +20,12 @@ function Index() {
   return (
     <>
       {/* 1. Franja inicial */}
-      <section className="section-forest relative w-full py-6 text-center">
+      <section className="section-forest relative w-full py-4 sm:py-6 text-center">
         <div className="flex flex-col items-center justify-center">
-          <span className="font-['Cormorant_Garamond'] text-[2.8rem] text-cream/80 tracking-widest uppercase leading-none">
+          <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.8rem] text-cream/80 tracking-widest uppercase leading-none">
             VENUS
           </span>
-          <span className="font-sans text-[0.8rem] text-cream/80 tracking-[0.2em] uppercase leading-none mt-0 translate-x-[5px] translate-y-[-1px]">
+          <span className="font-sans text-[0.65rem] sm:text-[0.8rem] text-cream/80 tracking-[0.2em] uppercase leading-none mt-0 translate-x-[5px] translate-y-[-1px]">
             EDICIÓN LIMITADA
           </span>
         </div>
@@ -33,41 +34,51 @@ function Index() {
       {/* 2. Menú manual */}
       <SiteHeader />
 
-{/* 3. Hero — fondo crema seda */}
-      <section className="section-cream relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Composición sensorial: seda crema, flor blanca y carta astral dorada"
-            width={1600}
-            height={1200}
-            className="h-full w-full object-cover opacity-50"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-cream/40 via-cream/60 to-cream" />
-        </div>
+      {/* NUEVO BLOQUE MODULAR: Relleno p-8 añadido a themeClasses para empujar el texto hacia dentro */}
+      <section className="section-forest w-full py-12 md:py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col md:flex-row items-start gap-8 w-full">
+            
+            {/* Columna de la tarjeta adaptada al espacio disponible */}
+            <div className="flex-1 w-full">
+              <LunarEventCard />
+            </div>
 
-        <div className="relative mx-auto max-w-7xl px-6 pt-0 pb-32 text-right translate-x 40 md:pt-10 md:pb-44">
+            <SideRecommendImage />
+
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Hero Visual */}
+      <section className="section-cream relative overflow-hidden min-h-[40vh] sm:min-h-[50vh]">
+        <img
+          src={heroImage}
+          alt="Composición sensorial: seda crema, flor blanca y carta astral dorada"
+          width={1600}
+          height={1200}
+          className="h-full w-full object-cover opacity-50"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-cream/40 via-cream/60 to-cream" />
+      </section>
+
+      {/* 4. Bloque de Introducción — Textos y botones */}
+      <section className="section-cream py-24 text-center">
+        <div className="relative mx-auto max-w-7xl px-6">
           <p className="eyebrow text-wine text-xl">Astrología·Emocional</p>
           
-          <div className="relative w-162 mx-auto mt-10 mb-10 -translate-x-90 -translate-y-30">
-            {/* Modifica el valor de scale(1) para cambiar el tamaño en porcentaje (ej: scale(0.85)) */}
-            <div style={{ transform: "scale(0.85)", transformOrigin: "center" }}>
-              <LunarWidget />
-            </div>
-          </div>
-          
-          <h1 className="mt-8 font-display text-[4rem] leading-[0.95] text-ink md:text-[6rem] lg:text-[7rem]">
+          <h1 className="mt-6 sm:mt-8 font-display text-[2.5rem] sm:text-[4rem] leading-[0.95] text-ink md:text-[6rem] lg:text-[7rem]">
             VENUS
           </h1>
-          <p className="eyebrow mt-5 text-ink/70 text-xl translate-x-3 -translate-y-1">
+          
+          <p className="eyebrow mt-4 sm:mt-5 text-ink/70 text-base sm:text-xl translate-x-2 sm:translate-x-3 -translate-y-1">
             Edición Limitada
           </p>
+          
           <p className="mx-auto mt-10 max-w-xl text-base leading-relaxed text-ink/80 md:text-lg">
             Terapias de acompañamiento donde el cuerpo, los astros y la palabra
             se reúnen para sostener tu proceso.
           </p>
-          
-
 
           <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
             <Link
@@ -133,7 +144,6 @@ function Index() {
           Escríbeme
         </Link>
       </section>
-
     </>
   );
 }
