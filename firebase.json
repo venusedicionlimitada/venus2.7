@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "your-first-page-main/dist",
+    "public": "your-first-page-main/.output/public",
     "ignore": [
       "firebase.json",
       "**/.*",
