@@ -153,12 +153,12 @@ export function LunarEventCard() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <div 
         onClick={() => setIsOpen(true)} 
-        className="cursor-pointer w-full block text-left"
+        className="cursor-pointer w-full min-w-0 block text-left"
       >
-        <div className="group section-forest border border-cream/30 bg-cream/5 hover:border-gold p-5 sm:p-8 sm:pl-12 flex flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
+        <div className="group section-forest border border-cream/30 bg-cream/5 hover:border-gold p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
           <div>
-            <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
-              <div className="flex flex-wrap items-baseline gap-x-3 sm:gap-x-4 gap-y-1">
+            <div className="flex min-w-0 flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+              <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 sm:gap-x-4 gap-y-1">
                 <span className="font-sans text-lg sm:text-2xl italic text-gold tracking-wide">
                   {evento.date_label}
                 </span>
@@ -168,9 +168,17 @@ export function LunarEventCard() {
               </div>
               
               {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
-                <span className="font-mono text-xl sm:text-3xl md:text-4xl tracking-[0.1em] text-gold/90">
-                  {timeLeft.days}d:{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s
-                </span>
+                <>
+                  <div className="grid w-full grid-cols-2 gap-x-5 gap-y-1 font-mono text-lg tracking-[0.08em] text-gold/90 tabular-nums sm:hidden">
+                    <span>{timeLeft.days}d</span>
+                    <span>{timeLeft.hours}h</span>
+                    <span>{timeLeft.minutes}m</span>
+                    <span>{timeLeft.seconds}s</span>
+                  </div>
+                  <span className="hidden font-mono text-3xl tracking-[0.1em] text-gold/90 tabular-nums sm:inline md:text-4xl">
+                    {timeLeft.days}d:{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s
+                  </span>
+                </>
               )}
             </div>
 

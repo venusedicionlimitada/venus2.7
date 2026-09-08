@@ -20,16 +20,16 @@ function Index() {
   return (
     <>
       {/* 1. Franja inicial */}
-      <section className="section-forest relative w-full py-4 sm:py-6 text-center">
-        <div className="flex flex-col items-center justify-center">
-          <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.8rem] text-cream/80 tracking-widest uppercase leading-none">
-            VENUS
-          </span>
-          <span className="font-sans text-[0.65rem] sm:text-[0.8rem] text-cream/80 tracking-[0.2em] uppercase leading-none mt-0 translate-x-[5px] translate-y-[-1px]">
-            EDICIÓN LIMITADA
-          </span>
-        </div>
-      </section>
+<section className="section-forest relative w-full py-6 sm:py-8 text-center">
+  <div className="flex flex-col items-center justify-center">
+    <span className="font-display text-[2rem] sm:text-[2.8rem] text-cream/80 tracking-widest uppercase leading-none">
+      VENUS
+    </span>
+    <span className="font-sans text-[0.65rem] sm:text-[0.8rem] text-cream/80 tracking-[0.2em] uppercase leading-none mt-2 sm:mt-3 translate-x-[5px]">
+      EDICIÓN LIMITADA
+    </span>
+  </div>
+</section>
 
       {/* 2. Menú manual */}
       <SiteHeader />
@@ -65,7 +65,9 @@ function Index() {
       {/* 4. Bloque de Introducción — Textos y botones */}
       <section className="section-cream py-24 text-center">
         <div className="relative mx-auto max-w-7xl px-6">
-          <p className="eyebrow text-wine text-xl">Astrología·Emocional</p>
+          <p className="eyebrow text-base tracking-[0.2em] text-wine sm:text-xl sm:tracking-[0.35em]">
+            Astrología·Emocional
+          </p>
           
           <h1 className="mt-6 sm:mt-8 font-display text-[2.5rem] sm:text-[4rem] leading-[0.95] text-ink md:text-[6rem] lg:text-[7rem]">
             VENUS
