@@ -26,12 +26,6 @@ export function FeatureCard({ item, themeClasses, linkTo, linkParams, tagLabel }
             </p>
           </div>
 
-          {item.body && (
-            <div className="hidden md:block prose prose-sm max-w-none opacity-60 line-clamp-4 mt-4 pt-4 border-t border-current/10">
-              <div dangerouslySetInnerHTML={{ __html: item.body }} />
-            </div>
-          )}
-
           <InCardCoverImage src={item.cover_image_url} />
 
           <div className="mt-4 pt-2 flex justify-end">

@@ -12,13 +12,14 @@ function Astrologia() {
   
   if (location.pathname !== "/astrologia" && location.pathname !== "/astrologia/") return <Outlet />;
 
+  const currentFeaturedItem = data.currentPage > 1 ? null : data.featuredItem;
+
   return (
     <ListLayout
       sectionClass="section-card-forest"
-      // CAMBIA ESTO POR LAS CLASES DE TU ESTILO:
       sidebarClass="border border-forest-green" 
       items={data.items}
-      featuredItem={data.featuredItem}
+      featuredItem={currentFeaturedItem}
       secondaryItems={data.secondaryItems}
       error={data.error}
       pagination={{ currentPage: data.currentPage, totalPages: data.totalPages, setCurrentPage: data.setCurrentPage }}
@@ -27,7 +28,6 @@ function Astrologia() {
           key={a.id} 
           item={a} 
           mPrincipal={0.7} 
-          // AQUÍ CAMBIAS EL COLOR DE LA TARJETA PRINCIPAL:
           themeClasses="border border-forest-green" 
           linkTo="/$seccion/$slug" 
           linkParams={{ seccion: "astrologia", slug: a.slug }} 
@@ -40,7 +40,6 @@ function Astrologia() {
           item={a} 
           mSecundaria={0.6} 
           idx={idx} 
-          // AQUÍ CAMBIAS EL COLOR DE LAS TARJETAS PEQUEÑAS:
           themeClasses="border border-forest-green" 
           linkTo="/$seccion/$slug" 
           linkParams={{ seccion: "astrologia", slug: a.slug }} 

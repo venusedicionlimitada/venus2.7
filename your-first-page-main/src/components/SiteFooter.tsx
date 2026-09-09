@@ -5,10 +5,10 @@ export function SiteFooter() {
   return (
     <footer className="mt-0.2">
       {/* Franja de Respiro — Marcas */}
-      <div className="w-full py-6 sm:py-8">
+      <div className="w-full py-4 sm:py-8">
         <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row justify-between items-center gap-8 sm:gap-4">
           
-          <div className="flex flex-col items-center sm:items-start scale-75 sm:scale-75 origin-center sm:origin-left">
+          <div className="hidden sm:flex flex-col items-center sm:items-start scale-75 sm:scale-75 origin-center sm:origin-left">
             <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.8rem] text-ink tracking-widest uppercase leading-none">
               VENUS
             </span>
@@ -17,13 +17,18 @@ export function SiteFooter() {
             </span>
           </div>
 
-          <div className="flex flex-col items-center justify-center scale-45 sm:scale-[0.55] origin-center sm:origin-right border border-[#706f6d] px-6 py-4 sm:px-8 sm:py-5">
-            <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.6rem] text-ink tracking-[0.1em] uppercase leading-none">
-              LUNA FLOW
-            </span>
-            <span className="font-sans text-[0.75rem] sm:text-[0.9rem] text-ink tracking-[0.3em] uppercase leading-none mt-2 translate-x-[5px]">
-              ASTROLOGÍA EMOCIONAL
-            </span>
+          <div className="w-full sm:w-auto flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center scale-[0.55] sm:scale-[0.55] origin-center sm:origin-right border border-[#706f6d] px-6 py-4 sm:px-8 sm:py-5">
+              <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.6rem] text-ink tracking-[0.1em] uppercase leading-none">
+                LUNA FLOW
+              </span>
+              <span className="font-sans text-[0.75rem] sm:text-[0.9rem] text-ink tracking-[0.3em] uppercase leading-none mt-2 translate-x-[5px]">
+                ASTROLOGÍA EMOCIONAL
+              </span>
+            </div>
+            <p className="sm:hidden font-display italic text-sm text-ink/80 tracking-wide mt-[-10px] text-center">
+              by VENUS EDICIÓN LIMITADA
+            </p>
           </div>
 
         </div>
@@ -94,11 +99,11 @@ export function SiteFooter() {
                   className="w-full bg-transparent border-b border-gold/80 pb-1 text-sm focus:outline-none focus:border-wine text-cream"
                 />
               </div>
-              <div className="mt-3 md:-translate-x-[80px] md:translate-y-[20px]">
-  <Button className="border border-wine bg-wine text-cream hover:bg-transparent hover:text-wine transition-colors">
-    Suscribirme al Newsletter
-  </Button>
-</div>
+              <div className="w-full flex justify-center md:block mt-3 md:-translate-x-[80px] md:translate-y-[20px]">
+                <Button className="border border-gold bg-gold text-cream hover:bg-transparent hover:text-wine transition-colors rounded-full md:rounded-md">
+                  Suscribirme a Newsletter
+                </Button>
+              </div>
             </div>
           </div>
         </div>

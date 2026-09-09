@@ -17,18 +17,24 @@ const links = [
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
-  const isHome = router.state.location.pathname === "/";
+  const currentPath = router.state.location.pathname;
+  const isHome = currentPath === "/";
   
   const { scrollY } = useScroll();
   const scrollOpacity = useTransform(scrollY, [0, 50], [0, 1]);
   
-  // Si estamos en la Home usa el efecto de scroll; en las demás páginas se ve desde el principio
   const opacity = isHome ? scrollOpacity : 1;
+
+  // Encontramos la etiqueta de la sección actual para mostrarla en el móvil
+  const currentLink = links.find((l) => {
+    if (l.to === "/") return currentPath === "/";
+    return currentPath.startsWith(l.to);
+  });
+  const currentLabel = currentLink ? currentLink.label : "";
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 sm:bg-background/85 backdrop-blur-md">
-      {/* He combinado los divs en uno solo para eliminar el espacio muerto */}
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 md:py-3">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 md:py-3 relative">
         <Link
           to="/"
           onClick={() => setOpen(false)}
@@ -36,19 +42,25 @@ export function SiteHeader() {
         >
           <motion.div 
             style={{ opacity }} 
-            // Cambiamos justify-center por justify-start para evitar que el texto se "aplastara" hacia el centro
             className="flex flex-col justify-start w-auto max-w-[180px] sm:max-w-[220px] overflow-visible"
           >
-            {/* Quitamos leading-none y dejamos que el navegador gestione el espacio natural */}
             <span className="font-display text-xl sm:text-[2rem] text-ink truncate">
               VENUS
             </span>
-            {/* Quitamos leading-none y el translate negativo que podía estar solapando */}
             <span className="font-sans text-[0.6rem] sm:text-[0.5rem] uppercase tracking-[0.2em] font-semibold hidden sm:block mt-1.5 sm:mt-0 text-ink truncate translate-x-[2px] translate-y-0 sm:translate-x-[3.5px] sm:translate-y-[2px]">
-  Edición Limitada
-</span>
+              Edición Limitada
+            </span>
           </motion.div>
         </Link>
+
+        {/* Sección activa centrada en dispositivos móviles */}
+        {currentLabel && (
+          <div className="absolute left-1/2 -translate-x-1/2 lg:hidden text-center pointer-events-none px-2 max-w-[calc(100%-140px)] truncate">
+            <span className="text-[0.68rem] uppercase tracking-[0.25em] text-ink font-bold border-b border-forest pb-0.5">
+              {currentLabel}
+            </span>
+          </div>
+        )}
 
         <nav className="hidden items-center gap-8 lg:flex">
           {links.map((l) => (
@@ -73,7 +85,6 @@ export function SiteHeader() {
         </button>
       </div>
 
-      {/* Menú móvil */}
       {open && (
         <nav className="border-t border-border/40 bg-background lg:hidden">
           <ul className="flex flex-col px-6 py-4">

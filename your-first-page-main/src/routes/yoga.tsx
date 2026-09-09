@@ -29,26 +29,22 @@ function Yoga() {
   const mPrincipal = 0.7; 
   const mSecundaria = 0.6;
 
+  const currentFeaturedItem = currentPage > 1 ? null : featuredItem;
+
   return (
     <ListLayout
-      // 1. CONFIGURACIÓN DE SECCIÓN: Clase del contenedor global
       sectionClass="section-yoga"
-      
-      // 2. CAJA LATERAL: Clase para el borde de la imagen fija de la derecha
       sidebarClass="border"
-      
       items={items}
-      featuredItem={featuredItem}
+      featuredItem={currentFeaturedItem}
       secondaryItems={secondaryItems}
       error={error}
       pagination={{ currentPage, totalPages, setCurrentPage }}
-      
       renderFeature={(a) => (
         <FeatureCard 
           key={a.id} 
           item={a} 
           mPrincipal={mPrincipal} 
-          // 3. TARJETA PRINCIPAL: Tus colores/bordes aquí
           themeClasses="border" 
           linkTo="/$seccion/$slug" 
           linkParams={{ seccion: "yoga", slug: a.slug }} 
@@ -61,7 +57,6 @@ function Yoga() {
           item={a} 
           mSecundaria={mSecundaria} 
           idx={idx} 
-          // 4. TARJETAS SECUNDARIAS: Tus colores/bordes aquí
           themeClasses="border" 
           linkTo="/$seccion/$slug" 
           linkParams={{ seccion: "yoga", slug: a.slug }} 
