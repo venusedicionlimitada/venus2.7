@@ -156,8 +156,28 @@ export function LunarEventCard() {
         className="cursor-pointer w-full min-w-0 block text-left"
       >
         <div className="group section-forest border border-cream/30 bg-cream/5 hover:border-gold p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
-          <div>
-            <div className="flex min-w-0 flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6">
+          
+          <div className="flex flex-col">
+            
+            {/* BLOQUE DE TÍTULO Y DESCRIPCIÓN (Arriba en móvil: order-1, Abajo en PC: sm:order-2) */}
+            <div className="order-1 sm:order-2 mb-4 sm:mb-0">
+              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-cream tracking-wide -mt-1 sm:-mt-2 mb-1 uppercase">
+                {evento.title}
+              </h3>
+              
+              {evento.subtitle && (
+                <p className="font-sans text-lg sm:text-xl md:text-2xl uppercase tracking-[0em] text-cream/60 mb-3 sm:mb-4">
+                  {evento.subtitle}
+                </p>
+              )}
+              
+              <p className="font-sans text-lg leading-relaxed text-cream/80 max-w-xl -mt-2 mb-2 line-clamp-3">
+                {evento.description}
+              </p>
+            </div>
+
+            {/* BLOQUE DE FECHA Y HORA (Abajo en móvil: order-2, Arriba en PC: sm:order-1) */}
+            <div className="order-2 sm:order-1 flex min-w-0 flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 mt-4 sm:mt-0">
               <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 sm:gap-x-4 gap-y-1">
                 <span className="font-sans text-lg sm:text-2xl italic text-gold tracking-wide">
                   {evento.date_label}
@@ -169,36 +189,22 @@ export function LunarEventCard() {
               
               {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
                 <>
-                  <div className="grid w-full grid-cols-2 gap-x-5 gap-y-1 font-mono text-lg tracking-[0.08em] text-gold/90 tabular-nums sm:hidden">
-                    <span>{timeLeft.days}d</span>
-                    <span>{timeLeft.hours}h</span>
-                    <span>{timeLeft.minutes}m</span>
-                    <span>{timeLeft.seconds}s</span>
-                  </div>
+                  {/* CRONÓMETRO MÓVIL: Una sola línea */}
+                  <span className="font-mono text-lg tracking-[0.1em] text-gold/90 tabular-nums sm:hidden">
+                    {timeLeft.days}d:{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s
+                  </span>
+                  
+                  {/* CRONÓMETRO PC */}
                   <span className="hidden font-mono text-3xl tracking-[0.1em] text-gold/90 tabular-nums sm:inline md:text-4xl">
                     {timeLeft.days}d:{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s
                   </span>
                 </>
               )}
             </div>
-
-            <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-cream tracking-wide -mt-1 sm:-mt-2 mb-1 uppercase">
-              {evento.title}
-            </h3>
             
-            {evento.subtitle && (
-              <p className="font-sans text-lg sm:text-xl md:text-2xl uppercase tracking-[0em] text-cream/60 mb-3 sm:mb-4">
-                {evento.subtitle}
-              </p>
-            )}
-            
-            {/* Clamping de seguridad para evitar que el texto empuje el enlace */}
-            <p className="font-sans text-lg leading-relaxed text-cream/80 max-w-xl -mt-2 mb-2 line-clamp-3">
-              {evento.description}
-            </p>
           </div>
 
-          <div className="mt-0 pt-2 flex justify-end">
+          <div className="mt-2 sm:mt-0 pt-2 flex justify-end">
             <span className="inline-block border-b border-cream/30 pb-0.5 text-base italic tracking-[0.1em] text-cream/70 group-hover:text-gold group-hover:border-gold transition-colors">
               quiero saber más
             </span>
