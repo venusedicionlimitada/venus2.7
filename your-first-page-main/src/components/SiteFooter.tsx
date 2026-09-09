@@ -27,8 +27,8 @@ export function SiteFooter() {
               </span>
             </div>
             <p className="sm:hidden font-display italic text-sm text-ink/80 tracking-wide mt-[-10px] text-center">
-              by VENUS EDICIÓN LIMITADA
-            </p>
+  by <span className="font-display not-italic font-normal">VENUS</span> <span className="font-sans text-[0.65rem] tracking-[0.2em] uppercase font-semibold">EDICIÓN LIMITADA</span>
+</p>
           </div>
 
         </div>

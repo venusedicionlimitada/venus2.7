@@ -53,13 +53,16 @@ export function SiteHeader() {
           </motion.div>
         </Link>
 
-        {/* Sección activa centrada en dispositivos móviles */}
+        {/* Sección activa centrada en dispositivos móviles con el mismo efecto de opacidad */}
         {currentLabel && (
-          <div className="absolute left-1/2 -translate-x-1/2 lg:hidden text-center pointer-events-none px-2 max-w-[calc(100%-140px)] truncate">
+          <motion.div 
+            style={{ opacity }}
+            className="absolute left-1/2 -translate-x-1/2 lg:hidden text-center pointer-events-none px-2 max-w-[calc(100%-140px)] truncate"
+          >
             <span className="text-[0.68rem] uppercase tracking-[0.25em] text-ink font-bold border-b border-forest pb-0.5">
               {currentLabel}
             </span>
-          </div>
+          </motion.div>
         )}
 
         <nav className="hidden items-center gap-8 lg:flex">
