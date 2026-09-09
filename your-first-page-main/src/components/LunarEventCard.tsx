@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
+import { InCardCoverImage } from "@/components/SideRecommendImage";
 
-export function LunarEventCard() {
+type LunarEventCardProps = {
+  onCoverUrl?: (url: string | null) => void;
+};
+
+export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [evento, setEvento] = useState(null);
   const [publicaciones, setPublicaciones] = useState([]);
@@ -37,8 +42,10 @@ export function LunarEventCard() {
           description: eventoData.description ?? eventoData.descripcion ?? "",
           categoria_emocional: eventoData.categoria_emocional,
           raw_fecha: eventoData.fecha_evento,
-          raw_hora: eventoData.hora_evento
+          raw_hora: eventoData.hora_evento,
+          cover_image_url: eventoData.cover_image_url ?? null,
         });
+        onCoverUrl?.(eventoData.cover_image_url ?? null);
 
         if (eventoData.categoria_emocional) {
           const listaCategorias = eventoData.categoria_emocional
@@ -79,12 +86,14 @@ export function LunarEventCard() {
 
           setPublicaciones(combinadas);
         }
+      } else {
+        onCoverUrl?.(null);
       }
       setLoading(false);
     }
     
     fetchEventoYPublicaciones();
-  }, []);
+  }, [onCoverUrl]);
 
   useEffect(() => {
     if (!evento || !evento.raw_fecha) return;
@@ -203,6 +212,8 @@ export function LunarEventCard() {
             </div>
             
           </div>
+
+          <InCardCoverImage src={evento.cover_image_url} />
 
           <div className="mt-2 sm:mt-0 pt-2 flex justify-end">
             <span className="inline-block border-b border-cream/30 pb-0.5 text-base italic tracking-[0.1em] text-cream/70 group-hover:text-gold group-hover:border-gold transition-colors">

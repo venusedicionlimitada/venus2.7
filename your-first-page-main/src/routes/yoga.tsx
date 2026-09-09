@@ -21,7 +21,7 @@ export const Route = createFileRoute("/yoga")({
 
 function Yoga() {
   const location = useLocation();
-  const { currentItems, currentPage, totalPages, setCurrentPage, error } = useContentData<YogaArticle>("yoga_articles", 7);
+  const { items, featuredItem, secondaryItems, currentPage, totalPages, setCurrentPage, error } = useContentData<YogaArticle>("yoga_articles", 7);
 
   if (location.pathname !== "/yoga" && location.pathname !== "/yoga/") return <Outlet />;
 
@@ -37,7 +37,9 @@ function Yoga() {
       // 2. CAJA LATERAL: Clase para el borde de la imagen fija de la derecha
       sidebarClass="border"
       
-      items={currentItems}
+      items={items}
+      featuredItem={featuredItem}
+      secondaryItems={secondaryItems}
       error={error}
       pagination={{ currentPage, totalPages, setCurrentPage }}
       

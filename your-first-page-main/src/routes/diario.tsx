@@ -21,7 +21,7 @@ export const Route = createFileRoute("/diario")({
 
 function Diario() {
   const location = useLocation();
-  const { currentItems: currentPosts, currentPage, totalPages, setCurrentPage, error } = useContentData<Post>("diary_entries", 7);
+  const { items, featuredItem, secondaryItems, currentPage, totalPages, setCurrentPage, error } = useContentData<Post>("diary_entries", 7);
 
   if (location.pathname !== "/diario" && location.pathname !== "/diario/") return <Outlet />;
 
@@ -37,7 +37,9 @@ function Diario() {
       // 2. CAJA LATERAL: Cambia aquí los bordes/colores de la imagen fija de la derecha
       sidebarClass="border border-cream/30 bg-cream/5 hover:border-gold"
       
-      items={currentPosts}
+      items={items}
+      featuredItem={featuredItem}
+      secondaryItems={secondaryItems}
       error={error}
       pagination={{ currentPage, totalPages, setCurrentPage }}
       

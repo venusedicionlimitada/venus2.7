@@ -17,7 +17,9 @@ function Astrologia() {
       sectionClass="section-card-forest"
       // CAMBIA ESTO POR LAS CLASES DE TU ESTILO:
       sidebarClass="border border-forest-green" 
-      items={data.currentItems}
+      items={data.items}
+      featuredItem={data.featuredItem}
+      secondaryItems={data.secondaryItems}
       error={data.error}
       pagination={{ currentPage: data.currentPage, totalPages: data.totalPages, setCurrentPage: data.setCurrentPage }}
       renderFeature={(a) => (

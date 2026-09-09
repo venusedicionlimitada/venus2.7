@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { InCardCoverImage } from "@/components/SideRecommendImage";
 
 type FeatureCardProps = {
   item: any;
@@ -10,23 +11,11 @@ type FeatureCardProps = {
 };
 
 export function FeatureCard({ item, themeClasses, linkTo, linkParams, tagLabel }: FeatureCardProps) {
-  const hasImage = !!item.cover_image_url;
-
   return (
     <div className="flex flex-col w-full">
       <article
-        className={`group border p-5 sm:p-8 sm:pl-12 transition-colors w-full overflow-hidden relative flex flex-col justify-between ${themeClasses} min-h-[240px] md:min-h-[350px] ${
-          hasImage ? "md:grid md:grid-cols-2 md:gap-8 md:items-center" : ""
-        }`}
+        className={`group border p-5 sm:p-8 sm:pl-12 transition-colors w-full overflow-hidden relative flex flex-col justify-between ${themeClasses} min-h-[240px] md:min-h-[350px]`}
       >
-        {hasImage && (
-          <img
-            src={item.cover_image_url}
-            alt=""
-            className="w-full object-cover max-h-44 md:max-h-[280px]"
-          />
-        )}
-
         <div className="flex flex-col h-full justify-between min-w-0 flex-1">
           <div>
             <h2 className="font-display text-3xl sm:text-4xl md:text-5xl transition-colors tracking-wide">
@@ -37,11 +26,13 @@ export function FeatureCard({ item, themeClasses, linkTo, linkParams, tagLabel }
             </p>
           </div>
 
-          {!hasImage && item.body && (
-            <div className="prose prose-sm max-w-none opacity-60 line-clamp-4 mt-4 pt-4 border-t border-current/10">
+          {item.body && (
+            <div className="hidden md:block prose prose-sm max-w-none opacity-60 line-clamp-4 mt-4 pt-4 border-t border-current/10">
               <div dangerouslySetInnerHTML={{ __html: item.body }} />
             </div>
           )}
+
+          <InCardCoverImage src={item.cover_image_url} />
 
           <div className="mt-4 pt-2 flex justify-end">
             <Link

@@ -43,8 +43,42 @@ export function useContentData<T>(tableName: string, pageSize: number) {
     };
   }, [tableName]);
 
-  const totalPages = items ? Math.ceil(items.length / pageSize) : 0;
-  const currentItems = items ? items.slice((currentPage - 1) * pageSize, currentPage * pageSize) : [];
+  const featuredItem = items && items.length > 0 ? items[0] : null;
+  const rest = items ? items.slice(1) : [];
+  const page1SecondaryCount = Math.max(pageSize - 1, 0);
 
-  return { items, currentItems, currentPage, totalPages, setCurrentPage, error };
+  let totalPages = 0;
+  if (items && items.length > 0) {
+    if (rest.length <= page1SecondaryCount) {
+      totalPages = 1;
+    } else {
+      totalPages = 1 + Math.ceil((rest.length - page1SecondaryCount) / pageSize);
+    }
+  }
+
+  useEffect(() => {
+    if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [totalPages, currentPage]);
+
+  let secondaryItems: T[] = [];
+  if (items) {
+    if (currentPage === 1) {
+      secondaryItems = rest.slice(0, page1SecondaryCount);
+    } else {
+      const offset = page1SecondaryCount + (currentPage - 2) * pageSize;
+      secondaryItems = rest.slice(offset, offset + pageSize);
+    }
+  }
+
+  return {
+    items,
+    featuredItem,
+    secondaryItems,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    error,
+  };
 }

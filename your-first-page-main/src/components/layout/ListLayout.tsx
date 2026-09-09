@@ -1,16 +1,31 @@
 import { SiteHeader } from "@/components/SiteHeader";
 import { PaginationControl } from "@/components/ui/pagination-control";
 import { SideRecommendImage } from "@/components/SideRecommendImage";
+
 type ListLayoutProps = {
   sectionClass: string;
+  sidebarClass?: string;
   items: any[] | null;
+  featuredItem: any | null;
+  secondaryItems: any[];
   error?: string | null;
   renderFeature: (item: any) => React.ReactNode;
   renderSecondary: (item: any, idx: number) => React.ReactNode;
   pagination: { currentPage: number; totalPages: number; setCurrentPage: (p: number) => void };
 };
 
-export function ListLayout({ sectionClass, items, error, renderFeature, renderSecondary, pagination }: ListLayoutProps) {
+export function ListLayout({
+  sectionClass,
+  items,
+  featuredItem,
+  secondaryItems,
+  error,
+  renderFeature,
+  renderSecondary,
+  pagination,
+}: ListLayoutProps) {
+  const showFeatured = pagination.currentPage === 1 && featuredItem;
+
   return (
     <>
       <SiteHeader />
@@ -28,15 +43,17 @@ export function ListLayout({ sectionClass, items, error, renderFeature, renderSe
             </p>
           ) : (
             <div className="flex flex-col gap-24">
-              <div className="flex flex-col md:flex-row items-start gap-8 w-full">
-                <div className="w-full flex-1 min-w-0">
-                  {items.slice(0, 1).map(renderFeature)}
+              {showFeatured && (
+                <div className="flex flex-col md:flex-row items-start gap-8 w-full">
+                  <div className="w-full flex-1 min-w-0">
+                    {renderFeature(featuredItem)}
+                  </div>
+                  <SideRecommendImage src={featuredItem.cover_image_url} />
                 </div>
-                <SideRecommendImage />
-              </div>
-              {items.length > 1 && (
+              )}
+              {secondaryItems.length > 0 && (
                 <div className="grid gap-x-6 md:gap-x-12 gap-y-6 md:gap-y-0 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-                  {items.slice(1).map(renderSecondary)}
+                  {secondaryItems.map(renderSecondary)}
                 </div>
               )}
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImage from "../assets/hero-venus.jpg";
 import { SiteHeader } from "../components/SiteHeader";
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [lunarCoverUrl, setLunarCoverUrl] = useState<string | null>(null);
+
   return (
     <>
       {/* 1. Franja inicial */}
@@ -41,10 +44,10 @@ function Index() {
             
             {/* Columna de la tarjeta adaptada al espacio disponible */}
             <div className="flex-1 w-full">
-              <LunarEventCard />
+              <LunarEventCard onCoverUrl={setLunarCoverUrl} />
             </div>
 
-            <SideRecommendImage />
+            <SideRecommendImage src={lunarCoverUrl} />
 
           </div>
         </div>
