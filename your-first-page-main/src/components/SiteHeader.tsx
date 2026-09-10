@@ -59,7 +59,7 @@ export function SiteHeader() {
     style={{ opacity }}
     className="absolute left-1/2 -translate-x-1/2 lg:hidden text-center pointer-events-none px-2 max-w-[calc(100%-140px)] truncate"
   >
-    <span className="text-[0.55rem] uppercase tracking-[0.2em] text-ink/90 font-bold border-b border-forest pb-0.5">
+    <span className="text-[0.55rem] uppercase tracking-[0.2em] text-ink/90 font-normal border-b border-forest pb-0.5">
       {currentLabel}
     </span>
   </motion.div>

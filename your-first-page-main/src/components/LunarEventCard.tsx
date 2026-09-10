@@ -166,60 +166,110 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
       >
         <div className="group section-forest border border-cream/30 bg-cream/5 hover:border-gold p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
           
-          <div className="flex flex-col">
-            
-            {/* BLOQUE DE TÍTULO Y DESCRIPCIÓN (Arriba en móvil: order-1, Abajo en PC: sm:order-2) */}
-            <div className="order-1 sm:order-2 mb-4 sm:mb-0">
-              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl text-cream tracking-wide -mt-1 sm:-mt-2 mb-1 uppercase">
+          {/* ===== VERSIÓN MÓVIL (Orden exacto: Próxima, Título, Sub, Descripción, Fecha, Hora, Cuenta atrás) ===== */}
+          <div className="flex flex-col sm:hidden w-full min-w-0">
+            <span className="font-display text-cream text-lg uppercase tracking-wider mb-4">
+              Próxima
+            </span>
+
+            <div className="mb-4 w-full min-w-0">
+              <h3 className="font-display text-3xl text-cream tracking-wide -mt-1 mb-1 uppercase">
                 {evento.title}
               </h3>
               
               {evento.subtitle && (
-                <p className="font-sans text-lg sm:text-xl md:text-2xl uppercase tracking-[0em] text-cream/60 mb-3 sm:mb-4">
+                <p className="font-sans text-lg uppercase tracking-[0em] text-cream/60 mb-3">
                   {evento.subtitle}
                 </p>
               )}
               
-              <p className="font-sans text-lg leading-relaxed text-cream/80 max-w-xl -mt-2 mb-2 line-clamp-3">
+              <p className="font-sans text-lg leading-relaxed text-cream/80 -mt-2 mb-2 line-clamp-3">
                 {evento.description}
               </p>
             </div>
 
-            {/* BLOQUE DE FECHA Y HORA (Abajo en móvil: order-2, Arriba en PC: sm:order-1) */}
-            <div className="order-2 sm:order-1 flex min-w-0 flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 mb-4 sm:mb-6 mt-4 sm:mt-0">
-              <div className="flex min-w-0 flex-wrap items-baseline gap-x-3 sm:gap-x-4 gap-y-1">
-                <span className="font-sans text-lg sm:text-2xl italic text-gold tracking-wide">
+            <div className="flex flex-col w-full items-start mt-2">
+              <div className="flex flex-col items-start mb-2">
+                <span className="font-sans text-lg italic text-gold tracking-wide">
                   {evento.date_label}
                 </span>
-                <span className="font-sans text-sm sm:text-base uppercase tracking-widest text-cream/40">
+                <span className="font-sans text-sm uppercase tracking-widest text-gold mt-1">
                   {evento.time_label} HS
                 </span>
               </div>
-              
+
               {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
-                <>
-                  {/* CRONÓMETRO MÓVIL: Una sola línea */}
-                  <span className="font-mono text-lg tracking-[0.1em] text-gold/90 tabular-nums sm:hidden">
-                    {timeLeft.days}d:{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s
-                  </span>
-                  
-                  {/* CRONÓMETRO PC */}
-                  <span className="hidden font-mono text-3xl tracking-[0.1em] text-gold/90 tabular-nums sm:inline md:text-4xl">
-                    {timeLeft.days}d:{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s
-                  </span>
-                </>
+                <div className="mt-3 w-full flex justify-start">
+                  <div className="flex flex-col font-mono text-lg tracking-[0.1em] text-gold/90 tabular-nums">
+                    <span>{String(timeLeft.days).padStart(2, '\u00A0')} días</span>
+                    <span>{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s</span>
+                  </div>
+                </div>
               )}
             </div>
-            
           </div>
 
+          {/* ===== VERSIÓN ESCRITORIO (Grid estricto con control de anchos y líneas) ===== */}
+          <div className="hidden sm:grid grid-cols-[1fr_auto] gap-6 w-full items-start">
+            
+            {/* Columna Izquierda (Texto): Ancho fluido pero con límite estricto para no romper */}
+            <div className="flex flex-col min-w-0 max-w-full">
+              <span className="font-display text-cream text-xl uppercase tracking-wider mb-6 block">
+                Próxima
+              </span>
+              
+              <div className="w-full min-w-0">
+                <h3 className="font-display text-4xl md:text-5xl text-cream tracking-wide -mt-2 mb-1 uppercase truncate">
+                  {evento.title}
+                </h3>
+                
+                {evento.subtitle && (
+                  <p className="font-sans text-xl md:text-2xl uppercase tracking-[0em] text-cream/60 mb-4 truncate">
+                    {evento.subtitle}
+                  </p>
+                )}
+                
+                <p className="font-sans text-lg leading-relaxed text-cream/80 -mt-2 mb-2 line-clamp-3">
+                  {evento.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Columna Derecha (Cronómetro): Rígida, no se estira ni se desplaza */}
+            <div className="flex flex-col items-end flex-shrink-0">
+              <div className="flex flex-col items-end text-right">
+                <span className="font-sans text-2xl italic text-gold tracking-wide whitespace-nowrap">
+                  {evento.date_label}
+                </span>
+                <span className="font-sans text-base uppercase tracking-widest text-gold mt-1 whitespace-nowrap">
+                  {evento.time_label} HS
+                </span>
+              </div>
+
+              {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
+                <div className="mt-4 flex justify-end">
+                  <div className="flex flex-col items-end font-mono text-3xl tracking-[0.1em] text-gold/90 tabular-nums md:text-4xl text-right whitespace-nowrap">
+                    <span>{String(timeLeft.days).padStart(2, '\u00A0')} días</span>
+                    <span>{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ===== ELEMENTOS COMUNES ===== */}
           <InCardCoverImage src={evento.cover_image_url} />
 
           <div className="mt-2 sm:mt-0 pt-2 flex justify-end">
-            <span className="inline-block border-b border-cream/30 pb-0.5 text-base italic tracking-[0.1em] text-cream/70 group-hover:text-gold group-hover:border-gold transition-colors">
-              quiero saber más
-            </span>
-          </div>
+  <div className="flex flex-col items-end gap-1">
+    <span className="inline-block border-b border-cream/30 pb-0.5 text-base italic tracking-[0.1em] text-cream/70 group-hover:text-gold group-hover:border-gold transition-colors">
+      quiero saber más
+    </span>
+    <span className="font-sans text-xs uppercase tracking-widest text-cream/60">
+      CONTENIDO RELACIONADO
+    </span>
+  </div>
+</div>
         </div>
       </div>
       
@@ -284,7 +334,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                           <h5 className="font-display text-base text-ink truncate group-hover:text-gold transition-colors">
                             {p.title || p.titulo}
                           </h5>
-                          <p className="font-sans text-xs text-ink/70 line-clamp-2 mt-1 leading-normal">
+                          <p className="font-sans text-xs text-ink/70 line-clamp-3 mt-1 leading-normal">
                             {p.description || p.descripcion || p.extracto || ""}
                           </p>
                         </div>

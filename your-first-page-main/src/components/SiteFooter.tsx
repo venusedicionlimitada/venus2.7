@@ -27,7 +27,7 @@ export function SiteFooter() {
               </span>
             </div>
             <p className="sm:hidden font-display italic text-sm text-ink/80 tracking-wide mt-[-10px] text-center">
-  by <span className="font-display not-italic font-normal">VENUS</span> <span className="font-sans text-[0.65rem] tracking-[0.1em] uppercase font-normal">EDICIÓN LIMITADA</span>
+  by <span className="font-display not-italic font-normal">VENUS</span> <span className="not-italic font-sans text-[0.45rem] tracking-[0.1em] uppercase font-normal">EDICIÓN LIMITADA</span>
 </p>
           </div>
 
