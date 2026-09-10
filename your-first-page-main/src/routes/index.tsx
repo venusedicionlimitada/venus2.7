@@ -35,8 +35,18 @@ function Index() {
   const [lunarCoverUrl, setLunarCoverUrl] = useState<string | null>(null);
   const [api, setApi] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   
   const { items } = useContentData<Post>("diary_entries", 7);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     if (!api) return;
@@ -143,7 +153,11 @@ function Index() {
             <div className="relative px-0 flex justify-center">
               <Carousel 
                 setApi={setApi}
-                opts={{ align: "center", loop: false, containScroll: false }} 
+                opts={{ 
+                  align: isMobile ? "center" : "start", 
+                  loop: !isMobile, 
+                  containScroll: isMobile ? false : "trimSnaps" 
+                }} 
                 className="w-full max-w-6xl mx-auto transition-transform duration-300"
               >
                 <CarouselContent className="-ml-2 md:-ml-4">
@@ -153,9 +167,9 @@ function Index() {
                       <CarouselItem 
                         key={p.id} 
                         className={`pl-2 md:pl-4 basis-[240px] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center relative transition-all duration-300 ${
-                          isActive 
-                            ? "opacity-100 scale-100 z-30" 
-                            : "opacity-60 scale-95 md:opacity-100 md:scale-100 z-10"
+                          isMobile 
+                            ? (isActive ? "opacity-100 scale-100 z-30" : "opacity-60 scale-95 z-10")
+                            : "opacity-100 scale-100"
                         }`}
                       >
                         <HomeFeatureCard
