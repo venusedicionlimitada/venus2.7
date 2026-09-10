@@ -265,7 +265,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
     <span className="inline-block border-b border-cream/30 pb-0.5 text-base italic tracking-[0.1em] text-cream/70 group-hover:text-gold group-hover:border-gold transition-colors">
       quiero saber más
     </span>
-    <span className="font-sans text-xs uppercase tracking-widest text-cream/60">
+    <span className="sm:block font-sans text-xs uppercase tracking-widest text-cream/60">
       CONTENIDO RELACIONADO
     </span>
   </div>
