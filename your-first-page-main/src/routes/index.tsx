@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImage from "../assets/hero-venus.jpg";
 import { SiteHeader } from "../components/SiteHeader";
@@ -33,8 +33,18 @@ type Post = {
 
 function Index() {
   const [lunarCoverUrl, setLunarCoverUrl] = useState<string | null>(null);
+  const [api, setApi] = useState<any>();
+  const [currentIndex, setCurrentIndex] = useState(0);
   
   const { items } = useContentData<Post>("diary_entries", 7);
+
+  useEffect(() => {
+    if (!api) return;
+    setCurrentIndex(api.selectedScrollSnap());
+    api.on("select", () => {
+      setCurrentIndex(api.selectedScrollSnap());
+    });
+  }, [api]);
 
   return (
     <>
@@ -115,7 +125,7 @@ function Index() {
         </div>
       </section>
 
-     {/* 6. Bloque de Diario — Fondo blanco puro */}
+      {/* 6. Bloque de Diario — Fondo blanco puro */}
       <section className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 overflow-hidden">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center mb-6">
@@ -130,28 +140,36 @@ function Index() {
           ) : items.length === 0 ? (
             <p className="text-center text-sm text-ink/60">Pronto.</p>
           ) : (
-            <div className="relative px-4 sm:px-0 flex justify-center">
+            <div className="relative px-0 flex justify-center">
               <Carousel 
-                opts={{ align: "start", loop: true }} 
+                setApi={setApi}
+                opts={{ align: "center", loop: false, containScroll: false }} 
                 className="w-full max-w-6xl mx-auto transition-transform duration-300"
               >
-                <CarouselContent className="-ml-4">
-                  {items.map((p) => (
-                    <CarouselItem 
-                      key={p.id} 
-                      className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center"
-                    >
-                      <HomeFeatureCard
-                        item={p}
-                        linkTo="/diario/$slug"
-                        linkParams={{ slug: p.slug }}
-                        tagLabel="Diario"
-                        themeClasses="bg-transparent hover:bg-cream/45 border border-gold hover:border-gold text-ink transition-colors"
-                      />
-                    </CarouselItem>
-                  ))}
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {items.map((p, index) => {
+                    const isActive = index === currentIndex;
+                    return (
+                      <CarouselItem 
+                        key={p.id} 
+                        className={`pl-2 md:pl-4 basis-[240px] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center relative transition-all duration-300 ${
+                          isActive 
+                            ? "opacity-100 scale-100 z-30" 
+                            : "opacity-60 scale-95 md:opacity-100 md:scale-100 z-10"
+                        }`}
+                      >
+                        <HomeFeatureCard
+                          item={p}
+                          linkTo="/diario/$slug"
+                          linkParams={{ slug: p.slug }}
+                          tagLabel="Diario"
+                          themeClasses="bg-transparent hover:bg-cream/45 border border-gold hover:border-gold text-ink transition-colors"
+                        />
+                      </CarouselItem>
+                    );
+                  })}
                 </CarouselContent>
-                
+
                 <div className="hidden md:block">
                   <CarouselPrevious className="absolute -left-12 lg:-left-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
                   <CarouselNext className="absolute -right-12 lg:-right-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
