@@ -4,6 +4,9 @@ import heroImage from "../assets/hero-venus.jpg";
 import { SiteHeader } from "../components/SiteHeader";
 import { LunarEventCard } from "../components/LunarEventCard";
 import { SideRecommendImage } from "../components/SideRecommendImage";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { HomeFeatureCard } from "@/components/cards/HomeFeatureCard";
+import { useContentData } from "@/lib/hooks/useContentData";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,22 +20,35 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+type Post = {
+  id: string; 
+  slug: string;
+  date_label: string; 
+  title: string; 
+  description: string; 
+  body: string | null; 
+  cover_image_url: string | null;
+  tarjetas: string;
+};
+
 function Index() {
   const [lunarCoverUrl, setLunarCoverUrl] = useState<string | null>(null);
+  
+  const { items } = useContentData<Post>("diary_entries", 7);
 
   return (
     <>
       {/* 1. Franja inicial */}
-<section className="section-forest relative w-full py-6 sm:py-8 text-center">
-  <div className="flex flex-col items-center justify-center">
-    <span className="font-display text-[2rem] sm:text-[2.8rem] text-cream/80 tracking-widest uppercase leading-none">
-      VENUS
-    </span>
-    <span className="font-sans text-[0.65rem] sm:text-[0.8rem] text-cream/80 tracking-[0.2em] uppercase leading-none mt-2 sm:mt-3 translate-x-[5px]">
-      EDICIÓN LIMITADA
-    </span>
-  </div>
-</section>
+      <section className="section-forest relative w-full py-6 sm:py-8 text-center">
+        <div className="flex flex-col items-center justify-center">
+          <span className="font-display text-[2rem] sm:text-[2.8rem] text-cream/80 tracking-widest uppercase leading-none">
+            VENUS
+          </span>
+          <span className="font-sans text-[0.65rem] sm:text-[0.8rem] text-cream/80 tracking-[0.2em] uppercase leading-none mt-2 sm:mt-3 translate-x-[5px]">
+            EDICIÓN LIMITADA
+          </span>
+        </div>
+      </section>
 
       {/* 2. Menú manual */}
       <SiteHeader />
@@ -53,8 +69,8 @@ function Index() {
         </div>
       </section>
 
-      {/* 3. Hero Visual */}
-      <section className="section-cream relative overflow-hidden min-h-[40vh] sm:min-h-[50vh]">
+      {/* 3. Hero Visual con altura reducida */}
+      <section className="section-cream relative overflow-hidden h-[6vh] sm:h-[8vh]">
         <img
           src={heroImage}
           alt="Composición sensorial: seda crema, flor blanca y carta astral dorada"
@@ -65,27 +81,24 @@ function Index() {
         <div className="absolute inset-0 bg-gradient-to-b from-cream/40 via-cream/60 to-cream" />
       </section>
 
-      {/* 4. Bloque de Introducción — Textos y botones */}
-      <section className="section-cream py-24 text-center">
+      {/* 4. Bloque de Introducción — Cabecera de Astrología Emocional */}
+      <section className="section-cream pt-4 pb-8 sm:pt-14 sm:pb-6 text-center">
         <div className="relative mx-auto max-w-7xl px-6">
           <p className="eyebrow text-base tracking-[0.2em] text-wine sm:text-xl sm:tracking-[0.35em]">
             Astrología·Emocional
           </p>
-          
-          <h1 className="mt-6 sm:mt-8 font-display text-[2.5rem] sm:text-[4rem] leading-[0.95] text-ink md:text-[6rem] lg:text-[7rem]">
-            VENUS
-          </h1>
-          
-          <p className="eyebrow mt-4 sm:mt-5 text-ink/70 text-base sm:text-xl translate-x-2 sm:translate-x-3 -translate-y-1">
-            Edición Limitada
-          </p>
-          
-          <p className="mx-auto mt-10 max-w-xl text-base leading-relaxed text-ink/80 md:text-lg">
+        </div>
+      </section>
+
+      {/* 5. Bloque de Contenido — Texto principal y botones */}
+      <section className="section-cream pt-4 pb-20 sm:pt-6 sm:pb-28 text-center">
+        <div className="relative mx-auto max-w-7xl px-6">
+          <p className="mx-auto max-w-xl text-base leading-relaxed text-ink/80 md:text-lg">
             Terapias de acompañamiento donde el cuerpo, los astros y la palabra
             se reúnen para sostener tu proceso.
           </p>
 
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
+          <div className="mt-10 sm:mt-12 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/servicios"
               className="border border-wine bg-wine px-8 py-4 text-xs uppercase tracking-[0.3em] text-cream transition-colors hover:bg-transparent hover:text-wine"
@@ -102,13 +115,51 @@ function Index() {
         </div>
       </section>
 
-      {/* Filosofía — fondo blanco */}
-      <section className="mx-auto max-w-4xl px-6 py-24 text-center md:py-32">
-        <p className="eyebrow text-clay">Filosofía</p>
-        <p className="mt-8 font-display text-2xl italic leading-relaxed text-ink md:text-4xl">
-          "Habitar el cuerpo como quien habita un templo, leer los astros como
-          quien lee un mapa de regreso a casa."
-        </p>
+     {/* 6. Bloque de Diario — Fondo blanco puro */}
+      <section className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center mb-6">
+            <p className="eyebrow text-clay">Contenido</p>
+            <h2 className="hidden mt-2 font-display text-2xl text-ink md:text-3xl font-light">
+              Explora nuestro contenido
+            </h2>
+          </div>
+
+          {!items ? (
+            <p className="text-center text-sm text-ink/60">Cargando…</p>
+          ) : items.length === 0 ? (
+            <p className="text-center text-sm text-ink/60">Pronto.</p>
+          ) : (
+            <div className="relative px-4 sm:px-0 flex justify-center">
+              <Carousel 
+                opts={{ align: "start", loop: true }} 
+                className="w-full max-w-6xl mx-auto transition-transform duration-300"
+              >
+                <CarouselContent className="-ml-4">
+                  {items.map((p) => (
+                    <CarouselItem 
+                      key={p.id} 
+                      className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center"
+                    >
+                      <HomeFeatureCard
+                        item={p}
+                        linkTo="/diario/$slug"
+                        linkParams={{ slug: p.slug }}
+                        tagLabel="Diario"
+                        themeClasses="bg-transparent hover:bg-cream/45 border border-gold hover:border-gold text-ink transition-colors"
+                      />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                
+                <div className="hidden md:block">
+                  <CarouselPrevious className="absolute -left-12 lg:-left-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
+                  <CarouselNext className="absolute -right-12 lg:-right-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
+                </div>
+              </Carousel>
+            </div>
+          )}
+        </div>
       </section>
 
       {/* Pilares — fondo verde bosque */}

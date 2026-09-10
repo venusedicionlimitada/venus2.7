@@ -18,7 +18,7 @@ export function SiteFooter() {
           </div>
 
           <div className="w-full sm:w-auto flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center justify-center scale-[0.55] sm:scale-[0.55] origin-center sm:origin-right border border-[#706f6d] px-6 py-4 sm:px-8 sm:py-5">
+            <div className="flex flex-col items-center justify-center scale-[0.65] sm:scale-[0.55] origin-center sm:origin-right border border-[#706f6d] px-6 py-4 sm:px-8 sm:py-5">
               <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.6rem] text-ink tracking-[0.1em] uppercase leading-none">
                 LUNA FLOW
               </span>
@@ -27,7 +27,7 @@ export function SiteFooter() {
               </span>
             </div>
             <p className="sm:hidden font-display italic text-sm text-ink/80 tracking-wide mt-[-10px] text-center">
-  by <span className="font-display not-italic font-normal">VENUS</span> <span className="font-sans text-[0.65rem] tracking-[0.2em] uppercase font-semibold">EDICIÓN LIMITADA</span>
+  by <span className="font-display not-italic font-normal">VENUS</span> <span className="font-sans text-[0.65rem] tracking-[0.1em] uppercase font-normal">EDICIÓN LIMITADA</span>
 </p>
           </div>
 
@@ -100,7 +100,7 @@ export function SiteFooter() {
                 />
               </div>
               <div className="w-full flex justify-center md:block mt-3 md:-translate-x-[80px] md:translate-y-[20px]">
-                <Button className="border border-gold bg-gold text-cream hover:bg-transparent hover:text-wine transition-colors rounded-full md:rounded-md">
+                <Button className="border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:rounded-md">
                   Suscribirme a Newsletter
                 </Button>
               </div>

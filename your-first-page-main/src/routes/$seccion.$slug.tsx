@@ -87,7 +87,7 @@ function DiaryDetail() {
   const clasesSeccion: Record<string, string> = {
     yoga: "section-card-yoga",
     diario: "section-card-diario",
-    astrologia: "section-forest"
+    astrologia: "section-card-astrologia",
   };
 
   const claseActiva = clasesSeccion[seccion] || "";
@@ -98,6 +98,12 @@ function DiaryDetail() {
       <div className={claseActiva}>
         <article className="mx-auto max-w-5xl px-6 py-20">
           
+          <div className="mb-12">
+            <Link to="/$seccion" params={{ seccion }} className="eyebrow text-gold hover:text-wine">
+              ← {seccion}
+            </Link>
+          </div>
+
           {entry.cover_image_url ? (
             <div className="grid grid-cols-1 md:grid-cols-[minmax(0,300px)_1fr] gap-8 md:gap-12 items-start mt-8">
               <div className="w-full max-w-[300px] mx-auto md:mx-0">
@@ -148,19 +154,18 @@ function DiaryDetail() {
 
           {entry.body && (
             <div
-              className="prose prose-sm sm:prose-lg mt-12 max-w-none text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink w-full text-base"
+              className="prose prose-sm prose-p:leading-normal sm:prose-lg mt-12 max-w-none text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink w-full text-base"
               dangerouslySetInnerHTML={{ __html: entry.body }}
             />
           )}
 
           {entry.categoria_emocional && (
-            <p className="eyebrow text-gold mt-16 mb-2 block">
-              {entry.categoria_emocional}
-            </p>
-          )}
+          <p className="eyebrow text-ink mt-16 mb-2 inline-block border border-gold px-4 py-2">
+            {entry.categoria_emocional}
+          </p>
+        )}
 
-          <hr className={entry.categoria_emocional ? "mt-2 border-border/50" : "mt-20 border-border/50"} />
-
+        <hr className={entry.categoria_emocional ? "mt-2 border-border/50" : "mt-20 border-border/50"} />
           <div className="mt-12">
             <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="eyebrow text-gold hover:text-wine">
               ← {Route.useParams().seccion}

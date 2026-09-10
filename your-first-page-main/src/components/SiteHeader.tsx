@@ -47,23 +47,23 @@ export function SiteHeader() {
             <span className="font-display text-xl sm:text-[2rem] text-ink truncate">
               VENUS
             </span>
-            <span className="font-sans text-[0.6rem] sm:text-[0.5rem] uppercase tracking-[0.2em] font-semibold hidden sm:block mt-1.5 sm:mt-0 text-ink truncate translate-x-[2px] translate-y-0 sm:translate-x-[3.5px] sm:translate-y-[2px]">
+            <span className="font-sans text-[0.6rem] sm:text-[0.6rem] uppercase tracking-[0.1em] font-normal hidden sm:block mt-1.5 sm:mt-0 text-ink truncate translate-x-[2px] translate-y-0 sm:translate-x-[2.5px] sm:translate-y-[1px]">
               Edición Limitada
             </span>
           </motion.div>
         </Link>
 
         {/* Sección activa centrada en dispositivos móviles con el mismo efecto de opacidad */}
-        {currentLabel && (
-          <motion.div 
-            style={{ opacity }}
-            className="absolute left-1/2 -translate-x-1/2 lg:hidden text-center pointer-events-none px-2 max-w-[calc(100%-140px)] truncate"
-          >
-            <span className="text-[0.68rem] uppercase tracking-[0.25em] text-ink font-bold border-b border-forest pb-0.5">
-              {currentLabel}
-            </span>
-          </motion.div>
-        )}
+{currentLabel && (
+  <motion.div 
+    style={{ opacity }}
+    className="absolute left-1/2 -translate-x-1/2 lg:hidden text-center pointer-events-none px-2 max-w-[calc(100%-140px)] truncate"
+  >
+    <span className="text-[0.55rem] uppercase tracking-[0.2em] text-ink/90 font-bold border-b border-forest pb-0.5">
+      {currentLabel}
+    </span>
+  </motion.div>
+)}
 
         <nav className="hidden items-center gap-8 lg:flex">
           {links.map((l) => (
