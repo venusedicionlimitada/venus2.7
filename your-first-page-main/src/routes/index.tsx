@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImage from "../assets/hero-venus.jpg";
 import { SiteHeader } from "../components/SiteHeader";
@@ -7,6 +7,9 @@ import { SideRecommendImage } from "../components/SideRecommendImage";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { HomeFeatureCard } from "@/components/cards/HomeFeatureCard";
 import { useContentData } from "@/lib/hooks/useContentData";
+import { supabase } from "@/integrations/supabase/client";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -36,8 +39,35 @@ function Index() {
   const [api, setApi] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [events, setEvents] = useState<any[]>([]);
   
   const { items } = useContentData<Post>("diary_entries", 7);
+
+  useEffect(() => {
+    supabase
+      .from("lunar_events")
+      .select("*")
+      .eq("published", true)
+      .order("sort_order")
+      .then(({ data }) => setEvents(data ?? []));
+  }, []);
+
+  const categories = useMemo(() => {
+    const map = new Map();
+    events.forEach((event) => {
+      if (!event.categoria_emocional) return;
+      const cats = event.categoria_emocional.split(",").map((c: string) => c.trim());
+      cats.forEach((cat: string) => {
+        if (!map.has(cat)) {
+          map.set(cat, {
+            nombre: cat,
+            representative: event,
+          });
+        }
+      });
+    });
+    return Array.from(map.values());
+  }, [events]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -73,27 +103,23 @@ function Index() {
       {/* 2. Menú manual */}
       <SiteHeader />
 
-      {/* NUEVO BLOQUE MODULAR: Relleno p-8 añadido a themeClasses para empujar el texto hacia dentro */}
+      {/* NUEVO BLOQUE MODULAR */}
       <section className="section-forest w-full py-12 md:py-16">
         <div className="mx-auto max-w-7xl px-6">
           <div className="flex flex-col md:flex-row items-start gap-8 w-full">
-            
-            {/* Columna de la tarjeta adaptada al espacio disponible */}
             <div className="flex-1 w-full">
               <LunarEventCard onCoverUrl={setLunarCoverUrl} />
             </div>
-
             <SideRecommendImage src={lunarCoverUrl} />
-
           </div>
         </div>
       </section>
 
-      {/* 3. Hero Visual con altura reducida */}
+      {/* 3. Hero Visual */}
       <section className="section-cream relative overflow-hidden h-[6vh] sm:h-[8vh]">
         <img
           src={heroImage}
-          alt="Composición sensorial: seda crema, flor blanca y carta astral dorada"
+          alt="Composición sensorial"
           width={1600}
           height={1200}
           className="h-full w-full object-cover opacity-50"
@@ -101,7 +127,7 @@ function Index() {
         <div className="absolute inset-0 bg-gradient-to-b from-cream/40 via-cream/60 to-cream" />
       </section>
 
-      {/* 4. Bloque de Introducción — Cabecera de Astrología Emocional */}
+      {/* 4. Bloque de Introducción */}
       <section className="section-cream pt-4 pb-8 sm:pt-14 sm:pb-6 text-center">
         <div className="relative mx-auto max-w-7xl px-6">
           <p className="eyebrow text-base tracking-[0.2em] text-wine sm:text-xl sm:tracking-[0.35em]">
@@ -110,14 +136,13 @@ function Index() {
         </div>
       </section>
 
-      {/* 5. Bloque de Contenido — Texto principal y botones */}
+      {/* 5. Bloque de Contenido */}
       <section className="section-cream pt-4 pb-20 sm:pt-6 sm:pb-28 text-center">
         <div className="relative mx-auto max-w-7xl px-6">
           <p className="mx-auto max-w-xl text-base leading-relaxed text-ink/80 md:text-lg">
             Terapias de acompañamiento donde el cuerpo, los astros y la palabra
             se reúnen para sostener tu proceso.
           </p>
-
           <div className="mt-10 sm:mt-12 flex flex-wrap items-center justify-center gap-4">
             <Link
               to="/servicios"
@@ -135,7 +160,7 @@ function Index() {
         </div>
       </section>
 
-      {/* 6. Bloque de Diario — Fondo blanco puro */}
+      {/* 6. Bloque de Diario */}
       <section className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 overflow-hidden">
         <div className="mx-auto max-w-7xl px-6">
           <div className="text-center mb-6">
@@ -194,15 +219,16 @@ function Index() {
         </div>
       </section>
 
-      {/* Pilares — fondo verde bosque */}
+      {/* Pilares — fondo verde bosque (max-w-6xl) */}
       <section className="section-forest">
-        <div className="mx-auto max-w-6xl px-6 py-24 md:py-32">
+        <div className="mx-auto max-w-6xl px-6 pt-12 pb-12 md:pt-16 md:pb-16">
           <div className="mb-16 text-center">
-            <p className="eyebrow text-gold">Tres pilares</p>
-            <h2 className="mt-6 font-display text-4xl text-cream md:text-5xl">
+            <p className="eyebrow text-gold text-lg">ASTROLOGÍA EMOCIONAL</p>
+            <h2 className="eyebrow mt-6 text-cream/85 md:text-lg">
               Una práctica tejida a mano.
             </h2>
           </div>
+
           <div className="grid gap-px bg-cream/15 md:grid-cols-3">
             {[
               { eyebrow: "I", title: "Yoga", body: "Secuencias conscientes para escuchar el cuerpo y soltar lo que pesa." },
@@ -218,6 +244,40 @@ function Index() {
           </div>
         </div>
       </section>
+
+      {/* Tarjetas dinámicas — NUEVO BLOQUE EXACTO a la vista /eventos (max-w-5xl) */}
+      {categories.length > 0 && (
+        <section className="section-forest">
+          <div className="mx-auto max-w-5xl px-6 pb-24 md:pb-32">
+            <div className="grid gap-6 md:grid-cols-3">
+              {categories.map((cat) => (
+                <Sheet key={cat.nombre}>
+                  <SheetTrigger asChild>
+                    <div className="relative w-full">
+                      <article className="w-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-6 sm:p-8 transition-colors hover:border-gold">
+                        {cat.representative.cover_image_url && (
+                          <img
+                            src={cat.representative.cover_image_url}
+                            alt=""
+                            className="mb-6 max-h-60 w-full object-cover"
+                          />
+                        )}
+                        <span className="eyebrow text-gold">Categoría Emocional</span>
+                        <h2 className="mt-6 font-display text-3xl text-cream">{cat.nombre}</h2>
+                        <p className="mt-4 text-sm text-cream/85">Explorar herramientas y conexiones para esta sintonía.</p>
+                      </article>
+                    </div>
+                  </SheetTrigger>
+
+                  <SheetContent className="w-full sm:max-w-xl bg-background border-l border-gold/70 p-0 overflow-y-auto">
+                    <CategoryDetailSheet categoria={cat.nombre} />
+                  </SheetContent>
+                </Sheet>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* CTA final — fondo blanco */}
       <section className="mx-auto max-w-3xl px-6 py-24 text-center md:py-32">
