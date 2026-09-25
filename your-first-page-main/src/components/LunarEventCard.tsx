@@ -146,7 +146,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
   if (loading) {
     return (
-      <div className="group border p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
+      <div className="border border-marco bg-white/70 p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
         <p className="text-sm italic">Cargando evento lunar…</p>
       </div>
     );
@@ -154,7 +154,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
   if (!evento) {
     return (
-      <div className="group border p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
+      <div className="border border-marco bg-white/70 p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
         <p className="text-sm italic text-center px-6">
           No hay ningún evento lunar publicado. Actívalo en Admin → Eventos.
         </p>
@@ -168,7 +168,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
         onClick={() => { if (evento.active && eventosAbiertos !== false) setIsOpen(true); }} 
         className={`${evento.active && eventosAbiertos !== false ? "cursor-pointer" : "cursor-default"} w-full min-w-0 block text-left`}
       >
-        <div className="group border p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
+        <div className="border border-marco bg-white/70 p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between w-full min-h-[240px] md:min-h-[350px]">
           
           {/* ===== VERSIÓN MÓVIL (Orden exacto: Próxima, Título, Sub, Descripción, Fecha, Hora, Cuenta atrás) ===== */}
           <div className="flex flex-col sm:hidden w-full min-w-0">
@@ -204,9 +204,9 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
               {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
                 <div className="mt-3 w-full flex justify-start">
-                  <div className="flex flex-col font-mono text-lg tracking-[0.1em] text-gold/90 tabular-nums">
-                    <span>{String(timeLeft.days).padStart(2, '\u00A0')} días</span>
-                    <span>{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s</span>
+                  <div className="flex flex-col text-lg tracking-[0.1em] text-granate tabular-nums" style={{ fontFamily: "var(--font-sans)" }}>
+                    <span>{String(timeLeft.days).padStart(2, "\u00A0")}<span className="pl-[0.12em]">días</span></span>
+                    <span className="text-sm">{timeLeft.hours}h:{timeLeft.minutes}m:{String(timeLeft.seconds).padStart(2, "0")}s</span>
                   </div>
                 </div>
               )}
@@ -252,9 +252,9 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
               {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
                 <div className="mt-4 flex justify-end">
-                  <div className="flex flex-col items-end font-mono text-3xl tracking-[0.1em] text-gold/90 tabular-nums md:text-4xl text-right whitespace-nowrap">
-                    <span>{String(timeLeft.days).padStart(2, '\u00A0')} días</span>
-                    <span>{timeLeft.hours}h:{timeLeft.minutes}m:{timeLeft.seconds}s</span>
+                  <div className="flex flex-col items-end text-3xl tracking-[0.1em] text-granate tabular-nums md:text-4xl text-right whitespace-nowrap" style={{ fontFamily: "var(--font-sans)" }}>
+                    <span>{String(timeLeft.days).padStart(2, "\u00A0")}<span className="pl-[0.12em]">días</span></span>
+                    <span className="text-xl md:text-2xl">{timeLeft.hours}h:{timeLeft.minutes}m:{String(timeLeft.seconds).padStart(2, "0")}s</span>
                   </div>
                 </div>
               )}
@@ -266,10 +266,13 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
           <div className="mt-2 sm:mt-0 pt-2 flex justify-end">
   <div className="flex flex-col items-end gap-1">
-    <span className="inline-block border-b pb-0.5 text-base italic tracking-[0.1em] transition-colors">
+    <span className="inline-block border-b border-marco pb-0.5 text-base italic tracking-[0.1em]">
       {evento.active && eventosAbiertos !== false ? "quiero saber más" : "Próximamente"}
     </span>
-    <span className="sm:block font-sans text-xs uppercase tracking-widest">
+    <span
+      className="sm:block text-xs uppercase tracking-widest"
+      style={{ color: "var(--granate)", opacity: 1, fontFamily: "var(--font-sans)" }}
+    >
       CONTENIDO RELACIONADO
     </span>
   </div>

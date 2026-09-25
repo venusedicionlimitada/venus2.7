@@ -539,3 +539,25 @@
   color: var(--verdejoya);
   border-color: var(--wine);
 }
+
+@keyframes app-cta-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    transform: scale(1.018);
+    box-shadow: 0 0 14px 0 color-mix(in oklch, var(--gold) 38%, transparent);
+  }
+}
+
+@utility app-cta-loop {
+  animation: app-cta-breathe 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-cta-loop {
+    animation: none;
+  }
+}
