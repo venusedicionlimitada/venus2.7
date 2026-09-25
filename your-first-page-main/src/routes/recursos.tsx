@@ -17,7 +17,25 @@ export const Route = createFileRoute("/recursos")({
   component: Recursos,
 });
 
-type Resource = { id: string; type: string; title: string; description: string; file_path: string | null };
+type Resource = {
+  id: string;
+  type: string;
+  title: string;
+  description: string;
+  file_path: string | null;
+  price: number | null;
+  active: boolean;
+  cover_image_url: string | null;
+};
+
+function formatResourcePrice(price: number) {
+  if (price <= 0) return "Gratis";
+  return new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "EUR",
+    maximumFractionDigits: 0,
+  }).format(price);
+}
 
 function Recursos() {
   const [items, setItems] = useState<Resource[] | null>(null);
@@ -30,7 +48,7 @@ function Recursos() {
 
   useEffect(() => {
     supabase.from("resources")
-      .select("id, type, title, description, file_path")
+      .select("id, type, title, description, file_path, price, active, cover_image_url")
       .eq("published", true).order("sort_order")
       .then(({ data }) => setItems((data ?? []) as Resource[]));
   }, []);
@@ -70,23 +88,44 @@ function Recursos() {
         ) : items.length === 0 ? (
           <p className="mt-20 text-center text-sm text-ink/60">Pronto.</p>
         ) : (
-          <div className="mt-20 grid gap-6 md:grid-cols-2">
-            {items.map((r) => (
-              <article key={r.id} className="flex flex-col justify-between border border-border/40 bg-card p-8">
+          <div className="mt-20 grid grid-cols-1 gap-10 md:grid-cols-3 md:gap-12">
+            {items.map((r) => {
+              const price = Number(r.price ?? 0);
+              const isFree = price <= 0;
+              const available = r.active && (isFree ? !!r.file_path : true);
+
+              return (
+              <article key={r.id} className="flex flex-col justify-between border border-border/40 bg-card p-6 sm:p-8">
                 <div>
+                  {r.cover_image_url ? (
+                    <img
+                      src={r.cover_image_url}
+                      alt=""
+                      className="mb-6 h-48 w-full object-cover sm:h-60"
+                    />
+                  ) : (
+                    <div
+                      className="mb-6 h-48 w-full border border-border/40 bg-white sm:h-60"
+                      aria-hidden
+                    />
+                  )}
                   <p className="eyebrow text-gold">{r.type}</p>
                   <h2 className="mt-4 font-display text-2xl text-ink md:text-3xl">{r.title}</h2>
                   <p className="mt-3 text-sm leading-relaxed text-ink/75">{r.description}</p>
                 </div>
-                <button
-                  onClick={() => { setSelected(r); setState("idle"); setEmail(""); }}
-                  disabled={!r.file_path}
-                  className="mt-8 self-start border border-gold px-6 py-3 text-xs uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-primary-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  {r.file_path ? "Descargar gratis" : "Próximamente"}
-                </button>
+                <div className="mt-8 self-start">
+                  <button
+                    onClick={() => { if (!available) return; setSelected(r); setState("idle"); setEmail(""); }}
+                    disabled={!available}
+                    className="border border-gold px-6 py-3 text-xs uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-primary-foreground transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {available ? (isFree ? "Descargar" : "Comprar") : "Próximamente"}
+                  </button>
+                  <p className="eyebrow mt-6 text-gold">{formatResourcePrice(price)}</p>
+                </div>
               </article>
-            ))}
+              );
+            })}
           </div>
         )}
 

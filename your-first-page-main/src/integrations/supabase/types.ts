@@ -56,6 +56,54 @@ export type Database = {
         }
         Relationships: []
       }
+      contact_messages: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          mensaje: string
+          motivo: string
+          nombre: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          mensaje: string
+          motivo: string
+          nombre: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          mensaje?: string
+          motivo?: string
+          nombre?: string
+          status?: string
+        }
+        Relationships: []
+      }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       diary_entries: {
         Row: {
           body: string | null
@@ -147,34 +195,52 @@ export type Database = {
       }
       resources: {
         Row: {
+          active: boolean
+          categoria_emocional: string | null
+          cover_image_url: string | null
           created_at: string
           description: string
           file_path: string | null
           id: string
+          price: number
           published: boolean
           sort_order: number
+          stripe_price_id: string | null
+          tags: string | null
           title: string
           type: string
           updated_at: string
         }
         Insert: {
+          active?: boolean
+          categoria_emocional?: string | null
+          cover_image_url?: string | null
           created_at?: string
           description: string
           file_path?: string | null
           id?: string
+          price?: number
           published?: boolean
           sort_order?: number
+          stripe_price_id?: string | null
+          tags?: string | null
           title: string
           type: string
           updated_at?: string
         }
         Update: {
+          active?: boolean
+          categoria_emocional?: string | null
+          cover_image_url?: string | null
           created_at?: string
           description?: string
           file_path?: string | null
           id?: string
+          price?: number
           published?: boolean
           sort_order?: number
+          stripe_price_id?: string | null
+          tags?: string | null
           title?: string
           type?: string
           updated_at?: string
@@ -217,6 +283,36 @@ export type Database = {
         }
         Relationships: []
       }
+      sobre_mi: {
+        Row: {
+          body: string | null
+          created_at: string
+          formacion: string | null
+          id: string
+          lead: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          formacion?: string | null
+          id?: string
+          lead?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          formacion?: string | null
+          id?: string
+          lead?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -249,6 +345,21 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      submit_contact_message: {
+        Args: {
+          p_email: string
+          p_mensaje: string
+          p_motivo: string
+          p_nombre: string
+        }
+        Returns: undefined
+      }
+      subscribe_newsletter: {
+        Args: {
+          p_email: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

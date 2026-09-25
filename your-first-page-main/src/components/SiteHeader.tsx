@@ -11,7 +11,6 @@ const links = [
   { to: "/eventos", label: "Astrología Emocional" },
   { to: "/recursos", label: "Recursos" },
   { to: "/servicios", label: "Terapias" },
-  { to: "/contacto", label: "Contacto" },
 ] as const;
 
 export function SiteHeader() {

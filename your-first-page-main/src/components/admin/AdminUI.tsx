@@ -47,8 +47,8 @@ export function Section<T>({ title, items, renderItem, onNew, modal }: {
   );
 }
 
-export function ItemRow({ title, subtitle, published, onEdit, onDelete }: {
-  title: string; subtitle: string; published: boolean; onEdit: () => void; onDelete: () => void;
+export function ItemRow({ title, subtitle, published, onEdit, onDelete, onPreview }: {
+  title: string; subtitle: string; published: boolean; onEdit: () => void; onDelete: () => void; onPreview?: () => void;
 }) {
   return (
     <div className="flex items-center justify-between gap-4 bg-background p-5">
@@ -57,10 +57,87 @@ export function ItemRow({ title, subtitle, published, onEdit, onDelete }: {
         <p className="mt-0.5 text-xs uppercase tracking-widest text-ink/55">{subtitle} · {published ? <span className="text-gold">Publicado</span> : <span>Borrador</span>}</p>
       </div>
       <div className="flex shrink-0 gap-2">
+        {onPreview && <GhostButton onClick={onPreview}>Vista previa</GhostButton>}
         <GhostButton onClick={onEdit}>Editar</GhostButton>
         <GhostButton onClick={onDelete}>Borrar</GhostButton>
       </div>
     </div>
+  );
+}
+
+export type ArticlePreview = {
+  section: string;
+  title: string;
+  subtitle?: string | null;
+  dateLabel?: string | null;
+  description?: string | null;
+  body?: string | null;
+  coverImageUrl?: string | null;
+  badge?: string | null;
+  category?: string | null;
+  href?: string | null;
+  published: boolean;
+};
+
+export function ArticlePreviewModal({ article, onClose }: { article: ArticlePreview; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[70] overflow-y-auto bg-background">
+      <div className="sticky top-0 z-10 flex flex-wrap items-center justify-between gap-3 border-b border-border bg-background/95 px-6 py-4 backdrop-blur-sm">
+        <p className="text-xs uppercase tracking-[0.25em] text-ink/60">
+          Vista previa · {article.section}
+          {article.published ? "" : " · borrador"}
+        </p>
+        <div className="flex gap-2">
+          {article.href && article.published && (
+            <a href={article.href} target="_blank" rel="noreferrer" className="border border-border px-4 py-2 text-[0.7rem] uppercase tracking-[0.25em] text-ink/70 hover:border-gold hover:text-gold">
+              Abrir en el sitio
+            </a>
+          )}
+          <GhostButton type="button" onClick={onClose}>Cerrar</GhostButton>
+        </div>
+      </div>
+      <article className="mx-auto max-w-5xl px-6 py-16">
+        {article.coverImageUrl ? (
+          <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-[minmax(0,300px)_1fr] md:gap-12">
+            <div className="mx-auto w-full max-w-[300px] md:mx-0">
+              <img src={article.coverImageUrl} alt="" className="block h-auto w-full object-cover" />
+            </div>
+            <PreviewHeader article={article} />
+          </div>
+        ) : (
+          <PreviewHeader article={article} />
+        )}
+        {article.body && (
+          <div
+            className="prose prose-sm mt-12 w-full max-w-none text-base text-ink/85 prose-headings:font-display prose-headings:text-ink prose-a:text-wine prose-strong:text-ink prose-p:leading-normal sm:prose-lg"
+            dangerouslySetInnerHTML={{ __html: article.body }}
+          />
+        )}
+        {article.category && (
+          <p className="eyebrow mb-2 mt-16 inline-block border border-gold px-4 py-2 text-ink">{article.category}</p>
+        )}
+      </article>
+    </div>
+  );
+}
+
+function PreviewHeader({ article }: { article: ArticlePreview }) {
+  return (
+    <header className="flex w-full min-w-0 flex-col">
+      <div className="flex w-full flex-wrap items-center justify-between gap-2">
+        <span className="eyebrow text-gold">{article.badge}</span>
+        <span className="eyebrow text-right text-clay">{article.dateLabel}</span>
+      </div>
+      <h1 className="mt-4 w-full break-words font-display text-3xl leading-tight text-ink sm:text-4xl md:text-5xl lg:text-6xl">
+        {article.title}
+      </h1>
+      {article.subtitle && (
+        <p className="mt-4 w-full font-sans text-lg leading-relaxed text-ink sm:text-xl md:text-[22px]">{article.subtitle}</p>
+      )}
+      {article.description && (
+        <p className="mt-6 w-full text-base leading-relaxed text-ink/75 md:text-lg">{article.description}</p>
+      )}
+    </header>
   );
 }
 

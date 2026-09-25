@@ -1,5 +1,67 @@
+import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+
+function NewsletterSignup() {
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    setSending(true);
+    setError(null);
+
+    const { error: sendError } = await supabase.rpc("subscribe_newsletter", {
+      p_email: String(form.get("email") ?? ""),
+    });
+
+    setSending(false);
+    if (sendError) {
+      setError("No se ha podido suscribir. Inténtalo de nuevo en un momento.");
+      return;
+    }
+    setSent(true);
+  }
+
+  if (sent) {
+    return (
+      <p className="mt-1 text-sm text-cream/80 md:-translate-x-[80px] md:translate-y-[10px]">
+        Te has suscrito. Gracias.
+      </p>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div className="mt-1 md:-translate-x-[80px] md:translate-y-[10px]">
+        <input
+          type="email"
+          name="email"
+          required
+          placeholder="Tu email..."
+          className="w-full bg-transparent border-b border-gold/80 pb-1 text-sm focus:outline-none focus:border-wine text-cream"
+        />
+      </div>
+      <div className="w-full flex justify-center md:block mt-3 md:-translate-x-[80px] md:translate-y-[20px]">
+        <Button
+          type="submit"
+          disabled={sending}
+          className="border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:rounded-md disabled:opacity-60"
+        >
+          {sending ? "Enviando…" : "Suscribirme a Newsletter"}
+        </Button>
+      </div>
+      {error && (
+        <p className="mt-3 text-sm text-cream/80 md:-translate-x-[80px]">
+          {error}
+        </p>
+      )}
+    </form>
+  );
+}
 
 export function SiteFooter() {
   return (
@@ -62,15 +124,18 @@ export function SiteFooter() {
                 <li><Link to="/contacto" className="hover:text-gold">Contacto</Link></li>
               </ul>
 
-              <div className="mt-4">
-                <p className="eyebrow !text-gold md:-translate-x-[50px]">Conversemos</p>
-                <p className="mt-1 text-sm md:-translate-x-[50px] leading-relaxed text-cream/80">
-                  Para reservas y consultas personales,{" "}
-                  <Link to="/contacto" className="text-gold underline-offset-4 hover:underline">
-                    escríbeme aquí
-                  </Link>
-                  .
+              <div className="mt-4 flex flex-col items-start gap-2.5 md:-translate-x-[50px]">
+                <p className="eyebrow !text-gold">Conversemos</p>
+                <p className="text-sm leading-relaxed text-cream/80">
+                  Para reservas y consultas personales.
                 </p>
+                <Button
+                  asChild
+                  size="sm"
+                  className="h-7 max-w-full whitespace-normal px-2.5 text-center text-[0.68rem] leading-tight border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:rounded-md"
+                >
+                  <Link to="/contacto">Escríbeme aquí</Link>
+                </Button>
               </div>
             </div>
 
@@ -92,18 +157,7 @@ export function SiteFooter() {
 
             <div className="col-span-2 sm:col-span-2 md:col-span-1">
               <p className="eyebrow !text-gold md:-translate-x-[15px]">Newsletter</p>
-              <div className="mt-1 md:-translate-x-[80px] md:translate-y-[10px]">
-                <input 
-                  type="email" 
-                  placeholder="Tu email..." 
-                  className="w-full bg-transparent border-b border-gold/80 pb-1 text-sm focus:outline-none focus:border-wine text-cream"
-                />
-              </div>
-              <div className="w-full flex justify-center md:block mt-3 md:-translate-x-[80px] md:translate-y-[20px]">
-                <Button className="border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:rounded-md">
-                  Suscribirme a Newsletter
-                </Button>
-              </div>
+              <NewsletterSignup />
             </div>
           </div>
         </div>

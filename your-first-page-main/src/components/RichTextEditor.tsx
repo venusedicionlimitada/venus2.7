@@ -3,6 +3,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Link from "@tiptap/extension-link";
 import { useEffect, useRef, useState, type DragEvent, type ChangeEvent } from "react";
+import { createPortal } from "react-dom";
 
 type Props = {
   value: string;
@@ -14,6 +15,7 @@ export function RichTextEditor({ value, onChange }: Props) {
   const [dragOver, setDragOver] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importMsg, setImportMsg] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
@@ -39,6 +41,22 @@ export function RichTextEditor({ value, onChange }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor]);
+
+  useEffect(() => {
+    if (!expanded) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setExpanded(false);
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [expanded]);
+
+  useEffect(() => {
+    const dom = editor?.view?.dom;
+    if (!dom) return;
+    dom.classList.toggle("min-h-[200px]", !expanded);
+    dom.classList.toggle("min-h-[calc(100vh-11rem)]", expanded);
+  }, [editor, expanded]);
 
   async function importDocx(file: File, mode: "replace" | "append" = "append") {
     if (!editor) return;
@@ -102,15 +120,26 @@ export function RichTextEditor({ value, onChange }: Props) {
 
   if (!editor) return null;
 
-  return (
-    <div className="mt-2">
-      <Toolbar editor={editor} />
+  const panel = (
+    <div className={expanded ? "fixed inset-0 z-[80] flex flex-col bg-background p-6" : "mt-2"}>
+      <div className="mb-2 flex items-start gap-2">
+        <div className="min-w-0 flex-1">
+          <Toolbar editor={editor} />
+        </div>
+        <button
+          type="button"
+          onClick={() => setExpanded((open) => !open)}
+          className="shrink-0 border border-border px-2 py-1 text-xs uppercase tracking-[0.2em] text-ink/70 hover:border-gold hover:text-gold"
+        >
+          {expanded ? "Reducir" : "Ampliar"}
+        </button>
+      </div>
 
       <div
         onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        className={`relative ${dragOver ? "ring-2 ring-gold ring-offset-2 ring-offset-background" : ""}`}
+        className={`relative ${expanded ? "min-h-0 flex-1 overflow-y-auto" : ""} ${dragOver ? "ring-2 ring-gold ring-offset-2 ring-offset-background" : ""}`}
       >
         <EditorContent editor={editor} />
         {dragOver && (
@@ -141,13 +170,16 @@ export function RichTextEditor({ value, onChange }: Props) {
       </div>
     </div>
   );
+
+  if (expanded) return createPortal(panel, document.body);
+  return panel;
 }
 
 function Toolbar({ editor }: { editor: Editor }) {
   const btn = (active: boolean) =>
     `px-2 py-1 text-xs border border-border ${active ? "bg-gold/20 text-gold border-gold" : "text-ink/70 hover:text-gold"}`;
   return (
-    <div className="mb-2 flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-1">
       <button type="button" onClick={() => editor.chain().focus().toggleBold().run()} className={btn(editor.isActive("bold"))}><b>B</b></button>
       <button type="button" onClick={() => editor.chain().focus().toggleItalic().run()} className={btn(editor.isActive("italic"))}><i>I</i></button>
       <button type="button" onClick={() => editor.chain().focus().toggleUnderline().run()} className={btn(editor.isActive("underline"))}><u>U</u></button>

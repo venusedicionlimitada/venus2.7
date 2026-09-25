@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, GhostButton, PrimaryButton } from "@/components/admin/AdminUI";
+import { Section, ItemRow, EditorModal, ArticlePreviewModal, Label, TextInput, TextArea, GhostButton, PrimaryButton } from "@/components/admin/AdminUI";
 import { ContentForm } from "@/components/ContentForm";
 import { uploadImage, slugify } from "@/lib/utils";
 
@@ -23,6 +23,7 @@ type YogaRow = {
 export function YogaSection() {
   const [items, setItems] = useState<YogaRow[] | null>(null);
   const [editing, setEditing] = useState<Partial<YogaRow> | null>(null);
+  const [preview, setPreview] = useState<YogaRow | null>(null);
 
   async function load() {
     const { data } = await supabase.from("yoga_articles").select("*").order("sort_order", { ascending: false });
@@ -65,9 +66,11 @@ export function YogaSection() {
       items={items}
       renderItem={(it) => (
         <ItemRow key={it.id} title={it.title} subtitle={`${it.tarjetas} · ${it.date_label}`} published={it.published}
-          onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} />
+          onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} onPreview={() => setPreview(it)} />
       )}
-      modal={editing && (
+      modal={
+        <>
+      {editing && (
         <EditorModal title={editing.id ? "Editar artículo de yoga" : "Nuevo artículo de yoga"} onClose={() => setEditing(null)}>
           <ContentForm 
             initial={editing} 
@@ -85,6 +88,26 @@ export function YogaSection() {
           />
         </EditorModal>
       )}
+      {preview && (
+        <ArticlePreviewModal
+          article={{
+            section: "yoga",
+            title: preview.title,
+            subtitle: preview.subtitle,
+            dateLabel: preview.date_label,
+            description: preview.description,
+            body: preview.body,
+            coverImageUrl: preview.cover_image_url,
+            badge: preview.tarjetas,
+            category: preview.categoria_emocional,
+            href: preview.slug ? `/yoga/${preview.slug}` : null,
+            published: preview.published,
+          }}
+          onClose={() => setPreview(null)}
+        />
+      )}
+        </>
+      }
     />
   );
 }

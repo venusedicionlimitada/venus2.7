@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ContentForm } from "@/components/ContentForm";
-import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
+import { Section, ItemRow, EditorModal, ArticlePreviewModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
 import { uploadImage, slugify } from "@/lib/utils";
 
 type DiaryRow = {
@@ -23,6 +23,7 @@ type DiaryRow = {
 export function DiarySection() {
   const [items, setItems] = useState<DiaryRow[] | null>(null);
   const [editing, setEditing] = useState<Partial<DiaryRow> | null>(null);
+  const [preview, setPreview] = useState<DiaryRow | null>(null);
 
   async function load() {
     const { data, error } = await supabase.from("diary_entries").select("*").order("sort_order", { ascending: false });
@@ -71,10 +72,12 @@ export function DiarySection() {
         <ItemRow
           key={it.id}
           title={it.title} subtitle={`${it.tarjeta ?? ""} · ${it.date_label}`} published={it.published}
-          onEdit={() => setEditing(it)} onDelete={() => remove(it.id)}
+          onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} onPreview={() => setPreview(it)}
         />
       )}
-      modal={editing && (
+      modal={
+        <>
+      {editing && (
         <EditorModal title={editing.id ? "Editar entrada" : "Nueva entrada"} onClose={() => setEditing(null)}>
           <ContentForm 
             initial={editing} 
@@ -92,6 +95,26 @@ export function DiarySection() {
           />
         </EditorModal>
       )}
+      {preview && (
+        <ArticlePreviewModal
+          article={{
+            section: "diario",
+            title: preview.title,
+            subtitle: preview.subtitle,
+            dateLabel: preview.date_label,
+            description: preview.description,
+            body: preview.body,
+            coverImageUrl: preview.cover_image_url,
+            badge: preview.tarjeta,
+            category: preview.categoria_emocional,
+            href: preview.slug ? `/diario/${preview.slug}` : null,
+            published: preview.published,
+          }}
+          onClose={() => setPreview(null)}
+        />
+      )}
+        </>
+      }
     />
   );
 }

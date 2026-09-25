@@ -21,11 +21,11 @@ export const requestResourceDownload = createServerFn({ method: "POST" })
 
     const { data: res, error: lookupErr } = await supabaseAnon
       .from("resources")
-      .select("file_path, published")
+      .select("file_path, published, active")
       .eq("id", data.resourceId)
       .maybeSingle();
 
-    if (lookupErr || !res || !res.published) {
+    if (lookupErr || !res || !res.published || !res.active) {
       return { ok: false as const, error: "Recurso no disponible." };
     }
     if (!res.file_path) {

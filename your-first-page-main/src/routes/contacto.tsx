@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "../components/SiteHeader";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
@@ -16,9 +17,27 @@ export const Route = createFileRoute("/contacto")({
 
 function Contacto() {
   const [sent, setSent] = useState(false);
-  function handleSubmit(e: React.FormEvent) {
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    // Pendiente: conectar con Lovable Cloud para guardar y notificar.
+    const form = new FormData(e.currentTarget);
+    setSending(true);
+    setError(null);
+
+    const { error: sendError } = await supabase.rpc("submit_contact_message", {
+      p_nombre: String(form.get("nombre") ?? ""),
+      p_email: String(form.get("email") ?? ""),
+      p_motivo: String(form.get("motivo") ?? ""),
+      p_mensaje: String(form.get("mensaje") ?? ""),
+    });
+
+    setSending(false);
+    if (sendError) {
+      setError("No se ha podido enviar el mensaje. Inténtalo de nuevo en un momento.");
+      return;
+    }
     setSent(true);
   }
 
@@ -78,11 +97,14 @@ return (
               />
             </div>
 
+            {error && <p className="text-sm text-wine">{error}</p>}
+
             <button
               type="submit"
-              className="w-full border border-gold bg-gold/10 px-6 py-4 text-xs uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-primary-foreground transition-colors"
+              disabled={sending}
+              className="w-full border border-gold bg-gold/10 px-6 py-4 text-xs uppercase tracking-[0.3em] text-gold hover:bg-gold hover:text-primary-foreground transition-colors disabled:opacity-50"
             >
-              Enviar mensaje
+              {sending ? "Enviando…" : "Enviar mensaje"}
             </button>
           </form>
         )}

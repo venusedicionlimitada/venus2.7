@@ -6,7 +6,6 @@ import { LunarEventCard } from "../components/LunarEventCard";
 import { SideRecommendImage } from "../components/SideRecommendImage";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { HomeFeatureCard } from "@/components/cards/HomeFeatureCard";
-import { useContentData } from "@/lib/hooks/useContentData";
 import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet";
@@ -23,16 +22,49 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+const HOME_CAROUSEL_LIMIT = 5;
+
+const SECTION_LABEL = {
+  diario: "Diario",
+  yoga: "Yoga",
+  astrologia: "Astrología",
+} as const;
+
+type Seccion = keyof typeof SECTION_LABEL;
+
 type Post = {
-  id: string; 
+  id: string;
   slug: string;
-  date_label: string; 
-  title: string; 
-  description: string; 
-  body: string | null; 
+  date_label: string;
+  title: string;
+  description: string;
+  body: string | null;
   cover_image_url: string | null;
   tarjetas: string;
+  seccion: Seccion;
+  created_at: string;
 };
+
+const CAROUSEL_SOURCES: { seccion: Seccion; table: string }[] = [
+  { seccion: "diario", table: "diary_entries" },
+  { seccion: "yoga", table: "yoga_articles" },
+  { seccion: "astrologia", table: "astrology_articles" },
+];
+
+function toPost(row: Record<string, unknown>, seccion: Seccion): Post {
+  return {
+    id: String(row.id ?? ""),
+    slug: String(row.slug ?? ""),
+    date_label: String(row.date_label ?? ""),
+    title: String(row.title ?? ""),
+    description: String(row.description ?? row.excerpt ?? ""),
+    body: (row.body as string | null) ?? null,
+    cover_image_url: (row.cover_image_url as string | null) ?? null,
+    tarjetas: String(row.tarjetas ?? row.tag ?? row.tarjeta ?? ""),
+    seccion,
+    created_at: String(row.created_at ?? ""),
+  };
+}
 
 function Index() {
   const [lunarCoverUrl, setLunarCoverUrl] = useState<string | null>(null);
@@ -40,8 +72,40 @@ function Index() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [events, setEvents] = useState<any[]>([]);
-  
-  const { items } = useContentData<Post>("diary_entries", 7);
+  const [items, setItems] = useState<Post[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    Promise.all(
+      CAROUSEL_SOURCES.map(async ({ seccion, table }) => {
+        const { data, error } = await supabase
+          .from(table as "diary_entries")
+          .select("*")
+          .eq("published", true)
+          .order("created_at", { ascending: false })
+          .limit(HOME_CAROUSEL_LIMIT);
+
+        if (error) {
+          console.error(`[home carousel] ${table}:`, error.message);
+          return [] as Post[];
+        }
+
+        return (data ?? []).map((row) => toPost(row as Record<string, unknown>, seccion));
+      }),
+    ).then((groups) => {
+      if (cancelled) return;
+      const merged = groups
+        .flat()
+        .sort((a, b) => b.created_at.localeCompare(a.created_at))
+        .slice(0, HOME_CAROUSEL_LIMIT);
+      setItems(merged);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     supabase
@@ -190,7 +254,7 @@ function Index() {
                     const isActive = index === currentIndex;
                     return (
                       <CarouselItem 
-                        key={p.id} 
+                        key={`${p.seccion}-${p.id}`} 
                         className={`pl-2 md:pl-4 basis-[240px] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center relative transition-all duration-300 ${
                           isMobile 
                             ? (isActive ? "opacity-100 scale-100 z-30" : "opacity-60 scale-95 z-10")
@@ -199,9 +263,9 @@ function Index() {
                       >
                         <HomeFeatureCard
                           item={p}
-                          linkTo="/diario/$slug"
-                          linkParams={{ slug: p.slug }}
-                          tagLabel="Diario"
+                          linkTo="/$seccion/$slug"
+                          linkParams={{ seccion: p.seccion, slug: p.slug }}
+                          tagLabel={SECTION_LABEL[p.seccion]}
                           themeClasses="bg-transparent hover:bg-cream/45 border border-gold hover:border-gold text-ink transition-colors"
                         />
                       </CarouselItem>
