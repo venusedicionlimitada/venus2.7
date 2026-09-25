@@ -322,6 +322,60 @@ export type Database = {
         }
         Relationships: []
       }
+      app_photos: {
+        Row: {
+          alt: string | null
+          id: string
+          image_url: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          alt?: string | null
+          id?: string
+          image_url: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          alt?: string | null
+          id?: string
+          image_url?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      app_reviews: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          name: string
+          quote: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label?: string
+          name: string
+          quote: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          name?: string
+          quote?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_sections: {
         Row: {
           active: boolean
