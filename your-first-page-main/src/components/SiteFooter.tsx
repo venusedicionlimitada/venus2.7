@@ -109,11 +109,12 @@ export function SiteFooter() {
               <p className="eyebrow !text-gold">Explorar</p>
               <ul className="mt-1 space-y-1.5 text-sm text-cream">
                 <li><Link to="/servicios" className="hover:text-gold">Terapias</Link></li>
-                <li><Link to="/diario" className="hover:text-gold">Diario</Link></li>
+                <li><Link to="/diario" className="hover:text-gold">Reflexiones</Link></li>
                 <li><Link to="/astrologia" className="hover:text-gold">Astrología</Link></li>
                 <li><Link to="/yoga" className="hover:text-gold">Yoga</Link></li>
                 <li><Link to="/eventos" className="hover:text-gold">Astrología Emocional</Link></li>
                 <li><Link to="/recursos" className="hover:text-gold">Recursos</Link></li>
+                <li><Link to="/app" className="hover:text-gold">App</Link></li>
               </ul>
             </div>
 

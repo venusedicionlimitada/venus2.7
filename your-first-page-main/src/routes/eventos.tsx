@@ -4,13 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "../components/SiteHeader";
 import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationPages } from "@/components/ui/pagination";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet"; // Nuevo componente
+import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 export const Route = createFileRoute("/eventos")({
   component: Eventos,
 });
 
 function Eventos() {
+  const sectionActive = useSectionActive("eventos");
   const [items, setItems] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6;
@@ -45,6 +48,8 @@ function Eventos() {
   const indexOfFirst = indexOfLast - postsPerPage;
   const currentCategories = categories.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(categories.length / postsPerPage);
+
+  if (sectionActive === false) return <SectionPaused className="section-forest" />;
 
   return (
     <>

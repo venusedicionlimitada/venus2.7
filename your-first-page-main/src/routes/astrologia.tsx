@@ -3,14 +3,18 @@ import { ListLayout } from "@/components/layout/ListLayout";
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import { GridCard } from "@/components/cards/GridCard";
 import { useContentData } from "@/lib/hooks/useContentData";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 export const Route = createFileRoute("/astrologia")({ component: Astrologia });
 
 function Astrologia() {
   const location = useLocation();
+  const sectionActive = useSectionActive("astrologia");
   const data = useContentData<any>("astrology_articles", 7);
   
   if (location.pathname !== "/astrologia" && location.pathname !== "/astrologia/") return <Outlet />;
+  if (sectionActive === false) return <SectionPaused className="section-card-forest" />;
 
   const currentFeaturedItem = data.currentPage > 1 ? null : data.featuredItem;
 

@@ -5,12 +5,13 @@ import { motion, useScroll, useTransform } from "framer-motion";
 
 const links = [
   { to: "/", label: "Inicio" },
-  { to: "/diario", label: "Diario" },
+  { to: "/diario", label: "Reflexiones" },
   { to: "/yoga", label: "Yoga" },
   { to: "/astrologia", label: "Astrología" },
   { to: "/eventos", label: "Astrología Emocional" },
   { to: "/recursos", label: "Recursos" },
   { to: "/servicios", label: "Terapias" },
+  { to: "/app", label: "App" },
 ] as const;
 
 export function SiteHeader() {

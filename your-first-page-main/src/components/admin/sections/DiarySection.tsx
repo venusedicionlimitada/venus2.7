@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ContentForm } from "@/components/ContentForm";
 import { Section, ItemRow, EditorModal, ArticlePreviewModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
 import { uploadImage, slugify } from "@/lib/utils";
+import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
 
 type DiaryRow = {
   id: string;
@@ -14,6 +15,7 @@ type DiaryRow = {
   body: string | null;
   cover_image_url: string | null;
   published: boolean;
+  active: boolean;
   sort_order: number;
   tags: string | null;
   tarjeta: string | null;
@@ -45,6 +47,7 @@ export function DiarySection() {
       body: form.body ?? null,
       cover_image_url: form.cover_image_url ?? null,
       published: form.published ?? false,
+      active: form.active ?? false,
       sort_order: form.sort_order ?? 0,
       tags: form.tags ?? null,
       tarjeta: form.tarjeta ?? "Reflexión",
@@ -64,14 +67,16 @@ export function DiarySection() {
   }
 
   return (
+    <>
+    <SectionPauseControl section="diario" />
     <Section
       title="Entradas del Diario"
-      onNew={() => setEditing({ tarjeta: "Reflexión", published: false, sort_order: (items?.length ?? 0) + 1 })}
+      onNew={() => setEditing({ tarjeta: "Reflexión", published: false, active: false, sort_order: (items?.length ?? 0) + 1 })}
       items={items}
       renderItem={(it) => (
         <ItemRow
           key={it.id}
-          title={it.title} subtitle={`${it.tarjeta ?? ""} · ${it.date_label}`} published={it.published}
+          title={it.title} subtitle={`${it.tarjeta ?? ""} · ${it.date_label}${it.active ? "" : " · desactivado"}`} published={it.published}
           onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} onPreview={() => setPreview(it)}
         />
       )}
@@ -116,5 +121,6 @@ export function DiarySection() {
         </>
       }
     />
+    </>
   );
 }

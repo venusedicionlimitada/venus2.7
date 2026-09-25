@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "../components/SiteHeader";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 export const Route = createFileRoute("/servicios")({
   head: () => ({
@@ -17,17 +19,20 @@ export const Route = createFileRoute("/servicios")({
   component: Servicios,
 });
 
-type Service = { id: string; num: string; title: string; duration: string; body: string };
+type Service = { id: string; num: string; title: string; duration: string; body: string; active: boolean };
 
 function Servicios() {
+  const sectionActive = useSectionActive("servicios");
   const [items, setItems] = useState<Service[] | null>(null);
 
   useEffect(() => {
     supabase.from("services")
-      .select("id, num, title, duration, body")
+      .select("id, num, title, duration, body, active")
       .eq("published", true).order("sort_order")
       .then(({ data }) => setItems((data ?? []) as Service[]));
   }, []);
+
+  if (sectionActive === false) return <SectionPaused className="bg-silk-gold" />;
 
   return (
 <>
@@ -128,6 +133,11 @@ function Servicios() {
                         
                         {/* 4. Bloque del Botón (Apertura Lateral) */}
                         <div className="pt-6 text-right">
+                          {s.active === false ? (
+                            <span className="inline-block border-b border-gold/40 pb-1 text-xs uppercase tracking-[0.25em] text-gold/70">
+                              Próximamente
+                            </span>
+                          ) : (
                           <Sheet>
                             <SheetTrigger className="inline-block border-b border-gold/40 pb-1 text-xs uppercase tracking-[0.25em] text-gold hover:border-gold transition-colors text-left bg-transparent cursor-pointer">
                               Solicitar info
@@ -153,6 +163,7 @@ function Servicios() {
                               </div>
                             </SheetContent>
                           </Sheet>
+                          )}
                         </div>
 
                       </article>

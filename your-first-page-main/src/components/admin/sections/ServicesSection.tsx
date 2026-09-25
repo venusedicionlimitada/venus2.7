@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
+import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
 
 type ServiceRow = {
   id: string; num: string; title: string; duration: string; body: string;
-  published: boolean; sort_order: number;
+  published: boolean; active: boolean; sort_order: number;
   tags: string | null; categoria_emocional: string | null;
 };
 
@@ -21,7 +22,7 @@ export function ServicesSection() {
   async function save(form: Partial<ServiceRow>) {
     const payload = {
       num: form.num ?? "", title: form.title ?? "", duration: form.duration ?? "",
-      body: form.body ?? "", published: form.published ?? true, sort_order: form.sort_order ?? 0,
+      body: form.body ?? "", published: form.published ?? true, active: form.active ?? false, sort_order: form.sort_order ?? 0,
       tags: form.tags ?? null, categoria_emocional: form.categoria_emocional ?? null,
     };
     const res = form.id
@@ -38,12 +39,14 @@ export function ServicesSection() {
   }
 
   return (
+    <>
+    <SectionPauseControl section="servicios" />
     <Section
       title="Terapias"
-      onNew={() => setEditing({ published: true, sort_order: (items?.length ?? 0) + 1 })}
+      onNew={() => setEditing({ published: true, active: false, sort_order: (items?.length ?? 0) + 1 })}
       items={items}
       renderItem={(it) => (
-        <ItemRow key={it.id} title={`${it.num} · ${it.title}`} subtitle={it.duration} published={it.published}
+        <ItemRow key={it.id} title={`${it.num} · ${it.title}`} subtitle={`${it.duration}${it.active ? "" : " · desactivado"}`} published={it.published}
           onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} />
       )}
       modal={editing && (
@@ -52,6 +55,7 @@ export function ServicesSection() {
         </EditorModal>
       )}
     />
+    </>
   );
 }
 
@@ -70,13 +74,20 @@ function ServiceForm({ initial, onSubmit, onCancel }: {
       <div><Label>Descripción</Label><TextArea required rows={5} value={v.body ?? ""} onChange={(e) => setV({ ...v, body: e.target.value })} /></div>
       <div><Label>Etiquetas</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. Sesión, Acompañamiento, Online" /></div>
       <div><Label>Categoría Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Sanación, Sombra, Integración" /></div>
-      <div className="flex items-center gap-3">
-        <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
-        <label className="ml-6 flex items-center gap-2 text-sm text-ink/80">
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="flex items-center gap-3">
+          <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
+        </div>
+        <label className="flex items-center gap-2 text-sm text-ink/80">
+          <input type="checkbox" checked={!!v.active} onChange={(e) => setV({ ...v, active: e.target.checked })} />
+          Activado
+        </label>
+        <label className="flex items-center gap-2 text-sm text-ink/80">
           <input type="checkbox" checked={!!v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} />
           Publicada
         </label>
       </div>
+      <p className="text-xs text-ink/55">Publicada: se ve en la página. Activada: «Solicitar info» abre la ficha. Publicada y desactivada: se ve «Próximamente».</p>
       <div className="flex justify-end gap-3 pt-4"><GhostButton type="button" onClick={onCancel}>Cancelar</GhostButton><PrimaryButton type="submit" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</PrimaryButton></div>
     </form>
   );

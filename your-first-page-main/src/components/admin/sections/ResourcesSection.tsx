@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { uploadImage } from "@/lib/utils";
 import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
+import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
 
 type ResourceRow = {
   id: string; type: string; title: string; description: string;
@@ -54,6 +55,8 @@ export function ResourcesSection() {
   }
 
   return (
+    <>
+    <SectionPauseControl section="recursos" />
     <Section
       title="Recursos descargables"
       onNew={() => setEditing({
@@ -77,6 +80,7 @@ export function ResourcesSection() {
         </EditorModal>
       )}
     />
+    </>
   );
 }
 

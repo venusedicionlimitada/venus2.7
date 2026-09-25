@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Label, TextInput, TextArea, GhostButton, PrimaryButton } from "@/components/admin/AdminUI";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
 
 type SobreMiRow = {
   id: string;
@@ -88,6 +89,7 @@ export function SobreMiSection() {
 
   return (
     <div>
+      <SectionPauseControl section="sobre-mi" />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <h2 className="font-display text-2xl text-ink">Sobre mí</h2>
         <Link to="/sobre-mi" className="text-[0.7rem] uppercase tracking-[0.25em] text-ink/60 hover:text-gold">

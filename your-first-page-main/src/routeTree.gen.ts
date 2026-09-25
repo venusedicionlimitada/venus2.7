@@ -18,6 +18,7 @@ import { Route as DiarioRouteImport } from './routes/diario'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AstrologiaRouteImport } from './routes/astrologia'
+import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -68,6 +69,11 @@ const AstrologiaRoute = AstrologiaRouteImport.update({
   path: '/astrologia',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppRoute = AppRouteImport.update({
+  id: '/app',
+  path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -90,6 +96,7 @@ const SeccionSlugRoute = SeccionSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/astrologia': typeof AstrologiaRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/app': typeof AppRoute
   '/astrologia': typeof AstrologiaRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/app': typeof AppRoute
   '/astrologia': typeof AstrologiaRoute
   '/auth': typeof AuthRoute
   '/contacto': typeof ContactoRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/app'
     | '/astrologia'
     | '/auth'
     | '/contacto'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/app'
     | '/astrologia'
     | '/auth'
     | '/contacto'
@@ -165,6 +176,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/app'
     | '/astrologia'
     | '/auth'
     | '/contacto'
@@ -181,6 +193,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AppRoute: typeof AppRoute
   AstrologiaRoute: typeof AstrologiaRoute
   AuthRoute: typeof AuthRoute
   ContactoRoute: typeof ContactoRoute
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AstrologiaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/app': {
+      id: '/app'
+      path: '/app'
+      fullPath: '/app'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -303,6 +323,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AppRoute: AppRoute,
   AstrologiaRoute: AstrologiaRoute,
   AuthRoute: AuthRoute,
   ContactoRoute: ContactoRoute,

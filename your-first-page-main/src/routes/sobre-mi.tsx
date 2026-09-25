@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "../components/SiteHeader";
 import { supabase } from "@/integrations/supabase/client";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 export const Route = createFileRoute("/sobre-mi")({
   head: () => ({
@@ -38,6 +40,7 @@ function formacionItems(value: string | null) {
 }
 
 function SobreMi() {
+  const sectionActive = useSectionActive("sobre-mi");
   const [page, setPage] = useState<SobreMiRow | null>(null);
 
   useEffect(() => {
@@ -49,6 +52,8 @@ function SobreMi() {
       .then(({ data }) => setPage((data as SobreMiRow | null) ?? FALLBACK))
       .catch(() => setPage(FALLBACK));
   }, []);
+
+  if (sectionActive === false) return <SectionPaused />;
 
   if (!page) {
     return (

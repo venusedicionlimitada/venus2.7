@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import heroImage from "../assets/hero-venus.jpg";
+import lunarBg from "../assets/Venus_02.jpg";
 import { SiteHeader } from "../components/SiteHeader";
 import { LunarEventCard } from "../components/LunarEventCard";
 import { SideRecommendImage } from "../components/SideRecommendImage";
@@ -9,6 +10,12 @@ import { HomeFeatureCard } from "@/components/cards/HomeFeatureCard";
 import { supabase } from "@/integrations/supabase/client";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet";
+import { sectionIsOpen, useSectionFlags } from "@/lib/hooks/useSectionActive";
+import { LandingVideo } from "@/components/app/LandingVideo";
+import silkGreen from "@/assets/app/silk-green.png";
+import splash from "@/assets/app/splash.jpg";
+import chatCarta from "@/assets/app/chat-carta.jpg";
+import chatPreguntas from "@/assets/app/chat-preguntas.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -24,8 +31,14 @@ export const Route = createFileRoute("/")({
 
 const HOME_CAROUSEL_LIMIT = 5;
 
+const PILLARS = [
+  { eyebrow: "I", title: "Yoga", body: "Secuencias conscientes para escuchar el cuerpo y soltar lo que pesa." },
+  { eyebrow: "II", title: "Astrología", body: "Lectura de carta como herramienta de autoconocimiento y dirección." },
+  { eyebrow: "III", title: "Acompañamiento", body: "Sesiones personales tejidas a tu momento y a tu pregunta." },
+];
+
 const SECTION_LABEL = {
-  diario: "Diario",
+  diario: "Reflexiones",
   yoga: "Yoga",
   astrologia: "Astrología",
 } as const;
@@ -43,13 +56,45 @@ type Post = {
   tarjetas: string;
   seccion: Seccion;
   created_at: string;
+  active: boolean;
 };
 
 const CAROUSEL_SOURCES: { seccion: Seccion; table: string }[] = [
-  { seccion: "diario", table: "diary_entries" },
+  { seccion: "reflexiones", table: "diary_entries" },
   { seccion: "yoga", table: "yoga_articles" },
   { seccion: "astrologia", table: "astrology_articles" },
 ];
+
+function EmotionalCategoryCard({
+  cat,
+}: {
+  cat: { nombre: string; representative: { cover_image_url?: string | null } };
+}) {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <div className="relative w-full">
+          <article className="w-full h-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-6 sm:p-8 transition-colors hover:border-gold">
+            {cat.representative.cover_image_url && (
+              <img
+                src={cat.representative.cover_image_url}
+                alt=""
+                className="mb-6 max-h-60 w-full object-cover"
+              />
+            )}
+            <span className="eyebrow text-gold">Categoría Emocional</span>
+            <h2 className="mt-6 font-display text-3xl text-cream">{cat.nombre}</h2>
+            <p className="mt-4 text-sm text-cream/85">Explorar herramientas y conexiones para esta sintonía.</p>
+          </article>
+        </div>
+      </SheetTrigger>
+
+      <SheetContent className="w-full sm:max-w-xl bg-background border-l border-gold/70 p-0 overflow-y-auto">
+        <CategoryDetailSheet categoria={cat.nombre} />
+      </SheetContent>
+    </Sheet>
+  );
+}
 
 function toPost(row: Record<string, unknown>, seccion: Seccion): Post {
   return {
@@ -63,6 +108,7 @@ function toPost(row: Record<string, unknown>, seccion: Seccion): Post {
     tarjetas: String(row.tarjetas ?? row.tag ?? row.tarjeta ?? ""),
     seccion,
     created_at: String(row.created_at ?? ""),
+    active: row.active !== false,
   };
 }
 
@@ -73,6 +119,7 @@ function Index() {
   const [isMobile, setIsMobile] = useState(false);
   const [events, setEvents] = useState<any[]>([]);
   const [items, setItems] = useState<Post[] | null>(null);
+  const sectionFlags = useSectionFlags();
 
   useEffect(() => {
     let cancelled = false;
@@ -168,14 +215,146 @@ function Index() {
       <SiteHeader />
 
       {/* NUEVO BLOQUE MODULAR */}
-      <section className="section-forest w-full py-12 md:py-16">
-        <div className="mx-auto max-w-7xl px-6">
+      <section className="section-yoga relative w-full overflow-hidden py-12 md:py-16">
+        <img
+          src={lunarBg}
+          alt=""
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
+        />
+        <div className="relative mx-auto max-w-7xl px-6">
           <div className="flex flex-col md:flex-row items-start gap-8 w-full">
             <div className="flex-1 w-full">
               <LunarEventCard onCoverUrl={setLunarCoverUrl} />
             </div>
             <SideRecommendImage src={lunarCoverUrl} />
           </div>
+        </div>
+      </section>
+
+      {/* Pilares — fondo verde bosque (max-w-6xl) */}
+      <section className="section-forest">
+        <div className="mx-auto max-w-6xl px-6 pt-12 pb-12 md:pt-16 md:pb-16">
+          <div className="text-center">
+            <p className="eyebrow text-gold text-lg">ASTROLOGÍA EMOCIONAL</p>
+            <h2 className="eyebrow mt-6 text-cream/85 md:text-lg">
+              Una práctica tejida a mano.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-cream/80 md:mt-3 md:w-full md:max-w-none md:text-base">
+              Yoga, astrología y acompañamiento se entrelazan para sostener tu
+              proceso: el cuerpo, la carta y la conversación como un mismo
+              ritual de escucha.
+            </p>
+          </div>
+
+          <div className="mt-2 hidden md:grid md:grid-cols-3">
+            {PILLARS.map((p, i) => (
+              <div key={p.title} className="px-10">
+                <p className="eyebrow text-gold">{p.eyebrow}</p>
+                <div className="relative">
+                  {i > 0 && (
+                    <span
+                      aria-hidden
+                      className="absolute top-0 bottom-0 -left-10 w-px bg-cream/15"
+                    />
+                  )}
+                  <h3 className="font-display text-3xl text-cream">{p.title}</h3>
+                  <p className="mt-4 pb-8 text-sm leading-relaxed text-cream/80">{p.body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Tarjetas dinámicas — categorías emocionales del bloque de pilares */}
+      {categories.length > 0 && (
+        <section className="section-forest">
+          <div className="mx-auto max-w-5xl px-6 pb-24 md:pb-32">
+            <div className="md:hidden">
+              <Carousel
+                opts={{
+                  align: "center",
+                  loop: false,
+                  containScroll: false,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-4">
+                  {categories.map((cat) => (
+                    <CarouselItem key={cat.nombre} className="pl-4 basis-[82%]">
+                      <EmotionalCategoryCard cat={cat} />
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+              </Carousel>
+            </div>
+
+            <div className="hidden md:grid gap-6 md:grid-cols-3">
+              {categories.map((cat) => (
+                <EmotionalCategoryCard key={cat.nombre} cat={cat} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Carrusel de contenido */}
+      <section className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 overflow-hidden">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center mb-6">
+            <p className="eyebrow text-clay">Contenido</p>
+            <h2 className="hidden mt-2 font-display text-2xl text-ink md:text-3xl font-light">
+              Explora nuestro contenido
+            </h2>
+          </div>
+
+          {!items ? (
+            <p className="text-center text-sm text-ink/60">Cargando…</p>
+          ) : items.length === 0 ? (
+            <p className="text-center text-sm text-ink/60">Pronto.</p>
+          ) : (
+            <div className="relative px-0 flex justify-center">
+              <Carousel 
+                setApi={setApi}
+                opts={{ 
+                  align: isMobile ? "center" : "start", 
+                  loop: !isMobile, 
+                  containScroll: isMobile ? false : "trimSnaps" 
+                }} 
+                className="w-full max-w-6xl mx-auto transition-transform duration-300"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {items.map((p, index) => {
+                    const isActive = index === currentIndex;
+                    return (
+                      <CarouselItem 
+                        key={`${p.seccion}-${p.id}`} 
+                        className={`pl-2 md:pl-4 basis-[240px] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center relative transition-all duration-300 ${
+                          isMobile 
+                            ? (isActive ? "opacity-100 scale-100 z-30" : "opacity-60 scale-95 z-10")
+                            : "opacity-100 scale-100"
+                        }`}
+                      >
+                        <HomeFeatureCard
+                          item={{ ...p, active: p.active !== false && sectionIsOpen(sectionFlags, p.seccion) }}
+                          linkTo="/$seccion/$slug"
+                          linkParams={{ seccion: p.seccion, slug: p.slug }}
+                          tagLabel={SECTION_LABEL[p.seccion]}
+                          themeClasses="bg-transparent hover:bg-cream/45 border border-gold hover:border-gold text-ink transition-colors"
+                        />
+                      </CarouselItem>
+                    );
+                  })}
+                </CarouselContent>
+
+                <div className="hidden md:block">
+                  <CarouselPrevious className="absolute -left-12 lg:-left-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
+                  <CarouselNext className="absolute -right-12 lg:-right-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
+                </div>
+              </Carousel>
+            </div>
+          )}
         </div>
       </section>
 
@@ -224,121 +403,38 @@ function Index() {
         </div>
       </section>
 
-      {/* 6. Bloque de Diario */}
-      <section className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 overflow-hidden">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center mb-6">
-            <p className="eyebrow text-clay">Contenido</p>
-            <h2 className="hidden mt-2 font-display text-2xl text-ink md:text-3xl font-light">
-              Explora nuestro contenido
-            </h2>
-          </div>
-
-          {!items ? (
-            <p className="text-center text-sm text-ink/60">Cargando…</p>
-          ) : items.length === 0 ? (
-            <p className="text-center text-sm text-ink/60">Pronto.</p>
-          ) : (
-            <div className="relative px-0 flex justify-center">
-              <Carousel 
-                setApi={setApi}
-                opts={{ 
-                  align: isMobile ? "center" : "start", 
-                  loop: !isMobile, 
-                  containScroll: isMobile ? false : "trimSnaps" 
-                }} 
-                className="w-full max-w-6xl mx-auto transition-transform duration-300"
-              >
-                <CarouselContent className="-ml-2 md:-ml-4">
-                  {items.map((p, index) => {
-                    const isActive = index === currentIndex;
-                    return (
-                      <CarouselItem 
-                        key={`${p.seccion}-${p.id}`} 
-                        className={`pl-2 md:pl-4 basis-[240px] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex justify-center relative transition-all duration-300 ${
-                          isMobile 
-                            ? (isActive ? "opacity-100 scale-100 z-30" : "opacity-60 scale-95 z-10")
-                            : "opacity-100 scale-100"
-                        }`}
-                      >
-                        <HomeFeatureCard
-                          item={p}
-                          linkTo="/$seccion/$slug"
-                          linkParams={{ seccion: p.seccion, slug: p.slug }}
-                          tagLabel={SECTION_LABEL[p.seccion]}
-                          themeClasses="bg-transparent hover:bg-cream/45 border border-gold hover:border-gold text-ink transition-colors"
-                        />
-                      </CarouselItem>
-                    );
-                  })}
-                </CarouselContent>
-
-                <div className="hidden md:block">
-                  <CarouselPrevious className="absolute -left-12 lg:-left-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
-                  <CarouselNext className="absolute -right-12 lg:-right-16 top-1/2 -translate-y-1/2 bg-transparent border-ink/20 text-ink hover:bg-ink/5 size-10 lg:size-12" />
-                </div>
-              </Carousel>
+      {sectionIsOpen(sectionFlags, "app") && (
+        <section className="relative overflow-hidden text-cream">
+          <img
+            src={silkGreen}
+            alt=""
+            className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
+          />
+          <div className="absolute inset-0 bg-[#1c3329]/78" />
+          <div className="relative mx-auto max-w-5xl px-6 py-16 text-center sm:py-20">
+            <p className="eyebrow text-gold">Venus App</p>
+            <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">Conversa a tu ritmo.</h2>
+            <p className="mt-2 font-display text-2xl italic text-cream/85">Cuéntale a Venus.</p>
+            <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/75">
+              Tu carta y la sinastría, en una consulta de astrología emocional. 14 días de demo gratuita.
+            </p>
+            <div className="mt-10">
+              <LandingVideo
+                src=""
+                poster={splash}
+                frames={[
+                  { src: splash, alt: "Venus, edición limitada. Consulta personalizada de astrología emocional." },
+                  { src: chatCarta, alt: "Conversación sobre los patrones de pareja en la carta." },
+                  { src: chatPreguntas, alt: "Venus devuelve preguntas para seguir la consulta." },
+                ]}
+              />
             </div>
-          )}
-        </div>
-      </section>
-
-      {/* Pilares — fondo verde bosque (max-w-6xl) */}
-      <section className="section-forest">
-        <div className="mx-auto max-w-6xl px-6 pt-12 pb-12 md:pt-16 md:pb-16">
-          <div className="mb-16 text-center">
-            <p className="eyebrow text-gold text-lg">ASTROLOGÍA EMOCIONAL</p>
-            <h2 className="eyebrow mt-6 text-cream/85 md:text-lg">
-              Una práctica tejida a mano.
-            </h2>
-          </div>
-
-          <div className="grid gap-px bg-cream/15 md:grid-cols-3">
-            {[
-              { eyebrow: "I", title: "Yoga", body: "Secuencias conscientes para escuchar el cuerpo y soltar lo que pesa." },
-              { eyebrow: "II", title: "Astrología", body: "Lectura de carta como herramienta de autoconocimiento y dirección." },
-              { eyebrow: "III", title: "Acompañamiento", body: "Sesiones personales tejidas a tu momento y a tu pregunta." },
-            ].map((p) => (
-              <div key={p.title} className="section-forest p-10">
-                <p className="eyebrow text-gold">{p.eyebrow}</p>
-                <h3 className="mt-6 font-display text-3xl text-cream">{p.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-cream/80">{p.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Tarjetas dinámicas — NUEVO BLOQUE EXACTO a la vista /eventos (max-w-5xl) */}
-      {categories.length > 0 && (
-        <section className="section-forest">
-          <div className="mx-auto max-w-5xl px-6 pb-24 md:pb-32">
-            <div className="grid gap-6 md:grid-cols-3">
-              {categories.map((cat) => (
-                <Sheet key={cat.nombre}>
-                  <SheetTrigger asChild>
-                    <div className="relative w-full">
-                      <article className="w-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-6 sm:p-8 transition-colors hover:border-gold">
-                        {cat.representative.cover_image_url && (
-                          <img
-                            src={cat.representative.cover_image_url}
-                            alt=""
-                            className="mb-6 max-h-60 w-full object-cover"
-                          />
-                        )}
-                        <span className="eyebrow text-gold">Categoría Emocional</span>
-                        <h2 className="mt-6 font-display text-3xl text-cream">{cat.nombre}</h2>
-                        <p className="mt-4 text-sm text-cream/85">Explorar herramientas y conexiones para esta sintonía.</p>
-                      </article>
-                    </div>
-                  </SheetTrigger>
-
-                  <SheetContent className="w-full sm:max-w-xl bg-background border-l border-gold/70 p-0 overflow-y-auto">
-                    <CategoryDetailSheet categoria={cat.nombre} />
-                  </SheetContent>
-                </Sheet>
-              ))}
-            </div>
+            <Link
+              to="/app"
+              className="mt-8 inline-flex w-full max-w-xs items-center justify-center border border-gold px-8 py-4 text-xs uppercase tracking-[0.28em] text-cream transition-colors hover:bg-gold hover:text-[#1c3329]"
+            >
+              Conocer la app
+            </Link>
           </div>
         </section>
       )}

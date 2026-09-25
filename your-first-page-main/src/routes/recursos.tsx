@@ -4,6 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { requestResourceDownload } from "@/lib/resources.functions";
 import { SiteHeader } from "../components/SiteHeader";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 export const Route = createFileRoute("/recursos")({
   head: () => ({
@@ -45,6 +47,7 @@ function Recursos() {
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const requestDownload = useServerFn(requestResourceDownload);
+  const sectionActive = useSectionActive("recursos");
 
   useEffect(() => {
     supabase.from("resources")
@@ -69,6 +72,8 @@ function Recursos() {
   function closeModal() {
     setSelected(null); setEmail(""); setState("idle"); setDownloadUrl(null); setErrorMsg(null);
   }
+
+  if (sectionActive === false) return <SectionPaused />;
 
   return (
     <>

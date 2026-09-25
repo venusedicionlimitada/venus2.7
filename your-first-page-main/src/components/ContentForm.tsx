@@ -74,13 +74,20 @@ export function ContentForm({
         <input type="file" accept="image/*" onChange={handleImage} className="mt-2 text-xs text-ink/70" />
       </div>
       
-      <div className="flex items-center gap-3">
-        <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
-        <label className="ml-6 flex items-center gap-2 text-sm text-ink/80">
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="flex items-center gap-3">
+          <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
+        </div>
+        <label className="flex items-center gap-2 text-sm text-ink/80">
+          <input type="checkbox" checked={!!v.active} onChange={(e) => setV({ ...v, active: e.target.checked })} />
+          Activado
+        </label>
+        <label className="flex items-center gap-2 text-sm text-ink/80">
           <input type="checkbox" checked={!!v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} />
           Publicada
         </label>
       </div>
+      <p className="text-xs text-ink/55">Publicada: se ve en la página. Activada: el enlace abre la publicación. Publicada y desactivada: se ve «Próximamente».</p>
       
       <div className="flex justify-end gap-3 pt-4"><GhostButton type="button" onClick={onCancel}>Cancelar</GhostButton><PrimaryButton type="submit" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</PrimaryButton></div>
     </form>

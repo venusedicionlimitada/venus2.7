@@ -1,12 +1,14 @@
 import { createFileRoute, Link, notFound, useRouter } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "../components/SiteHeader";
+import { useSectionActive, type SectionId } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 type Entry = {
   id: string; slug: string; date_label: string; title: string;
   subtitle: string | null; description: string; body: string | null; 
   cover_image_url: string | null; tarjetas: string | null;
-  categoria_emocional: string | null;
+  categoria_emocional: string | null; active: boolean;
 };
 
 async function fetchEntry(seccion: string, slug: string): Promise<{ entry: Entry; related: Entry[] }> {
@@ -20,14 +22,14 @@ async function fetchEntry(seccion: string, slug: string): Promise<{ entry: Entry
 
   const { data, error } = await supabase
     .from(nombreTabla)
-    .select(`id, slug, date_label, title, subtitle, description, body, cover_image_url, ${campoTarjeta}, categoria_emocional`)
+    .select(`id, slug, date_label, title, subtitle, description, body, cover_image_url, ${campoTarjeta}, categoria_emocional, active`)
     .eq("slug", slug).eq("published", true).maybeSingle();
   if (error) throw error;
-  if (!data) throw notFound();
+  if (!data || (data as { active?: boolean }).active === false) throw notFound();
 
   const { data: rel } = await supabase
     .from(nombreTabla)
-    .select(`id, slug, date_label, title, subtitle, description, body, cover_image_url, ${campoTarjeta}, categoria_emocional`)
+    .select(`id, slug, date_label, title, subtitle, description, body, cover_image_url, ${campoTarjeta}, categoria_emocional, active`)
     .eq("published", true).neq("slug", slug).order("sort_order").limit(2);
 
   const entryNormalizada = {
@@ -75,7 +77,7 @@ export const Route = createFileRoute("/$seccion/$slug")({
     <div className="mx-auto max-w-2xl px-6 py-32 text-center">
       <p className="eyebrow text-gold">404</p>
       <h1 className="mt-4 font-display text-4xl text-ink">Esta entrada no existe</h1>
-      <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="mt-8 inline-block border border-wine px-6 py-3 text-xs uppercase tracking-[0.3em] text-wine hover:bg-wine hover:text-cream transition-colors">Volver al diario</Link>
+      <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="mt-8 inline-block border border-wine px-6 py-3 text-xs uppercase tracking-[0.3em] text-wine hover:bg-wine hover:text-cream transition-colors">{Route.useParams().seccion === "diario" ? "Volver a Reflexiones" : "Volver al diario"}</Link>
     </div>
   ),
 });
@@ -83,6 +85,12 @@ export const Route = createFileRoute("/$seccion/$slug")({
 function DiaryDetail() {
   const { entry, related } = Route.useLoaderData();
   const { seccion } = Route.useParams();
+  const sectionActive = useSectionActive(seccion as SectionId);
+
+  if (sectionActive === false) {
+    const pageClass = seccion === "yoga" ? "section-yoga" : seccion === "astrologia" ? "section-card-forest" : "section-diario";
+    return <SectionPaused className={pageClass} />;
+  }
 
   const clasesSeccion: Record<string, string> = {
     yoga: "section-card-yoga",
@@ -100,7 +108,7 @@ function DiaryDetail() {
           
           <div className="mb-12">
             <Link to="/$seccion" params={{ seccion }} className="eyebrow text-gold hover:text-wine">
-              ← {seccion}
+              ← {seccion === "diario" ? "Reflexiones" : seccion}
             </Link>
           </div>
 
@@ -168,7 +176,7 @@ function DiaryDetail() {
         <hr className={entry.categoria_emocional ? "mt-2 border-border/50" : "mt-20 border-border/50"} />
           <div className="mt-12">
             <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="eyebrow text-gold hover:text-wine">
-              ← {Route.useParams().seccion}
+              ← {Route.useParams().seccion === "diario" ? "Reflexiones" : Route.useParams().seccion}
             </Link>
           </div>
 
@@ -177,11 +185,20 @@ function DiaryDetail() {
               <p className="eyebrow text-gold">Sigue leyendo</p>
               <div className="mt-6 grid gap-6 md:grid-cols-2">
                 {related.map((r: Entry) => (
+                  r.active === false ? (
+                    <div key={r.id} className="block border border-border p-6">
+                      <p className="eyebrow text-gold/80">{r.date_label}</p>
+                      <h3 className="mt-3 font-display text-xl text-ink">{r.title}</h3>
+                      <p className="mt-2 text-sm text-ink/70 line-clamp-3">{r.description}</p>
+                      <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-gold">Próximamente</p>
+                    </div>
+                  ) : (
                   <Link key={r.id} to="/$seccion/$slug" params={{ seccion: Route.useParams().seccion, slug: r.slug }} className="group block border border-border p-6 transition-colors hover:border-gold">
                     <p className="eyebrow text-gold/80">{r.date_label}</p>
                     <h3 className="mt-3 font-display text-xl text-ink group-hover:text-wine">{r.title}</h3>
                     <p className="mt-2 text-sm text-ink/70 line-clamp-3">{r.description}</p>
                   </Link>
+                  )
                 ))}
               </div>
             </section>

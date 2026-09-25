@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sectionIsOpen, useSectionFlags } from "@/lib/hooks/useSectionActive";
 
 export function CategoryDetailSheet({ categoria }: { categoria: string }) {
   const [publicaciones, setPublicaciones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const sectionFlags = useSectionFlags();
 
   useEffect(() => {
     async function fetchRelated() {
@@ -37,10 +39,18 @@ export function CategoryDetailSheet({ categoria }: { categoria: string }) {
       {loading ? <p>Cargando conexiones...</p> : (
         <div className="space-y-4">
           {publicaciones.map(p => (
+            p.active === false || !sectionIsOpen(sectionFlags, p.seccion) ? (
+              <div key={p.id} className="block p-4 border border-gold/20">
+                <h5 className="text-sm font-bold uppercase">{p.title || p.titulo}</h5>
+                <p className="text-xs text-ink/60">{p.seccion}</p>
+                <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-gold">Próximamente</p>
+              </div>
+            ) : (
             <a key={p.id} href={`/${p.seccion}/${p.slug || p.id}`} className="block p-4 border border-gold/20 hover:border-gold transition-colors">
               <h5 className="text-sm font-bold uppercase">{p.title || p.titulo}</h5>
               <p className="text-xs text-ink/60">{p.seccion}</p>
             </a>
+            )
           ))}
         </div>
       )}

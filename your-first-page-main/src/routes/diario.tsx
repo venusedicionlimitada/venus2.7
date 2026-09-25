@@ -3,6 +3,8 @@ import { ListLayout } from "@/components/layout/ListLayout";
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import { GridCard } from "@/components/cards/GridCard";
 import { useContentData } from "@/lib/hooks/useContentData";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 type Post = {
   id: string; 
@@ -21,9 +23,11 @@ export const Route = createFileRoute("/diario")({
 
 function Diario() {
   const location = useLocation();
+  const sectionActive = useSectionActive("diario");
   const { items, featuredItem, secondaryItems, currentPage, totalPages, setCurrentPage, error } = useContentData<Post>("diary_entries", 7);
 
   if (location.pathname !== "/diario" && location.pathname !== "/diario/") return <Outlet />;
+  if (sectionActive === false) return <SectionPaused className="section-diario" />;
 
   // Configuraciones de escala
   const mPrincipal = 0.7; 
@@ -49,7 +53,7 @@ function Diario() {
           themeClasses="border border-cream/30 bg-cream/5 hover:border-gold" 
           linkTo="/diario/$slug" 
           linkParams={{ slug: p.slug }} 
-          tagLabel="Diario" 
+          tagLabel="Reflexiones" 
         />
       )}
       renderSecondary={(p, idx) => (
@@ -61,7 +65,7 @@ function Diario() {
           themeClasses="border border-cream/20 bg-cream/5 hover:border-gold" 
           linkTo="/diario/$slug" 
           linkParams={{ slug: p.slug }} 
-          tagLabel="Diario" 
+          tagLabel="Reflexiones" 
         />
       )}
     />

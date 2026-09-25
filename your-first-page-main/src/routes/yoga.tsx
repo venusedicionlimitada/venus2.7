@@ -3,6 +3,8 @@ import { ListLayout } from "@/components/layout/ListLayout";
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import { GridCard } from "@/components/cards/GridCard";
 import { useContentData } from "@/lib/hooks/useContentData";
+import { useSectionActive } from "@/lib/hooks/useSectionActive";
+import { SectionPaused } from "@/components/SectionPaused";
 
 type YogaArticle = {
   id: string; 
@@ -21,9 +23,11 @@ export const Route = createFileRoute("/yoga")({
 
 function Yoga() {
   const location = useLocation();
+  const sectionActive = useSectionActive("yoga");
   const { items, featuredItem, secondaryItems, currentPage, totalPages, setCurrentPage, error } = useContentData<YogaArticle>("yoga_articles", 7);
 
   if (location.pathname !== "/yoga" && location.pathname !== "/yoga/") return <Outlet />;
+  if (sectionActive === false) return <SectionPaused className="section-yoga" />;
 
   // Configuraciones de escala
   const mPrincipal = 0.7; 

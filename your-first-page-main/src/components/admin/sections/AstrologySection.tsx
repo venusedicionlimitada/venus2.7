@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Section, ItemRow, EditorModal, ArticlePreviewModal, Label, TextInput, TextArea, GhostButton, PrimaryButton } from "@/components/admin/AdminUI";
 import { ContentForm } from "@/components/ContentForm";
 import { uploadImage, slugify } from "@/lib/utils";
+import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
 
 type AstroRow = {
   id: string;
@@ -15,6 +16,7 @@ type AstroRow = {
   body: string | null;
   cover_image_url: string | null;
   published: boolean;
+  active: boolean;
   sort_order: number;
   tags: string | null;
   categoria_emocional: string | null;
@@ -42,6 +44,7 @@ export function AstrologySection() {
       body: form.body ?? null,
       cover_image_url: form.cover_image_url ?? null,
       published: form.published ?? false,
+      active: form.active ?? false,
       sort_order: form.sort_order ?? 0,
       tags: form.tags ?? null,
       categoria_emocional: form.categoria_emocional ?? null,
@@ -60,12 +63,14 @@ export function AstrologySection() {
   }
 
   return (
+    <>
+    <SectionPauseControl section="astrologia" />
     <Section
       title="Artículos de Astrología"
-      onNew={() => setEditing({ tarjetas: "Lunación", published: false, sort_order: (items?.length ?? 0) + 1 })}
+      onNew={() => setEditing({ tarjetas: "Lunación", published: false, active: false, sort_order: (items?.length ?? 0) + 1 })}
       items={items}
       renderItem={(it) => (
-        <ItemRow key={it.id} title={it.title} subtitle={`${it.tarjetas} · ${it.date_label}`} published={it.published}
+        <ItemRow key={it.id} title={it.title} subtitle={`${it.tarjetas} · ${it.date_label}${it.active ? "" : " · desactivado"}`} published={it.published}
           onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} onPreview={() => setPreview(it)} />
       )}
       modal={
@@ -109,5 +114,6 @@ export function AstrologySection() {
         </>
       }
     />
+    </>
   );
 }

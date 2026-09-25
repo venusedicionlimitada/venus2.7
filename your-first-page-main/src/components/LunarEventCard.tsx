@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { supabase } from "@/integrations/supabase/client";
 import { InCardCoverImage } from "@/components/SideRecommendImage";
+import { sectionIsOpen, useSectionActive, useSectionFlags } from "@/lib/hooks/useSectionActive";
 
 type LunarEventCardProps = {
   onCoverUrl?: (url: string | null) => void;
@@ -14,6 +15,8 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
   const [loading, setLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(6);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const eventosAbiertos = useSectionActive("eventos");
+  const sectionFlags = useSectionFlags();
 
   useEffect(() => {
     async function fetchEventoYPublicaciones() {
@@ -44,6 +47,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
           raw_fecha: eventoData.fecha_evento,
           raw_hora: eventoData.hora_evento,
           cover_image_url: eventoData.cover_image_url ?? null,
+          active: eventoData.active !== false,
         });
         onCoverUrl?.(eventoData.cover_image_url ?? null);
 
@@ -142,16 +146,16 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
   if (loading) {
     return (
-      <div className="section-forest border border-cream/30 bg-cream/5 p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
-        <p className="text-sm text-cream/60 italic">Cargando evento lunar…</p>
+      <div className="group border p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
+        <p className="text-sm italic">Cargando evento lunar…</p>
       </div>
     );
   }
 
   if (!evento) {
     return (
-      <div className="section-forest border border-cream/30 bg-cream/5 p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
-        <p className="text-sm text-cream/60 italic text-center px-6">
+      <div className="group border p-5 sm:p-8 w-full min-h-[240px] md:min-h-[350px] flex items-center justify-center">
+        <p className="text-sm italic text-center px-6">
           No hay ningún evento lunar publicado. Actívalo en Admin → Eventos.
         </p>
       </div>
@@ -161,10 +165,10 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <div 
-        onClick={() => setIsOpen(true)} 
-        className="cursor-pointer w-full min-w-0 block text-left"
+        onClick={() => { if (evento.active && eventosAbiertos !== false) setIsOpen(true); }} 
+        className={`${evento.active && eventosAbiertos !== false ? "cursor-pointer" : "cursor-default"} w-full min-w-0 block text-left`}
       >
-        <div className="group section-forest border border-cream/30 bg-cream/5 hover:border-gold p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
+        <div className="group border p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between transition-colors w-full min-h-[240px] md:min-h-[350px]">
           
           {/* ===== VERSIÓN MÓVIL (Orden exacto: Próxima, Título, Sub, Descripción, Fecha, Hora, Cuenta atrás) ===== */}
           <div className="flex flex-col sm:hidden w-full min-w-0">
@@ -262,10 +266,10 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
 
           <div className="mt-2 sm:mt-0 pt-2 flex justify-end">
   <div className="flex flex-col items-end gap-1">
-    <span className="inline-block border-b border-cream/30 pb-0.5 text-base italic tracking-[0.1em] text-cream/70 group-hover:text-gold group-hover:border-gold transition-colors">
-      quiero saber más
+    <span className="inline-block border-b pb-0.5 text-base italic tracking-[0.1em] transition-colors">
+      {evento.active && eventosAbiertos !== false ? "quiero saber más" : "Próximamente"}
     </span>
-    <span className="sm:block font-sans text-xs uppercase tracking-widest text-cream/60">
+    <span className="sm:block font-sans text-xs uppercase tracking-widest">
       CONTENIDO RELACIONADO
     </span>
   </div>
@@ -319,6 +323,26 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                 {publicacionesVisibles.map((p) => (
                   <div key={p.id} className="w-full">
                     <div className="section-doradojoya">
+                      {p.active === false || !sectionIsOpen(sectionFlags, p.seccion) ? (
+                      <div className="border border-cream/30 bg-cream/5 p-4 w-full overflow-hidden flex gap-4 items-center relative">
+                        {p.cover_image_url && (
+                          <img 
+                            src={p.cover_image_url} 
+                            alt="" 
+                            className="w-12 h-12 object-cover flex-shrink-0 border border-cream/10" 
+                          />
+                        )}
+                        <div className="flex flex-col flex-grow min-w-0 text-left">
+                          <h5 className="font-display text-base text-ink truncate group-hover:text-gold transition-colors">
+                            {p.title || p.titulo}
+                          </h5>
+                          <p className="font-sans text-xs text-ink/70 line-clamp-3 mt-1 leading-normal">
+                            {p.description || p.descripcion || p.extracto || ""}
+                          </p>
+                          <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-gold">Próximamente</p>
+                        </div>
+                      </div>
+                      ) : (
                       <a 
                         href={`/${p.seccion}/${p.slug || p.id}`}
                         className="group border border-cream/30 bg-cream/5 p-4 transition-colors hover:border-gold w-full overflow-hidden flex gap-4 items-center relative block cursor-pointer"
@@ -339,6 +363,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                           </p>
                         </div>
                       </a>
+                      )}
                     </div>
                     
                     <div className="flex items-center justify-between mt-2 px-1 text-[11px]">

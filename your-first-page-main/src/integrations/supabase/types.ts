@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       astrology_articles: {
         Row: {
+          active: boolean
           body: string | null
           cover_image_url: string | null
           created_at: string
@@ -29,6 +30,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active?: boolean
           body?: string | null
           cover_image_url?: string | null
           created_at?: string
@@ -42,6 +44,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active?: boolean
           body?: string | null
           cover_image_url?: string | null
           created_at?: string
@@ -106,6 +109,7 @@ export type Database = {
       }
       diary_entries: {
         Row: {
+          active: boolean
           body: string | null
           cover_image_url: string | null
           created_at: string
@@ -118,6 +122,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active?: boolean
           body?: string | null
           cover_image_url?: string | null
           created_at?: string
@@ -130,6 +135,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active?: boolean
           body?: string | null
           cover_image_url?: string | null
           created_at?: string
@@ -249,6 +255,7 @@ export type Database = {
       }
       services: {
         Row: {
+          active: boolean
           body: string
           created_at: string
           duration: string
@@ -260,6 +267,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active?: boolean
           body: string
           created_at?: string
           duration: string
@@ -271,6 +279,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active?: boolean
           body?: string
           created_at?: string
           duration?: string
@@ -310,6 +319,21 @@ export type Database = {
           lead?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      site_sections: {
+        Row: {
+          active: boolean
+          id: string
+        }
+        Insert: {
+          active?: boolean
+          id: string
+        }
+        Update: {
+          active?: boolean
+          id?: string
         }
         Relationships: []
       }

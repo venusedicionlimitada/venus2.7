@@ -2,11 +2,12 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
 import { uploadImage } from "@/lib/utils";
+import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
 
 type EventRow = {
   id: string; titulo: string; subtitulo: string; description: string; 
   cover_image_url: string | null; fecha_evento: string; hora_evento: string;
-  published: boolean; related_article_ids: string[]; sort_order: number;
+  published: boolean; active: boolean; related_article_ids: string[]; sort_order: number;
   tags: string | null; categoria_emocional: string | null;
 };
 
@@ -24,7 +25,7 @@ export function EventsSection() {
     const payload = {
       titulo: form.titulo ?? "", subtitulo: form.subtitulo ?? "", description: form.description ?? "",
       cover_image_url: form.cover_image_url ?? null, fecha_evento: form.fecha_evento ?? "",
-      hora_evento: form.hora_evento ?? "", published: form.published ?? false,
+      hora_evento: form.hora_evento ?? "", published: form.published ?? false, active: form.active ?? false,
       related_article_ids: form.related_article_ids ?? [], sort_order: form.sort_order ?? 0,
       tags: form.tags ?? null, categoria_emocional: form.categoria_emocional ?? null,
     };
@@ -42,12 +43,14 @@ export function EventsSection() {
   }
 
   return (
+    <>
+    <SectionPauseControl section="eventos" />
     <Section
       title="Eventos Lunares"
-      onNew={() => setEditing({ published: false, sort_order: (items?.length ?? 0) + 1 })}
+      onNew={() => setEditing({ published: false, active: false, sort_order: (items?.length ?? 0) + 1 })}
       items={items}
       renderItem={(it) => (
-        <ItemRow key={it.id} title={it.titulo} subtitle={`${it.fecha_evento} ${it.hora_evento}`} published={it.published}
+        <ItemRow key={it.id} title={it.titulo} subtitle={`${it.fecha_evento} ${it.hora_evento}${it.active ? "" : " · desactivado"}`} published={it.published}
           onEdit={() => setEditing(it)} onDelete={() => remove(it.id)} />
       )}
       modal={editing && (
@@ -56,6 +59,7 @@ export function EventsSection() {
         </EditorModal>
       )}
     />
+    </>
   );
 }
 
@@ -89,13 +93,20 @@ function EventForm({ initial, onSubmit, onCancel }: {
         {v.cover_image_url && <img src={v.cover_image_url} alt="" className="mt-2 max-h-40 border border-border" />}
         <input type="file" accept="image/*" onChange={handleImage} className="mt-2 text-xs text-ink/70" />
       </div>
-      <div className="flex items-center gap-3">
-        <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
-        <label className="ml-6 flex items-center gap-2 text-sm text-ink/80">
+      <div className="flex flex-wrap items-center gap-6">
+        <div className="flex items-center gap-3">
+          <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />
+        </div>
+        <label className="flex items-center gap-2 text-sm text-ink/80">
+          <input type="checkbox" checked={!!v.active} onChange={(e) => setV({ ...v, active: e.target.checked })} />
+          Activado
+        </label>
+        <label className="flex items-center gap-2 text-sm text-ink/80">
           <input type="checkbox" checked={!!v.published} onChange={(e) => setV({ ...v, published: e.target.checked })} />
           Publicado
         </label>
       </div>
+      <p className="text-xs text-ink/55">Publicado: se ve en la página. Activado: «quiero saber más» abre el contenido. Publicado y desactivado: se ve «Próximamente».</p>
       <div className="flex justify-end gap-3 pt-4"><GhostButton type="button" onClick={onCancel}>Cancelar</GhostButton><PrimaryButton type="submit" disabled={busy}>{busy ? "Guardando…" : "Guardar"}</PrimaryButton></div>
     </form>
   );
