@@ -114,7 +114,7 @@ export function AppLandingBody() {
             <h1 className="mt-10 font-display font-light text-[2.55rem] leading-[1.05] text-cream/80 sm:mt-12 sm:text-4xl md:mt-0 md:translate-y-6 md:text-5xl md:text-center">
               Cuéntale a Venus
             </h1>
-            <p className="mt-3 font-sans text-xl leading-tight tracking-[0.2em] text-cream/90 sm:text-2xl md:translate-y-6 md:text-2xl md:text-center">
+            <p className="mt-3 font-sans text-xl leading-tight tracking-[0.04em] text-cream/90 sm:text-2xl md:translate-y-6 md:text-2xl md:text-center">
               a tu propio ritmo
             </p>
             <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-cream/75 sm:max-w-md sm:text-base md:ml-auto md:mr-0 md:w-fit md:max-w-none md:translate-y-8 md:text-center">

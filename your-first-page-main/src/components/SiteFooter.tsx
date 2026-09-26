@@ -28,7 +28,7 @@ function NewsletterSignup() {
 
   if (sent) {
     return (
-      <p className="mt-1 text-sm text-cream/80 md:-translate-x-[80px] md:translate-y-[10px]">
+      <p className="mt-1 text-sm text-cream/80">
         Te has suscrito. Gracias.
       </p>
     );
@@ -36,7 +36,7 @@ function NewsletterSignup() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="mt-1 md:-translate-x-[80px] md:translate-y-[10px]">
+      <div className="mt-1">
         <input
           type="email"
           name="email"
@@ -45,21 +45,46 @@ function NewsletterSignup() {
           className="w-full bg-transparent border-b border-gold/80 pb-1 text-sm focus:outline-none focus:border-wine text-cream"
         />
       </div>
-      <div className="w-full flex justify-center md:block mt-3 md:-translate-x-[80px] md:translate-y-[20px]">
+      <div className="mt-3 flex w-full justify-center md:block">
         <Button
           type="submit"
           disabled={sending}
-          className="border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:rounded-md disabled:opacity-60"
+          className="border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:w-full md:tracking-widest md:rounded-3xl disabled:opacity-60"
         >
           {sending ? "Enviando…" : "Suscribirme a Newsletter"}
         </Button>
       </div>
       {error && (
-        <p className="mt-3 text-sm text-cream/80 md:-translate-x-[80px]">
+        <p className="mt-3 text-sm text-cream/80">
           {error}
         </p>
       )}
     </form>
+  );
+}
+
+function FooterSupport() {
+  return (
+    <>
+      <p className="eyebrow tracking-[0.12em] !text-gold md:tracking-[0.35em]">Soporte</p>
+      <ul className="mt-1 space-y-1.5 text-sm text-cream/80">
+        <li><a href="#" className="hover:text-gold">Preguntas Frecuentes</a></li>
+      </ul>
+    </>
+  );
+}
+
+function SocialIcon({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a href="#" aria-label={label} className="inline-flex text-cream/80 hover:text-gold">
+      {children}
+    </a>
   );
 }
 
@@ -79,7 +104,7 @@ export function SiteFooter() {
             </span>
           </div>
 
-          <div className="w-full sm:w-auto flex flex-col items-center justify-center">
+          <div className="mt-4 flex w-full flex-col items-center justify-center sm:mt-0 sm:w-auto">
             <div className="flex flex-col items-center justify-center scale-[0.65] sm:scale-[0.55] origin-center sm:origin-right border border-[#706f6d] px-6 py-4 sm:px-8 sm:py-5">
               <span className="font-['Cormorant_Garamond'] text-[2rem] sm:text-[2.6rem] text-ink tracking-[0.1em] uppercase leading-none">
                 LUNA FLOW
@@ -88,7 +113,7 @@ export function SiteFooter() {
                 ASTROLOGÍA EMOCIONAL
               </span>
             </div>
-            <p className="sm:hidden font-display italic text-sm text-ink/80 tracking-wide mt-[-10px] text-center">
+            <p className="mt-8 text-center font-display text-sm italic tracking-wide text-ink/80 sm:hidden">
   by <span className="font-display not-italic font-normal">VENUS</span> <span className="not-italic font-sans text-[0.45rem] tracking-[0.1em] uppercase font-normal">EDICIÓN LIMITADA</span>
 </p>
           </div>
@@ -96,69 +121,112 @@ export function SiteFooter() {
         </div>
       </div>
 
-      {/* Línea divisoria */}
-      <div className="mx-auto max-w-8xl px-6 md:px-16 -mt-2 sm:-mt-[18px] mb-4 sm:mb-[18px]"> 
-        <div className="w-full border-t-2 border-forest/80" />
-      </div>
-
       {/* Navegación + contacto */}
       <div className="section-forest">
         <div className="mx-auto max-w-7xl px-6 sm:px-10 pt-6 pb-6 md:pt-3 md:pb-9">
-          <div className="grid grid-cols-2 gap-8 sm:gap-12 sm:grid-cols-2 md:grid-cols-5">
-            <div>
-              <p className="eyebrow !text-gold">Explorar</p>
-              <ul className="mt-1 space-y-1.5 text-sm text-cream">
-                <li><Link to="/servicios" className="hover:text-gold">Terapias</Link></li>
-                <li><Link to="/diario" className="hover:text-gold">Reflexiones</Link></li>
-                <li><Link to="/astrologia" className="hover:text-gold">Astrología</Link></li>
-                <li><Link to="/yoga" className="hover:text-gold">Yoga</Link></li>
-                <li><Link to="/eventos" className="hover:text-gold">Astrología Emocional</Link></li>
-                <li><Link to="/recursos" className="hover:text-gold">Recursos</Link></li>
-                <li><Link to="/app" className="hover:text-gold">App</Link></li>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-4 md:gap-10 xl:grid-cols-[max-content_max-content_minmax(0,1fr)] xl:justify-start xl:gap-x-14">
+            <div className="md:order-1">
+              <p className="eyebrow tracking-[0.12em] !text-gold md:tracking-[0.35em]">Explorar</p>
+              <ul className="mt-1 text-sm text-cream max-md:flex max-md:flex-col max-md:gap-1.5 md:space-y-1.5">
+                <li className="max-md:order-6"><Link to="/servicios" className="hover:text-gold">Terapias</Link></li>
+                <li className="max-md:order-1"><Link to="/diario" className="hover:text-gold">Reflexiones</Link></li>
+                <li className="max-md:order-4"><Link to="/astrologia" className="hover:text-gold">Astrología</Link></li>
+                <li className="max-md:order-2"><Link to="/yoga" className="hover:text-gold">Yoga</Link></li>
+                <li className="max-md:order-3"><Link to="/eventos" className="hover:text-gold">Astrología Emocional</Link></li>
+                <li className="max-md:order-5"><Link to="/recursos" className="hover:text-gold">Recursos</Link></li>
+                <li className="max-md:order-7"><Link to="/app" className="hover:text-gold">App</Link></li>
               </ul>
             </div>
 
-            <div>
-              <p className="eyebrow !text-gold md:-translate-x-[50px]">Cercanía</p>
-              <ul className="mt-1 space-y-1.5 md:-translate-x-[50px] text-sm text-cream/80">
-                <li><Link to="/sobre-mi" className="hover:text-gold">Sobre mí</Link></li>
-                <li><Link to="/contacto" className="hover:text-gold">Contacto</Link></li>
-              </ul>
+            <div className="md:hidden">
+              <FooterSupport />
+            </div>
 
-              <div className="mt-4 flex flex-col items-start gap-2.5 md:-translate-x-[50px]">
-                <p className="eyebrow !text-gold">Conversemos</p>
-                <p className="text-sm leading-relaxed text-cream/80">
-                  Para reservas y consultas personales.
+            <div className="md:order-2">
+              <div className="md:block">
+                <p className="eyebrow tracking-[0.12em] !text-gold md:tracking-[0.35em]">Comunidad</p>
+                <ul className="mt-1 flex items-center justify-start gap-4 text-cream/80 md:block md:space-y-1.5 md:text-sm">
+                  <li>
+                    <span className="md:hidden">
+                      <SocialIcon label="Instagram">
+                        <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+                          <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+                          <circle cx="12" cy="12" r="3.8" />
+                          <circle cx="17.4" cy="6.6" r="0.8" fill="currentColor" stroke="none" />
+                        </svg>
+                      </SocialIcon>
+                    </span>
+                    <a href="#" className="hidden hover:text-gold md:inline">Instagram</a>
+                  </li>
+                  <li>
+                    <span className="md:hidden">
+                      <SocialIcon label="Facebook">
+                        <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
+                          <path d="M14.2 8.4h2.3V5.6h-2.3c-2 0-3.4 1.4-3.4 3.5v1.5H8.6v2.8h2.2V20h2.8v-6.6h2.3l.4-2.8h-2.7V9.3c0-.5.3-.9.9-.9z" />
+                        </svg>
+                      </SocialIcon>
+                    </span>
+                    <a href="#" className="hidden hover:text-gold md:inline">Facebook</a>
+                  </li>
+                  <li>
+                    <span className="md:hidden">
+                      <SocialIcon label="YouTube">
+                        <svg viewBox="0 0 24 24" className="size-5" fill="currentColor" aria-hidden="true">
+                          <path d="M22.5 12.2s0-3-.4-4.3c-.2-.8-.8-1.5-1.6-1.7C19 5.8 12 5.8 12 5.8s-7 0-8.5.4c-.8.2-1.4.9-1.6 1.7-.4 1.3-.4 4.3-.4 4.3s0 3 .4 4.3c.2.8.8 1.5 1.6 1.7 1.5.4 8.5.4 8.5.4s7 0 8.5-.4c.8-.2 1.4-.9 1.6-1.7.4-1.3.4-4.3.4-4.3zM9.9 15.4V9l5.8 3.2-5.8 3.2z" />
+                        </svg>
+                      </SocialIcon>
+                    </span>
+                    <a href="#" className="hidden hover:text-gold md:inline">YouTube</a>
+                  </li>
+                </ul>
+              </div>
+              <div className="mt-8 hidden md:block">
+                <FooterSupport />
+              </div>
+            </div>
+
+            <div className="contents md:order-3 md:col-span-2 md:grid md:grid-cols-[minmax(0,17rem)_minmax(0,1fr)] md:content-start md:items-start md:gap-x-8 md:gap-y-8 xl:col-span-1 xl:grid-cols-[17rem_minmax(0,1fr)] xl:gap-x-14">
+              <div>
+                <p className="mt-1 text-lg leading-relaxed italic text-cream/90 xl:whitespace-nowrap">
+                  Cada proceso comienza con <span className="max-md:block">una conversación</span>
                 </p>
                 <Button
                   asChild
                   size="sm"
-                  className="h-7 max-w-full whitespace-normal px-2.5 text-center text-[0.68rem] leading-tight border border-gold bg-gold/70 text-cream hover:bg-cream hover:text-wine transition-colors rounded-full md:rounded-md"
+                  className="mt-3 h-9 w-full whitespace-nowrap rounded-full border border-gold bg-gold/70 px-3 text-center text-sm leading-tight text-cream transition-colors hover:bg-cream hover:text-wine md:h-9 md:w-full md:px-4 md:py-2 md:text-base md:font-normal md:italic md:leading-normal md:tracking-widest md:rounded-3xl"
                 >
                   <Link to="/contacto">Escríbeme aquí</Link>
                 </Button>
               </div>
-            </div>
 
-            <div>
-              <p className="eyebrow !text-gold md:-translate-x-[60px]">Soporte</p>
-              <ul className="mt-1 space-y-1.5 text-sm text-cream/80 md:-translate-x-[60px]">
-                <li><a href="#" className="hover:text-gold">Preguntas Frecuentes</a></li>
-                <li><a href="#" className="hover:text-gold">Garantías</a></li>
-              </ul>
-            </div>
+              <div className="md:col-span-1 md:col-start-1">
+                <p className="eyebrow tracking-[0.12em] !text-gold md:tracking-[0.35em]">Newsletter</p>
+                <NewsletterSignup />
+              </div>
 
-            <div>
-              <p className="eyebrow !text-gold md:-translate-x-[70px]">Comunidad</p>
-              <ul className="mt-1 space-y-1.5 text-sm text-cream/80 md:-translate-x-[70px]">
-                <li><a href="#" className="hover:text-gold">Instagram</a></li>
-                <li><a href="#" className="hover:text-gold">YouTube</a></li>
-              </ul>
-            </div>
-
-            <div className="col-span-2 sm:col-span-2 md:col-span-1">
-              <p className="eyebrow !text-gold md:-translate-x-[15px]">Newsletter</p>
-              <NewsletterSignup />
+              <div className="mt-6 flex w-full flex-col items-center md:col-start-2 md:row-start-1 md:row-span-2 md:mt-0 md:flex-row md:items-start md:justify-end md:self-stretch md:pl-6">
+                <div className="flex flex-col items-center">
+                  <div className="border border-gold/45 px-4 py-3 md:px-[1.19rem] md:py-[0.95rem]">
+                    <p className="flex w-fit flex-col items-end">
+                      <span className="font-display text-[2.45rem] leading-none tracking-[0.06em] text-cream md:text-[3rem]">
+                        VENUS
+                      </span>
+                      <span className="mt-1 font-sans text-[0.5rem] leading-none tracking-[0.18em] text-cream md:mt-[0.18rem] md:text-[0.58rem]">
+                        App
+                      </span>
+                    </p>
+                  </div>
+                  <p className="mt-3 whitespace-nowrap text-center font-display text-[clamp(1.2rem,7vw,1.7rem)] font-light italic leading-none tracking-[0.04em] text-cream/80 md:whitespace-normal md:text-[1.83rem] md:leading-[1.05] md:tracking-wide">
+                    Cuéntale a Venus
+                  </p>
+                  <a
+                    href="https://app.venusedicionlimitada.com"
+                    className="mt-4 inline-flex items-center justify-center rounded-xl border border-gold bg-granate px-5 py-2.5 text-center text-[0.78rem] font-medium uppercase tracking-[0.16em] text-cream transition-colors hover:bg-gold hover:text-granate md:px-4 md:py-3 md:text-[0.88rem] md:tracking-[0.18em]"
+                  >
+                    Conoce la App
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>

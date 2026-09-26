@@ -236,8 +236,8 @@ function Index() {
       <section className="section-forest">
         <div className="mx-auto max-w-6xl px-6 pt-12 pb-12 md:pt-16 md:pb-16">
           <div className="text-center">
-            <p className="eyebrow text-gold text-lg">ASTROLOGÍA EMOCIONAL</p>
-            <h2 className="eyebrow mt-6 text-cream/85 md:text-lg">
+            <p className="eyebrow text-lg tracking-[0.08em] text-gold">ASTROLOGÍA EMOCIONAL</p>
+            <h2 className="eyebrow mt-6 tracking-[0.08em] text-cream/85 md:text-lg">
               Una práctica tejida a mano.
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-cream/80 md:mt-3 md:w-full md:max-w-none md:text-base">
@@ -300,10 +300,10 @@ function Index() {
       )}
 
       {/* Carrusel de contenido */}
-      <section className="w-full bg-white pt-2 pb-6 md:pt-4 md:pb-8 overflow-hidden">
+      <section className="w-full bg-white pt-5 pb-6 md:pt-7 md:pb-8 overflow-hidden">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="text-center mb-6">
-            <p className="eyebrow text-clay">Contenido</p>
+          <div className="mb-6 text-center md:mb-8">
+            <p className="eyebrow tracking-[0.16em] text-clay">Contenido recomendado</p>
             <h2 className="hidden mt-2 font-display text-2xl text-ink md:text-3xl font-light">
               Explora nuestro contenido
             </h2>
@@ -373,7 +373,7 @@ function Index() {
       {/* 4. Bloque de Introducción */}
       <section className="section-cream pt-4 pb-8 sm:pt-14 sm:pb-6 text-center">
         <div className="relative mx-auto max-w-7xl px-6">
-          <p className="eyebrow text-base tracking-[0.2em] text-wine sm:text-xl sm:tracking-[0.35em]">
+          <p className="eyebrow text-base tracking-[0.08em] text-wine sm:text-xl">
             Astrología·Emocional
           </p>
         </div>
@@ -411,14 +411,30 @@ function Index() {
             className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
           />
           <div className="absolute inset-0 bg-[#1c3329]/78" />
-          <div className="relative mx-auto max-w-5xl px-6 py-16 text-center sm:py-20">
-            <p className="eyebrow text-gold">Venus App</p>
-            <h2 className="mt-4 font-display text-4xl leading-tight sm:text-5xl">Conversa a tu ritmo.</h2>
-            <p className="mt-2 font-display text-2xl italic text-cream/85">Cuéntale a Venus.</p>
-            <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-cream/75">
-              Tu carta y la sinastría, en una consulta de astrología emocional. 14 días de demo gratuita.
-            </p>
-            <div className="mt-10">
+          <div className="relative mx-auto flex max-w-5xl flex-col items-center px-6 pb-16 pt-10 text-center sm:pb-20 sm:pt-12 lg:grid lg:max-w-7xl lg:grid-cols-[minmax(0,1fr)_22rem_minmax(0,1fr)] lg:items-center lg:gap-x-8 lg:px-8 xl:gap-x-12">
+            <p className="eyebrow text-xl tracking-[0.16em] text-gold sm:text-2xl lg:hidden">Venus App</p>
+            <div className="lg:col-start-3 lg:row-start-1 lg:px-2">
+              <h2 className="mt-10 font-display text-4xl font-light leading-tight text-cream/80 sm:mt-12 sm:text-5xl lg:mt-0">Cuéntale a Venus</h2>
+              <p className="mt-1 font-sans text-xl leading-tight tracking-[0.04em] text-cream/90 sm:text-2xl lg:mt-3">a tu propio ritmo</p>
+              <div className="mt-6 text-center lg:hidden">
+                <p className="eyebrow text-[0.75rem] leading-[1.9] tracking-[0.25em] text-gold sm:text-[0.85rem]">Tu consulta</p>
+                <p className="eyebrow text-[0.75rem] leading-[1.9] tracking-[0.25em] text-gold sm:text-[0.85rem]">personalizada de</p>
+                <p className="eyebrow text-[0.75rem] leading-[1.9] tracking-[0.25em] text-gold sm:text-[0.85rem]">Astrología emocional</p>
+              </div>
+              <div className="mx-auto mt-9 hidden max-w-xs lg:block">
+                <p className="font-sans text-base italic leading-[1.85] text-cream/75">Tu carta,</p>
+                <p className="font-sans text-base italic leading-[1.85] text-cream/75">y si la pregunta es de dos,</p>
+                <p className="font-sans text-base italic leading-[1.85] text-cream/75">la sinastría</p>
+              </div>
+              <a
+                href="https://app.venusedicionlimitada.com"
+                className="app-cta-loop app-cta-loop-strong mt-10 hidden items-center justify-center rounded-3xl border border-gold bg-granate px-10 py-4 text-sm uppercase tracking-[0.28em] text-cream transition-colors hover:bg-gold hover:text-granate lg:inline-flex"
+              >
+                Ir a la App
+              </a>
+              <p className="mt-4 hidden font-sans text-sm leading-relaxed text-cream/75 lg:block">14 DÍAS DE PRUEBA GRATUITA</p>
+            </div>
+            <div className="mt-10 w-full lg:col-start-2 lg:row-start-1 lg:mt-0 lg:w-[22rem]">
               <LandingVideo
                 src=""
                 poster={splash}
@@ -431,27 +447,32 @@ function Index() {
             </div>
             <a
               href="https://app.venusedicionlimitada.com"
-              className="app-cta-loop mt-12 inline-flex w-auto items-center justify-center rounded-2xl border border-gold bg-granate px-6 py-2.5 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:app-cta-loop-strong md:hover:bg-gold md:hover:text-granate"
+              className="app-cta-loop mt-12 inline-flex w-auto items-center justify-center rounded-2xl border border-gold bg-granate px-6 py-2.5 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:app-cta-loop-strong md:hover:bg-gold md:hover:text-granate lg:hidden"
             >
               Ir a la App
             </a>
+            <p className="mt-4 font-sans text-sm leading-relaxed text-cream/75 lg:hidden">14 DÍAS DE PRUEBA GRATUITA</p>
+            <div className="hidden lg:col-start-1 lg:row-start-1 lg:flex lg:flex-col lg:items-center">
+              <div className="w-fit border border-gold/45 px-7 py-6 xl:px-10 xl:py-8">
+                <p className="flex w-fit flex-col items-end">
+                  <span className="font-display text-[3.15rem] leading-none tracking-[0.06em] text-cream xl:text-[4.35rem]">
+                    VENUS
+                  </span>
+                  <span className="mt-1.5 font-sans text-[0.9rem] leading-none tracking-[0.18em] text-cream xl:text-[1.12rem]">
+                    App
+                  </span>
+                </p>
+              </div>
+              <div className="mt-12 text-center xl:mt-14">
+                <p className="eyebrow text-[0.95rem] leading-[1.9] tracking-[0.25em] text-gold xl:text-[1.1rem] xl:leading-[2]">Tu consulta</p>
+                <p className="eyebrow text-[0.95rem] leading-[1.9] tracking-[0.25em] text-gold xl:text-[1.1rem] xl:leading-[2]">personalizada de</p>
+                <p className="eyebrow text-[0.95rem] leading-[1.9] tracking-[0.25em] text-gold xl:text-[1.1rem] xl:leading-[2]">Astrología emocional</p>
+              </div>
+            </div>
           </div>
         </section>
       )}
 
-      {/* CTA final — fondo blanco */}
-      <section className="mx-auto max-w-3xl px-6 py-24 text-center md:py-32">
-        <p className="eyebrow text-clay">¿Empezamos?</p>
-        <h2 className="mt-6 font-display text-4xl text-ink md:text-5xl">
-          Cada proceso comienza con una conversación.
-        </h2>
-        <Link
-          to="/contacto"
-          className="mt-10 inline-block border border-wine bg-wine px-10 py-4 text-xs uppercase tracking-[0.3em] text-cream hover:bg-transparent hover:text-wine transition-colors"
-        >
-          Escríbeme
-        </Link>
-      </section>
     </>
   );
 }
