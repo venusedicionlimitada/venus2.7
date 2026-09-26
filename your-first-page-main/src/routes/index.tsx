@@ -8,8 +8,7 @@ import { SideRecommendImage } from "../components/SideRecommendImage";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { HomeFeatureCard } from "@/components/cards/HomeFeatureCard";
 import { supabase } from "@/integrations/supabase/client";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet";
+import { EmotionalCategoryCard, tarjetasDeEmocion, type EmotionFicha } from "@/components/events/EmotionalCategoryCard";
 import { sectionIsOpen, useSectionFlags } from "@/lib/hooks/useSectionActive";
 import { LandingVideo } from "@/components/app/LandingVideo";
 import silkGreen from "@/assets/app/silk-green.png";
@@ -65,37 +64,6 @@ const CAROUSEL_SOURCES: { seccion: Seccion; table: string }[] = [
   { seccion: "astrologia", table: "astrology_articles" },
 ];
 
-function EmotionalCategoryCard({
-  cat,
-}: {
-  cat: { nombre: string; representative: { cover_image_url?: string | null } };
-}) {
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <div className="relative w-full">
-          <article className="w-full h-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-6 sm:p-8 transition-colors hover:border-gold">
-            {cat.representative.cover_image_url && (
-              <img
-                src={cat.representative.cover_image_url}
-                alt=""
-                className="mb-6 max-h-60 w-full object-cover"
-              />
-            )}
-            <span className="eyebrow text-gold">Categoría Emocional</span>
-            <h2 className="mt-6 font-display text-3xl text-cream">{cat.nombre}</h2>
-            <p className="mt-4 text-sm text-cream/85">Explorar herramientas y conexiones para esta sintonía.</p>
-          </article>
-        </div>
-      </SheetTrigger>
-
-      <SheetContent className="w-full sm:max-w-xl bg-background border-l border-gold/70 p-0 overflow-y-auto">
-        <CategoryDetailSheet categoria={cat.nombre} />
-      </SheetContent>
-    </Sheet>
-  );
-}
-
 function toPost(row: Record<string, unknown>, seccion: Seccion): Post {
   return {
     id: String(row.id ?? ""),
@@ -118,6 +86,7 @@ function Index() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [events, setEvents] = useState<any[]>([]);
+  const [fichas, setFichas] = useState<EmotionFicha[]>([]);
   const [items, setItems] = useState<Post[] | null>(null);
   const sectionFlags = useSectionFlags();
 
@@ -163,22 +132,19 @@ function Index() {
       .then(({ data }) => setEvents(data ?? []));
   }, []);
 
-  const categories = useMemo(() => {
-    const map = new Map();
-    events.forEach((event) => {
-      if (!event.categoria_emocional) return;
-      const cats = event.categoria_emocional.split(",").map((c: string) => c.trim());
-      cats.forEach((cat: string) => {
-        if (!map.has(cat)) {
-          map.set(cat, {
-            nombre: cat,
-            representative: event,
-          });
-        }
-      });
-    });
-    return Array.from(map.values());
-  }, [events]);
+  useEffect(() => {
+    supabase
+      .from("emociones")
+      .select("nombre, subtitulo, extracto, descripcion, cover_image_url")
+      .eq("published", true)
+      .order("sort_order")
+      .then(({ data }) => setFichas((data ?? []) as EmotionFicha[]));
+  }, []);
+
+  const categories = useMemo(
+    () => tarjetasDeEmocion(events, fichas),
+    [events, fichas],
+  );
 
   useEffect(() => {
     const checkMobile = () => {

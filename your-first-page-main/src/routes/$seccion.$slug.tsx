@@ -46,6 +46,8 @@ async function fetchEntry(seccion: string, slug: string): Promise<{ entry: Entry
 }
 
 export const Route = createFileRoute("/$seccion/$slug")({
+  validateSearch: (search: Record<string, unknown>): { desde?: "eventos" } =>
+    search.desde === "eventos" ? { desde: "eventos" } : {},
   loader: ({ params }) => fetchEntry(params.seccion, params.slug),
   head: ({ loaderData, params }) => {
     if (!loaderData) return { meta: [{ title: "Entrada no encontrada" }, { name: "robots", content: "noindex" }] };
@@ -82,6 +84,22 @@ export const Route = createFileRoute("/$seccion/$slug")({
   ),
 });
 
+function EnlaceVolver({ seccion, desdeEventos }: { seccion: string; desdeEventos: boolean }) {
+  const clase = "font-sans text-[0.75rem] font-light tracking-[0.06em] text-ink/60 transition-colors hover:text-wine md:text-base md:italic";
+  if (desdeEventos) {
+    return (
+      <Link to="/eventos" className={clase}>
+        ← Astrología Emocional
+      </Link>
+    );
+  }
+  return (
+    <Link to="/$seccion" params={{ seccion }} className={clase}>
+      ← {nombreSeccion(seccion)}
+    </Link>
+  );
+}
+
 function nombreSeccion(seccion: string) {
   if (seccion === "diario") return "Reflexiones";
   if (seccion === "astrologia") return "Astrología";
@@ -100,6 +118,8 @@ function palabrasEtiqueta(valor: string) {
 function DiaryDetail() {
   const { entry, related } = Route.useLoaderData();
   const { seccion } = Route.useParams();
+  const { desde } = Route.useSearch();
+  const desdeEventos = desde === "eventos";
   const sectionActive = useSectionActive(seccion as SectionId);
 
   if (sectionActive === false) {
@@ -122,9 +142,7 @@ function DiaryDetail() {
         <article className="mx-auto max-w-5xl px-6 py-20">
           
           <div className="mb-12">
-            <Link to="/$seccion" params={{ seccion }} className="font-sans text-[0.75rem] font-light tracking-[0.06em] text-ink/60 transition-colors hover:text-wine md:text-base md:italic">
-              ← {nombreSeccion(seccion)}
-            </Link>
+            <EnlaceVolver seccion={seccion} desdeEventos={desdeEventos} />
           </div>
 
           {entry.cover_image_url ? (
@@ -197,9 +215,7 @@ function DiaryDetail() {
 
         <hr className={entry.categoria_emocional ? "mt-2 border-border/50" : "mt-20 border-border/50"} />
           <div className="mt-12">
-            <Link to="/$seccion" params={{ seccion }} className="font-sans text-[0.75rem] font-light tracking-[0.06em] text-ink/60 transition-colors hover:text-wine md:text-base md:italic">
-              ← {nombreSeccion(seccion)}
-            </Link>
+            <EnlaceVolver seccion={seccion} desdeEventos={desdeEventos} />
           </div>
 
           {related.length > 0 && (

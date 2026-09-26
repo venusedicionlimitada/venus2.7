@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sectionIsOpen, useSectionFlags } from "@/lib/hooks/useSectionActive";
 
-export function CategoryDetailSheet({ categoria }: { categoria: string }) {
+export function CategoryDetailSheet({ categoria, descripcion }: { categoria: string; descripcion?: string }) {
   const [publicaciones, setPublicaciones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const sectionFlags = useSectionFlags();
@@ -36,6 +36,9 @@ export function CategoryDetailSheet({ categoria }: { categoria: string }) {
   return (
     <div className="p-8">
       <h2 className="font-display text-3xl text-ink mb-6">{categoria}</h2>
+      {descripcion ? (
+        <p className="mb-8 text-base leading-relaxed text-ink/80">{descripcion}</p>
+      ) : null}
       {loading ? <p>Cargando conexiones...</p> : (
         <div className="space-y-4">
           {publicaciones.map(p => (
@@ -46,7 +49,7 @@ export function CategoryDetailSheet({ categoria }: { categoria: string }) {
                 <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-gold">Próximamente</p>
               </div>
             ) : (
-            <a key={p.id} href={`/${p.seccion}/${p.slug || p.id}`} className="block p-4 border border-gold/20 hover:border-gold transition-colors">
+            <a key={p.id} href={`/${p.seccion}/${p.slug || p.id}?desde=eventos`} className="block p-4 border border-gold/20 hover:border-gold transition-colors">
               <h5 className="text-sm font-bold uppercase">{p.title || p.titulo}</h5>
               <p className="text-xs text-ink/60">{p.seccion}</p>
             </a>

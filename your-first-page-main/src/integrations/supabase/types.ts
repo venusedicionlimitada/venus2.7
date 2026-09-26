@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      emociones: {
+        Row: {
+          cover_image_url: string | null
+          created_at: string
+          descripcion: string | null
+          extracto: string | null
+          id: string
+          nombre: string
+          published: boolean
+          sort_order: number
+          subtitulo: string | null
+          updated_at: string
+        }
+        Insert: {
+          cover_image_url?: string | null
+          created_at?: string
+          descripcion?: string | null
+          extracto?: string | null
+          id?: string
+          nombre: string
+          published?: boolean
+          sort_order?: number
+          subtitulo?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cover_image_url?: string | null
+          created_at?: string
+          descripcion?: string | null
+          extracto?: string | null
+          id?: string
+          nombre?: string
+          published?: boolean
+          sort_order?: number
+          subtitulo?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       astrology_articles: {
         Row: {
           active: boolean

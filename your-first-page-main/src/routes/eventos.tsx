@@ -2,9 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "../components/SiteHeader";
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious, PaginationPages } from "@/components/ui/pagination";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { CategoryDetailSheet } from "@/components/events/CategoryDetailSheet";
+import { PaginationControl } from "@/components/ui/pagination-control";
+import { EmotionalCategoryCard, tarjetasDeEmocion, type EmotionFicha } from "@/components/events/EmotionalCategoryCard";
 import { useSectionActive } from "@/lib/hooks/useSectionActive";
 import { SectionPaused } from "@/components/SectionPaused";
 
@@ -15,6 +14,7 @@ export const Route = createFileRoute("/eventos")({
 function Eventos() {
   const sectionActive = useSectionActive("eventos");
   const [items, setItems] = useState<any[]>([]);
+  const [fichas, setFichas] = useState<EmotionFicha[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 6;
 
@@ -24,68 +24,52 @@ function Eventos() {
       .eq("published", true)
       .order("sort_order")
       .then(({ data }) => setItems((data ?? [])));
+    supabase.from("emociones")
+      .select("nombre, subtitulo, extracto, descripcion, cover_image_url")
+      .eq("published", true)
+      .order("sort_order")
+      .then(({ data }) => setFichas((data ?? []) as EmotionFicha[]));
   }, []);
 
-  // Lógica de Agrupación: transformamos eventos en categorías únicas
-  const categories = useMemo(() => {
-    const map = new Map();
-    items.forEach(event => {
-      if (!event.categoria_emocional) return;
-      const cats = event.categoria_emocional.split(',').map((c: string) => c.trim());
-      cats.forEach((cat: string) => {
-        if (!map.has(cat)) {
-          map.set(cat, {
-            nombre: cat,
-            representative: event // Usamos el primer evento encontrado para la foto y descripción
-          });
-        }
-      });
-    });
-    return Array.from(map.values());
-  }, [items]);
+  const categories = useMemo(
+    () => tarjetasDeEmocion(items, fichas),
+    [items, fichas],
+  );
 
   const indexOfLast = currentPage * postsPerPage;
   const indexOfFirst = indexOfLast - postsPerPage;
   const currentCategories = categories.slice(indexOfFirst, indexOfLast);
   const totalPages = Math.ceil(categories.length / postsPerPage);
 
-  if (sectionActive === false) return <SectionPaused className="section-forest" />;
+  if (sectionActive === false) return <SectionPaused className="bg-verdejoya text-cream" />;
 
   return (
     <>
       <SiteHeader />
-      <div className="section-forest">
-        <div className="mx-auto max-w-5xl px-6 py-24 md:py-32">
-          <header className="text-center">
-            <p className="eyebrow text-gold">Astrología Emocional</p>
-            <h1 className="mt-6 font-display text-5xl text-cream md:text-7xl">
-              Sintonizar con el ritmo cíclico.
+      <div className="bg-verdejoya text-cream">
+        <div className="mx-auto max-w-5xl px-6 pt-8 md:pt-12">
+          <header className="mx-auto max-w-4xl text-center">
+            <h1 className="eyebrow text-base tracking-[0.16em] text-gold sm:text-lg md:text-xl md:tracking-[0.2em]">
+              Astrología Emocional Aplicada
             </h1>
+            <p className="mt-6 text-base leading-relaxed text-cream/85 md:text-lg">
+              Elige la emoción que quieres trabajar. Cada una reúne las prácticas que acompañan esa energía: el cuerpo, la reflexión y el acompañamiento, según lo que haya disponible.
+            </p>
           </header>
-
-          <div className="mt-20 grid gap-6 md:grid-cols-3">
-  {currentCategories.map((cat) => (
-    <Sheet key={cat.nombre}>
-      <SheetTrigger asChild>
-        {/* Modifica los valores entre corchetes para ancho, alto y coordenadas */}
-        <div className="relative w-full">
-          <article className="w-full cursor-pointer group flex flex-col border border-cream/20 bg-cream/5 p-6 sm:p-8 transition-colors hover:border-gold">
-            {cat.representative.cover_image_url && (
-              <img src={cat.representative.cover_image_url} alt="" className="mb-6 max-h-60 w-full object-cover" />
-            )}
-            <span className="eyebrow text-gold">Categoría Emocional</span>
-            <h2 className="mt-6 font-display text-3xl text-cream">{cat.nombre}</h2>
-            <p className="mt-4 text-sm text-cream/85">Explorar herramientas y conexiones para esta sintonía.</p>
-          </article>
         </div>
-      </SheetTrigger>
 
-      <SheetContent className="w-full sm:max-w-xl bg-background border-l border-gold/70 p-0 overflow-y-auto">
-        <CategoryDetailSheet categoria={cat.nombre} />
-      </SheetContent>
-    </Sheet>
-  ))}
-</div>
+        <div className="mx-auto max-w-[66rem] px-6 pb-24 pt-20 md:pb-32">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-10">
+            {currentCategories.map((cat) => (
+              <EmotionalCategoryCard key={cat.nombre} cat={cat} />
+            ))}
+          </div>
+
+          <PaginationControl
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
       </div>
     </>

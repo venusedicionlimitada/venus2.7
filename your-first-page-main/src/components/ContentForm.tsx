@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { RichTextEditor } from "@/components/RichTextEditor";
+import { EmotionPicker } from "@/components/admin/EmotionPicker";
 
 interface ContentFormProps {
   initial: any;
@@ -66,7 +67,7 @@ export function ContentForm({
       
       <div><Label>Etiquetas (Manuales)</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. mindfulness, meditacion, conciencia" /></div>
       
-      <div><Label>Astrologia Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Integración, Sombra, Claridad" /></div>
+      <EmotionPicker value={v.categoria_emocional} onChange={(categoria_emocional) => setV({ ...v, categoria_emocional })} />
       
       <div>
         <Label>Imagen de portada</Label>

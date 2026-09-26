@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
 import { uploadImage } from "@/lib/utils";
 import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
+import { EmotionPicker } from "@/components/admin/EmotionPicker";
 
 type EventRow = {
   id: string; titulo: string; subtitulo: string; description: string; 
@@ -87,7 +88,7 @@ function EventForm({ initial, onSubmit, onCancel }: {
         <div><Label>Hora</Label><TextInput type="time" required value={v.hora_evento ?? ""} onChange={(e) => setV({ ...v, hora_evento: e.target.value })} /></div>
       </div>
       <div><Label>Etiquetas</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. Círculo, Luna Llena, Ritual" /></div>
-      <div><Label>Categoría Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Claridad, Integración, Sombra" /></div>
+      <EmotionPicker value={v.categoria_emocional} onChange={(categoria_emocional) => setV({ ...v, categoria_emocional })} />
       <div>
         <Label>Imagen</Label>
         {v.cover_image_url && <img src={v.cover_image_url} alt="" className="mt-2 max-h-40 border border-border" />}

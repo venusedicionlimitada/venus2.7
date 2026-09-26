@@ -346,7 +346,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                       </div>
                       ) : (
                       <a 
-                        href={`/${p.seccion}/${p.slug || p.id}`}
+                        href={`/${p.seccion}/${p.slug || p.id}?desde=eventos`}
                         className="group border border-cream/30 bg-cream/5 p-4 transition-colors hover:border-gold w-full overflow-hidden flex gap-4 items-center relative block cursor-pointer"
                       >
                         {p.cover_image_url && (

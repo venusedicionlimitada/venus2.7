@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
 import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
+import { EmotionPicker } from "@/components/admin/EmotionPicker";
 
 type ServiceRow = {
   id: string; num: string; title: string; duration: string; body: string;
@@ -73,7 +74,7 @@ function ServiceForm({ initial, onSubmit, onCancel }: {
       <div><Label>Duración / formato</Label><TextInput required value={v.duration ?? ""} onChange={(e) => setV({ ...v, duration: e.target.value })} placeholder="60 min · online" /></div>
       <div><Label>Descripción</Label><TextArea required rows={5} value={v.body ?? ""} onChange={(e) => setV({ ...v, body: e.target.value })} /></div>
       <div><Label>Etiquetas</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. Sesión, Acompañamiento, Online" /></div>
-      <div><Label>Categoría Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Sanación, Sombra, Integración" /></div>
+      <EmotionPicker value={v.categoria_emocional} onChange={(categoria_emocional) => setV({ ...v, categoria_emocional })} />
       <div className="flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-3">
           <Label>Orden</Label><TextInput type="number" value={v.sort_order ?? 0} onChange={(e) => setV({ ...v, sort_order: Number(e.target.value) })} className="!w-24 !mt-0" />

@@ -8,6 +8,7 @@ import { YogaSection } from "@/components/admin/sections/YogaSection";
 import { ResourcesSection } from "@/components/admin/sections/ResourcesSection";
 import { ServicesSection } from "@/components/admin/sections/ServicesSection";
 import { EventsSection } from "@/components/admin/sections/EventsSection";
+import { EmocionesSection } from "@/components/admin/sections/EmocionesSection";
 import { MessagesSection } from "@/components/admin/sections/MessagesSection";
 import { NewsletterSection } from "@/components/admin/sections/NewsletterSection";
 import { SobreMiSection } from "@/components/admin/sections/SobreMiSection";
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "diario" | "astrologia" | "yoga" | "recursos" | "servicios" | "eventos" | "sobre-mi" | "app" | "mensajes" | "newsletter";
+type Tab = "diario" | "astrologia" | "yoga" | "recursos" | "servicios" | "eventos" | "emociones" | "sobre-mi" | "app" | "mensajes" | "newsletter";
 
 function AdminPage() {
   const navigate = useNavigate();
@@ -59,7 +60,7 @@ function AdminPage() {
       </header>
 
       <nav className="mt-8 flex flex-wrap gap-2 border-b border-border/40">
-        {(["diario", "astrologia", "yoga", "recursos", "servicios", "eventos", "sobre-mi", "app", "mensajes", "newsletter"] as const).map((t) => (
+        {(["diario", "astrologia", "yoga", "recursos", "servicios", "eventos", "emociones", "sobre-mi", "app", "mensajes", "newsletter"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -67,7 +68,7 @@ function AdminPage() {
               tab === t ? "border-b-2 border-gold text-gold" : "text-ink/60 hover:text-ink"
             }`}
           >
-            {t === "app" ? "App" : t === "diario" ? "Diario" : t === "astrologia" ? "Astrología" : t === "yoga" ? "Yoga" : t === "recursos" ? "Recursos" : t === "servicios" ? "Terapias" : t === "eventos" ? "Eventos" : t === "sobre-mi" ? "Sobre mí" : t === "mensajes" ? "Mensajes" : "Newsletter"}
+            {t === "app" ? "App" : t === "diario" ? "Diario" : t === "astrologia" ? "Astrología" : t === "yoga" ? "Yoga" : t === "recursos" ? "Recursos" : t === "servicios" ? "Terapias" : t === "eventos" ? "Eventos" : t === "emociones" ? "Astrología emocional" : t === "sobre-mi" ? "Sobre mí" : t === "mensajes" ? "Mensajes" : "Newsletter"}
           </button>
         ))}
       </nav>
@@ -79,6 +80,7 @@ function AdminPage() {
         {tab === "recursos" && <ResourcesSection />}
         {tab === "servicios" && <ServicesSection />}
         {tab === "eventos" && <EventsSection />}
+        {tab === "emociones" && <EmocionesSection />}
         {tab === "sobre-mi" && <SobreMiSection />}
         {tab === "app" && <AppSection />}
         {tab === "mensajes" && <MessagesSection />}

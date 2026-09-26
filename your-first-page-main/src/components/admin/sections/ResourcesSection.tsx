@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { uploadImage } from "@/lib/utils";
 import { Section, ItemRow, EditorModal, Label, TextInput, TextArea, PrimaryButton, GhostButton } from "@/components/admin/AdminUI";
 import { SectionPauseControl } from "@/components/admin/SectionPauseControl";
+import { EmotionPicker } from "@/components/admin/EmotionPicker";
 
 type ResourceRow = {
   id: string; type: string; title: string; description: string;
@@ -145,7 +146,7 @@ function ResourceForm({ initial, onSubmit, onCancel }: {
         />
       </div>
       <div><Label>Etiquetas</Label><TextInput value={v.tags ?? ""} onChange={(e) => setV({ ...v, tags: e.target.value })} placeholder="ej. PDF, Plantilla, Práctica" /></div>
-      <div><Label>Categoría Emocional</Label><TextInput value={v.categoria_emocional ?? ""} onChange={(e) => setV({ ...v, categoria_emocional: e.target.value })} placeholder="ej. Enfoque, Claridad, Estructura" /></div>
+      <EmotionPicker value={v.categoria_emocional} onChange={(categoria_emocional) => setV({ ...v, categoria_emocional })} />
       <div className="flex flex-wrap items-center gap-6">
         <div className="flex items-center gap-3">
           <Label>Orden</Label>
