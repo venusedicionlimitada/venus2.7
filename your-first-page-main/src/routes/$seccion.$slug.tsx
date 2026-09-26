@@ -82,6 +82,21 @@ export const Route = createFileRoute("/$seccion/$slug")({
   ),
 });
 
+function nombreSeccion(seccion: string) {
+  if (seccion === "diario") return "Reflexiones";
+  if (seccion === "astrologia") return "Astrología";
+  if (seccion === "yoga") return "Yoga";
+  return seccion.charAt(0).toUpperCase() + seccion.slice(1).toLowerCase();
+}
+
+function palabrasEtiqueta(valor: string) {
+  return valor
+    .split(/,+/)
+    .flatMap((parte) => parte.trim().split(/\s+/))
+    .map((palabra) => palabra.trim())
+    .filter(Boolean);
+}
+
 function DiaryDetail() {
   const { entry, related } = Route.useLoaderData();
   const { seccion } = Route.useParams();
@@ -107,8 +122,8 @@ function DiaryDetail() {
         <article className="mx-auto max-w-5xl px-6 py-20">
           
           <div className="mb-12">
-            <Link to="/$seccion" params={{ seccion }} className="eyebrow text-gold hover:text-wine">
-              ← {seccion === "diario" ? "Reflexiones" : seccion}
+            <Link to="/$seccion" params={{ seccion }} className="font-sans text-[0.75rem] font-light tracking-[0.06em] text-ink/60 transition-colors hover:text-wine md:text-base md:italic">
+              ← {nombreSeccion(seccion)}
             </Link>
           </div>
 
@@ -124,8 +139,8 @@ function DiaryDetail() {
               
               <header className="w-full flex flex-col min-w-0">
                 <div className="w-full flex flex-wrap justify-between items-center gap-2">
-                  <span className="eyebrow text-gold">{entry.tarjetas}</span>
-                  <span className="eyebrow text-clay text-right">{entry.date_label}</span>
+                  <span className="font-sans text-[0.85rem] font-medium uppercase tracking-[0.16em] text-gold">{entry.tarjetas}</span>
+                  <span className="font-sans text-[0.7rem] font-normal uppercase tracking-[0.16em] text-clay text-right">{entry.date_label}</span>
                 </div>
                 <h1 className="mt-4 font-display leading-tight text-ink w-full break-words text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
                   {entry.title}
@@ -143,8 +158,8 @@ function DiaryDetail() {
           ) : (
             <header className="mt-8 w-full flex flex-col">
               <div className="w-full flex flex-wrap justify-between items-center gap-2">
-                <span className="eyebrow text-gold">{entry.tarjetas}</span>
-                <span className="eyebrow text-clay text-right">{entry.date_label}</span>
+                <span className="font-sans text-[0.85rem] font-medium uppercase tracking-[0.16em] text-gold">{entry.tarjetas}</span>
+                <span className="font-sans text-[0.7rem] font-normal uppercase tracking-[0.16em] text-clay text-right">{entry.date_label}</span>
               </div>
               <h1 className="mt-4 font-display leading-tight text-ink w-full break-words text-3xl sm:text-4xl md:text-5xl lg:text-6xl">
                 {entry.title}
@@ -168,33 +183,40 @@ function DiaryDetail() {
           )}
 
           {entry.categoria_emocional && (
-          <p className="eyebrow text-ink mt-16 mb-2 inline-block border border-gold px-4 py-2">
-            {entry.categoria_emocional}
-          </p>
+          <div className="mt-16 mb-2 flex flex-wrap gap-2">
+            {palabrasEtiqueta(entry.categoria_emocional).map((palabra, index) => (
+              <span
+                key={`${palabra}-${index}`}
+                className="inline-block border border-gold px-3 py-1.5 font-sans text-[0.7rem] font-normal uppercase tracking-[0.12em] text-ink"
+              >
+                {palabra}
+              </span>
+            ))}
+          </div>
         )}
 
         <hr className={entry.categoria_emocional ? "mt-2 border-border/50" : "mt-20 border-border/50"} />
           <div className="mt-12">
-            <Link to="/$seccion" params={{ seccion: Route.useParams().seccion }} className="eyebrow text-gold hover:text-wine">
-              ← {Route.useParams().seccion === "diario" ? "Reflexiones" : Route.useParams().seccion}
+            <Link to="/$seccion" params={{ seccion }} className="font-sans text-[0.75rem] font-light tracking-[0.06em] text-ink/60 transition-colors hover:text-wine md:text-base md:italic">
+              ← {nombreSeccion(seccion)}
             </Link>
           </div>
 
           {related.length > 0 && (
             <section className="mt-20">
-              <p className="eyebrow text-gold">Sigue leyendo</p>
+              <p className="font-sans text-base font-light uppercase tracking-[0.1em] text-ink/80">Sigue leyendo</p>
               <div className="mt-6 grid gap-6 md:grid-cols-2">
                 {related.map((r: Entry) => (
                   r.active === false ? (
                     <div key={r.id} className="block border border-border p-6">
-                      <p className="eyebrow text-gold/80">{r.date_label}</p>
+                      <p className="font-sans text-[0.7rem] font-normal uppercase tracking-[0.16em] text-gold/80">{r.date_label}</p>
                       <h3 className="mt-3 font-display text-xl text-ink">{r.title}</h3>
                       <p className="mt-2 text-sm text-ink/70 line-clamp-3">{r.description}</p>
                       <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-gold">Próximamente</p>
                     </div>
                   ) : (
                   <Link key={r.id} to="/$seccion/$slug" params={{ seccion: Route.useParams().seccion, slug: r.slug }} className="group block border border-border p-6 transition-colors hover:border-gold">
-                    <p className="eyebrow text-gold/80">{r.date_label}</p>
+                    <p className="font-sans text-[0.7rem] font-normal uppercase tracking-[0.16em] text-gold/80">{r.date_label}</p>
                     <h3 className="mt-3 font-display text-xl text-ink group-hover:text-wine">{r.title}</h3>
                     <p className="mt-2 text-sm text-ink/70 line-clamp-3">{r.description}</p>
                   </Link>

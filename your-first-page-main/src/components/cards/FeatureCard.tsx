@@ -43,8 +43,8 @@ export function FeatureCard({
       </div>
 
       <div className="mt-4 pt-2 flex justify-center">
-        <span className={`card-link-text inline-block text-base tracking-[0.1em] transition-colors ${available ? "opacity-30 group-hover:opacity-100" : "opacity-100"}`}>
-          {available ? "LEER PUBLICACIÓN" : "PRÓXIMAMENTE"}
+        <span className={`card-link-text inline-block text-base italic tracking-[0.1em] transition-colors ${available ? "opacity-30 group-hover:opacity-100" : "opacity-100"}`}>
+          {available ? "Leer publicación" : "Próximamente"}
         </span>
       </div>
     </div>
@@ -61,8 +61,8 @@ export function FeatureCard({
       )}
 
       <div className="flex items-center justify-between mt-3 px-1 w-full text-xs">
-        <span className="eyebrow">{tagLabel}</span>
-        {item.date_label && <span className="eyebrow">{item.date_label}</span>}
+        <span className="eyebrow tracking-[0.16em] md:text-sm">{tagLabel}</span>
+        {item.date_label && <span className="eyebrow tracking-[0.16em]">{item.date_label}</span>}
       </div>
     </div>
   );

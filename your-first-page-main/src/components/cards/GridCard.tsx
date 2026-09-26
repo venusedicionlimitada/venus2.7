@@ -35,7 +35,7 @@ export function GridCard({ item, idx, themeClasses, linkTo, linkParams, tagLabel
       </p>
 
       <div className="mt-auto pt-6 flex justify-center sm:absolute sm:bottom-8 sm:left-1/2 sm:-translate-x-1/2">
-        <span className={`inline-block eyebrow transition-colors text-[11px] ${available ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}>
+        <span className={`card-link-text inline-block text-[11px] italic tracking-[0.1em] transition-colors ${available ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}>
           {available ? "Leer publicación" : "Próximamente"}
         </span>
       </div>
@@ -53,8 +53,8 @@ export function GridCard({ item, idx, themeClasses, linkTo, linkParams, tagLabel
       )}
 
       <div className="flex items-center justify-between mt-3 px-1 w-full">
-        <span className="eyebrow tag-secondary-label">{tagLabel}</span>
-        <span className="eyebrow date-secondary-label">{item.date_label}</span>
+        <span className="eyebrow tag-secondary-label tracking-[0.16em] md:text-sm">{tagLabel}</span>
+        <span className="eyebrow date-secondary-label tracking-[0.16em]">{item.date_label}</span>
       </div>
     </div>
   );
