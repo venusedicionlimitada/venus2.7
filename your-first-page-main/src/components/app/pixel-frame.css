@@ -1,0 +1,132 @@
+/*
+ * Pixel 10 frame.
+ * Adapted from MockFrame / Marvel devices.css.
+ * Original work Copyright (c) 2014 Marvelapp — MIT License.
+ * Modifications Copyright (c) 2026 Mohammed Banani — MIT License.
+ */
+
+.venus-pixel {
+  position: relative;
+  width: min(22rem, 100%);
+  margin-inline: auto;
+  aspect-ratio: 436 / 939;
+  container-type: inline-size;
+  filter: drop-shadow(0 28px 40px rgba(0, 0, 0, 0.45));
+}
+
+.venus-pixel .mockframe {
+  display: inline-block;
+  position: relative;
+  box-sizing: content-box !important;
+}
+
+.venus-pixel .mockframe .screen {
+  z-index: 3;
+  background: #000;
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  overflow: hidden;
+}
+
+.venus-pixel .mockframe.pixel10 {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #1a1a1a;
+  border-radius: 48px;
+  width: 412px;
+  height: 915px;
+  padding: 12px;
+  transform: scale(calc(100cqi / 436px));
+  transform-origin: top left;
+}
+
+.venus-pixel .mockframe.pixel10::before {
+  content: "";
+  z-index: 1;
+  background: #0d0d0d;
+  border-radius: 44px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  display: block;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+.venus-pixel .mockframe.pixel10::after {
+  content: "";
+  z-index: 2;
+  pointer-events: none;
+  border-radius: 40px;
+  width: calc(100% - 16px);
+  height: calc(100% - 16px);
+  display: block;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  box-shadow: inset 0 0 8px #ffffff0d;
+}
+
+.venus-pixel .mockframe.pixel10 .screen {
+  box-shadow: none;
+  border-radius: 38px;
+}
+
+.venus-pixel .mockframe.pixel10 .camera {
+  z-index: 5;
+  background: #101010;
+  border-radius: 100%;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  box-shadow: inset 0 0 4px #000c;
+}
+
+.venus-pixel .mockframe.pixel10 .camera::before {
+  content: "";
+  background: radial-gradient(circle at 30% 30%, #2a2a3a 0%, #0a0a10 100%);
+  border-radius: 100%;
+  width: 6px;
+  height: 6px;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+}
+
+@media (max-width: 47.99rem) {
+  .venus-pixel .mockframe.pixel10.porcelain {
+    background: #e8e5e1;
+  }
+
+  .venus-pixel .mockframe.pixel10.porcelain .sleep,
+  .venus-pixel .mockframe.pixel10.porcelain .volume {
+    background: #d5d2ce;
+  }
+}
+
+.venus-pixel .mockframe.pixel10 .sleep,
+.venus-pixel .mockframe.pixel10 .volume {
+  background: #1a1a1a;
+  position: absolute;
+  right: -3px;
+}
+
+.venus-pixel .mockframe.pixel10 .sleep {
+  border-radius: 0 2px 2px 0;
+  width: 3px;
+  height: 72px;
+  top: 180px;
+}
+
+.venus-pixel .mockframe.pixel10 .volume {
+  border-radius: 0 2px 2px 0;
+  width: 3px;
+  height: 100px;
+  top: 260px;
+}

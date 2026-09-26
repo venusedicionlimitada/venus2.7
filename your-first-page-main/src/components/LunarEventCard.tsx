@@ -170,13 +170,23 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
       >
         <div className="border border-marco bg-white/70 p-5 sm:p-8 sm:pl-12 flex min-w-0 flex-col justify-between w-full min-h-[240px] md:min-h-[350px]">
           
-          {/* ===== VERSIÓN MÓVIL (Orden exacto: Próxima, Título, Sub, Descripción, Fecha, Hora, Cuenta atrás) ===== */}
+          {/* ===== VERSIÓN MÓVIL (Orden: Faltan + días, tiempo, Título, Sub, Fecha y hora, Descripción) ===== */}
           <div className="flex flex-col sm:hidden w-full min-w-0">
-            <span className="font-display text-cream text-lg uppercase tracking-wider mb-4">
-              Próxima
-            </span>
+            {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) ? (
+              <div className="mb-4 w-full flex justify-start">
+                <div className="flex flex-col text-4xl tracking-[0.1em] text-granate tabular-nums" style={{ fontFamily: "var(--font-sans)" }}>
+                  <span className="font-display text-cream text-lg uppercase tracking-wider mb-1">Faltan</span>
+                  <span>{timeLeft.days}<span className="pl-[0.12em]">días</span></span>
+                  <span className="text-2xl">{timeLeft.hours}h:{String(timeLeft.minutes).padStart(2, "0")}m:{String(timeLeft.seconds).padStart(2, "0")}s</span>
+                </div>
+              </div>
+            ) : (
+              <span className="font-display text-cream text-lg uppercase tracking-wider mb-4">
+                Próxima
+              </span>
+            )}
 
-            <div className="mb-4 w-full min-w-0">
+            <div className="w-full min-w-0">
               <h3 className="font-display text-3xl text-cream tracking-wide -mt-1 mb-1 uppercase">
                 {evento.title}
               </h3>
@@ -186,30 +196,19 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                   {evento.subtitle}
                 </p>
               )}
-              
-              <p className="font-sans text-lg leading-relaxed text-cream/80 -mt-2 mb-2 line-clamp-3">
-                {evento.description}
-              </p>
-            </div>
 
-            <div className="flex flex-col w-full items-start mt-2">
-              <div className="flex flex-col items-start mb-2">
-                <span className="font-sans text-lg italic text-gold tracking-wide">
+              <div className="flex flex-col items-start mb-3">
+                <span className="font-sans text-lg italic tracking-wide" style={{ color: "var(--titulo)", opacity: 1 }}>
                   {evento.date_label}
                 </span>
-                <span className="font-sans text-sm uppercase tracking-widest text-gold mt-1">
+                <span className="font-sans text-sm uppercase tracking-widest mt-1" style={{ color: "var(--titulo)", opacity: 1 }}>
                   {evento.time_label} HS
                 </span>
               </div>
-
-              {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
-                <div className="mt-3 w-full flex justify-start">
-                  <div className="flex flex-col text-lg tracking-[0.1em] text-granate tabular-nums" style={{ fontFamily: "var(--font-sans)" }}>
-                    <span>{String(timeLeft.days).padStart(2, "\u00A0")}<span className="pl-[0.12em]">días</span></span>
-                    <span className="text-sm">{timeLeft.hours}h:{timeLeft.minutes}m:{String(timeLeft.seconds).padStart(2, "0")}s</span>
-                  </div>
-                </div>
-              )}
+              
+              <p className="font-sans text-lg leading-relaxed text-cream/80 mb-2 line-clamp-3">
+                {evento.description}
+              </p>
             </div>
           </div>
 
@@ -253,8 +252,8 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
               {(timeLeft.days > 0 || timeLeft.hours > 0 || timeLeft.minutes > 0) && (
                 <div className="mt-4 flex justify-end">
                   <div className="flex flex-col items-end text-3xl tracking-[0.1em] text-granate tabular-nums md:text-4xl text-right whitespace-nowrap" style={{ fontFamily: "var(--font-sans)" }}>
-                    <span>{String(timeLeft.days).padStart(2, "\u00A0")}<span className="pl-[0.12em]">días</span></span>
-                    <span className="text-xl md:text-2xl">{timeLeft.hours}h:{timeLeft.minutes}m:{String(timeLeft.seconds).padStart(2, "0")}s</span>
+                    <span>{timeLeft.days}<span className="pl-[0.12em]">días</span></span>
+                    <span className="text-xl md:text-2xl">{timeLeft.hours}h:{String(timeLeft.minutes).padStart(2, "0")}m:{String(timeLeft.seconds).padStart(2, "0")}s</span>
                   </div>
                 </div>
               )}
