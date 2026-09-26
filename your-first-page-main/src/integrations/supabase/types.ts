@@ -415,6 +415,42 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_pages: {
+        Row: {
+          active: boolean
+          body: string | null
+          created_at: string
+          id: string
+          published: boolean
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body?: string | null
+          created_at?: string
+          id?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_sections: {
         Row: {
           active: boolean
