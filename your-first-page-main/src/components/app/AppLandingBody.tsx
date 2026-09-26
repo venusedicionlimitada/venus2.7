@@ -117,11 +117,14 @@ export function AppLandingBody() {
             <p className="mt-3 font-sans text-xl leading-tight tracking-[0.04em] text-cream/90 sm:text-2xl md:translate-y-6 md:text-2xl md:text-center">
               a tu propio ritmo
             </p>
-            <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-cream/75 sm:max-w-md sm:text-base md:ml-auto md:mr-0 md:w-fit md:max-w-none md:translate-y-8 md:text-center">
-              <span className="md:hidden">Tu carta, y la sinastría cuando la pregunta es de dos.</span>
-              <span className="hidden md:block">Tu carta,</span>
-              <span className="hidden md:block">y la sinastría cuando</span>
-              <span className="hidden md:block">la pregunta es de dos</span>
+            <p
+              aria-hidden="true"
+              className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-cream/75 sm:max-w-md sm:text-base md:ml-auto md:mr-0 md:w-fit md:max-w-none md:translate-y-8 md:text-center"
+            >
+              <span className="md:hidden">{"\u00A0"}</span>
+              <span className="hidden md:block">{"\u00A0"}</span>
+              <span className="hidden md:block">{"\u00A0"}</span>
+              <span className="hidden md:block">{"\u00A0"}</span>
             </p>
             <AccountLink className="app-cta-loop app-cta-loop-strong mt-8 inline-flex w-full max-w-xs items-center justify-center whitespace-nowrap rounded-xl border border-gold bg-granate px-6 py-4 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:mt-12 md:w-auto md:max-w-none md:px-12 md:py-5 md:text-sm md:hover:bg-gold md:hover:text-granate">
               Conoce la App
@@ -139,17 +142,18 @@ export function AppLandingBody() {
           alt=""
           className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
         />
-        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24">
-          <div className="mx-auto text-center">
-            <h2 className="font-display text-4xl leading-tight text-ink sm:text-5xl">
+        <div className="absolute inset-0 bg-cream/25" aria-hidden="true" />
+        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24 md:flex md:max-w-6xl md:items-center md:justify-center md:gap-20 md:py-28 md:[zoom:0.92] lg:gap-28">
+          <div className="mx-auto max-w-md text-center md:mx-0 md:max-w-sm md:-translate-x-20 lg:max-w-md">
+            <h2 className="font-display text-4xl leading-tight text-ink sm:text-5xl md:-translate-y-12">
               Así responde Venus
             </h2>
-            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink/80 sm:text-base md:max-w-2xl lg:max-w-3xl">
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink/80 sm:text-base md:mx-0 md:mt-8 md:max-w-none md:text-[1.65rem] md:leading-[1.3] md:text-ink lg:text-[1.85rem]">
               Lees tu carta en conversación. Preguntas por un vínculo, una decisión o esa tensión
               entre lo que piensas y lo que sientes. Ella responde, y te deja la siguiente pregunta.
             </p>
           </div>
-          <div className="mt-10">
+          <div className="mt-10 w-full md:mt-0 md:w-[22rem] md:shrink-0">
             <LandingVideo
               src={APP_VIDEO_SRC}
               poster={frames[0].src}
