@@ -2,6 +2,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sectionIsOpen, useSectionFlags } from "@/lib/hooks/useSectionActive";
 
+function extractoDe(p: { description?: string | null; descripcion?: string | null; excerpt?: string | null; extracto?: string | null }) {
+  return (p.description || p.descripcion || p.excerpt || p.extracto || "").trim();
+}
+
+function nombreSeccion(seccion: string) {
+  if (seccion === "diario") return "Reflexiones";
+  if (seccion === "astrologia") return "Astrología";
+  if (seccion === "yoga") return "Yoga";
+  if (seccion === "recursos") return "Recursos";
+  if (seccion === "servicios") return "Terapias";
+  return seccion;
+}
+
 export function CategoryDetailSheet({ categoria, descripcion }: { categoria: string; descripcion?: string }) {
   const [publicaciones, setPublicaciones] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,13 +34,21 @@ export function CategoryDetailSheet({ categoria, descripcion }: { categoria: str
         item.categoria_emocional?.toLowerCase().includes(categoria.toLowerCase())
       );
 
-      setPublicaciones([
-        ...filtrar(astro).map(p => ({...p, seccion: "astrologia"})),
-        ...filtrar(diary).map(p => ({...p, seccion: "diario"})),
-        ...filtrar(res).map(p => ({...p, seccion: "recursos"})),
-        ...filtrar(serv).map(p => ({...p, seccion: "servicios"})),
-        ...filtrar(yoga).map(p => ({...p, seccion: "yoga"}))
-      ]);
+      const porSeccion = [
+        filtrar(astro).map(p => ({...p, seccion: "astrologia"})),
+        filtrar(diary).map(p => ({...p, seccion: "diario"})),
+        filtrar(res).map(p => ({...p, seccion: "recursos"})),
+        filtrar(serv).map(p => ({...p, seccion: "servicios"})),
+        filtrar(yoga).map(p => ({...p, seccion: "yoga"})),
+      ];
+      const maxItems = Math.max(...porSeccion.map((grupo) => grupo.length), 0);
+      const intercaladas: any[] = [];
+      for (let i = 0; i < maxItems; i++) {
+        for (const grupo of porSeccion) {
+          if (grupo[i]) intercaladas.push(grupo[i]);
+        }
+      }
+      setPublicaciones(intercaladas);
       setLoading(false);
     }
     fetchRelated();
@@ -40,21 +61,34 @@ export function CategoryDetailSheet({ categoria, descripcion }: { categoria: str
         <p className="mb-8 text-base leading-relaxed text-ink/80">{descripcion}</p>
       ) : null}
       {loading ? <p>Cargando conexiones...</p> : (
-        <div className="space-y-4">
-          {publicaciones.map(p => (
-            p.active === false || !sectionIsOpen(sectionFlags, p.seccion) ? (
-              <div key={p.id} className="block p-4 border border-gold/20">
-                <h5 className="text-sm font-bold uppercase">{p.title || p.titulo}</h5>
-                <p className="text-xs text-ink/60">{p.seccion}</p>
-                <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-gold">Próximamente</p>
+        <div className="space-y-5">
+          {publicaciones.map(p => {
+            const extracto = extractoDe(p);
+            const titulo = (
+              <>
+                <h5 className="text-sm font-bold uppercase md:font-sans md:text-base md:font-medium md:leading-snug md:tracking-[0.04em]">{p.title || p.titulo}</h5>
+                {extracto ? (
+                  <p className="mt-2 font-sans text-base leading-relaxed text-ink/90 line-clamp-2">{extracto}</p>
+                ) : null}
+              </>
+            );
+            const cerrado = p.active === false || !sectionIsOpen(sectionFlags, p.seccion);
+            return (
+              <div key={p.id}>
+                {cerrado ? (
+                  <div className="block border border-[color-mix(in_oklch,var(--marco)_70%,var(--fondo))] bg-[color-mix(in_oklch,var(--fondo)_60%,var(--cream))] p-4">
+                    {titulo}
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-gold">Próximamente</p>
+                  </div>
+                ) : (
+                  <a href={`/${p.seccion}/${p.slug || p.id}?desde=eventos`} className="block border border-[color-mix(in_oklch,var(--marco)_70%,var(--fondo))] bg-[color-mix(in_oklch,var(--fondo)_60%,var(--cream))] p-4 transition-colors duration-150 hover:border-[var(--titulo)]">
+                    {titulo}
+                  </a>
+                )}
+                <p className="mt-2 px-1 font-sans text-sm uppercase tracking-[0.14em] text-gold">{nombreSeccion(p.seccion)}</p>
               </div>
-            ) : (
-            <a key={p.id} href={`/${p.seccion}/${p.slug || p.id}?desde=eventos`} className="block p-4 border border-gold/20 hover:border-gold transition-colors">
-              <h5 className="text-sm font-bold uppercase">{p.title || p.titulo}</h5>
-              <p className="text-xs text-ink/60">{p.seccion}</p>
-            </a>
-            )
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

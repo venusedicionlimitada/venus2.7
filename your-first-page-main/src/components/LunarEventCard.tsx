@@ -314,9 +314,12 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
           </SheetHeader>
 
           <div className="flex-1 flex flex-col min-h-0 mt-0">
-            <h4 className="font-display text-2rem text-ink/60 uppercase tracking-widest text-left mb-4 border-b border-gold/10 pb-1">
+            <h4 className="font-display text-2rem text-ink/60 uppercase tracking-widest text-left mb-3 border-b border-gold/10 pb-1">
               Contenido Relacionado
             </h4>
+            <p className="mb-5 font-sans text-base leading-relaxed text-ink/80">
+              Aquí encuentras el contenido relacionado con la energía de este evento, para acompañarla mientras está disponible.
+            </p>
             
             {publicacionesIntercaladas.length === 0 ? (
               <p className="text-left text-xs opacity-60 italic">No hay publicaciones con esta sintonía emocional hoy.</p>
@@ -335,7 +338,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                           />
                         )}
                         <div className="flex flex-col flex-grow min-w-0 text-left">
-                          <h5 className="font-display text-base text-ink truncate group-hover:text-gold transition-colors">
+                          <h5 className="font-display text-base text-ink truncate">
                             {p.title || p.titulo}
                           </h5>
                           <p className="font-sans text-xs text-ink/70 line-clamp-3 mt-1 leading-normal">
@@ -357,7 +360,7 @@ export function LunarEventCard({ onCoverUrl }: LunarEventCardProps) {
                           />
                         )}
                         <div className="flex flex-col flex-grow min-w-0 text-left">
-                          <h5 className="font-display text-base text-ink truncate group-hover:text-gold transition-colors">
+                          <h5 className="font-display text-base text-ink truncate">
                             {p.title || p.titulo}
                           </h5>
                           <p className="font-sans text-xs text-ink/70 line-clamp-3 mt-1 leading-normal">
