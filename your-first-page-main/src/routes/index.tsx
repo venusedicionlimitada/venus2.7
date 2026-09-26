@@ -429,12 +429,12 @@ function Index() {
                 ]}
               />
             </div>
-            <Link
-              to="/app"
-              className="app-cta-loop mt-8 inline-flex w-full max-w-xs items-center justify-center rounded-xl border border-gold bg-granate px-8 py-4 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:bg-transparent md:hover:bg-granate"
+            <a
+              href="https://app.venusedicionlimitada.com"
+              className="app-cta-loop mt-12 inline-flex w-auto items-center justify-center rounded-2xl border border-gold bg-granate px-6 py-2.5 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:app-cta-loop-strong md:hover:bg-gold md:hover:text-granate"
             >
-              Descargar la App
-            </Link>
+              Ir a la App
+            </a>
           </div>
         </section>
       )}

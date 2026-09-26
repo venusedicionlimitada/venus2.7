@@ -232,7 +232,7 @@ function VenusAppPage() {
             <p className="absolute left-1/2 top-[7%] hidden -translate-x-1/2 font-sans text-5xl leading-none tracking-[0.35em] text-cream md:block">
               OBTÉN
             </p>
-            <div className="absolute bottom-8 left-1/2 w-full max-w-3xl -translate-x-1/2 px-6 text-center text-cream md:bottom-12 md:max-w-6xl">
+            <div className="absolute bottom-5 left-1/2 w-full max-w-3xl -translate-x-1/2 px-6 text-center text-cream md:bottom-12 md:max-w-6xl">
               <p className="mb-5 hidden translate-y-4 font-sans text-4xl uppercase leading-none tracking-[0.35em] text-cream md:block">
                 CONSULTA CON TU
               </p>
@@ -242,7 +242,7 @@ function VenusAppPage() {
               <p className="hidden -translate-y-4 font-sans text-3xl uppercase leading-none tracking-[0.35em] text-cream/50 md:block">
                 ASTROLOGÍA EMOCIONAL APLICADA
               </p>
-              <AccountLink className="app-cta-loop inline-flex w-full max-w-xs items-center justify-center rounded-xl border border-gold bg-granate px-6 py-4 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:mx-auto md:mt-8 md:w-auto md:max-w-none md:bg-granate md:px-14 md:py-5 md:text-sm md:hover:bg-gold md:hover:text-granate">
+              <AccountLink className="app-cta-loop inline-flex w-auto items-center justify-center rounded-2xl border border-gold bg-granate px-3 py-2.5 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:mx-auto md:mt-8 md:w-auto md:rounded-xl md:bg-granate md:px-14 md:py-5 md:text-sm md:hover:bg-gold md:hover:text-granate">
                 Conoce la App
               </AccountLink>
             </div>
