@@ -13,6 +13,7 @@ import { Route as YogaRouteImport } from './routes/yoga'
 import { Route as SobreMiRouteImport } from './routes/sobre-mi'
 import { Route as ServiciosRouteImport } from './routes/servicios'
 import { Route as RecursosRouteImport } from './routes/recursos'
+import { Route as LandingRouteImport } from './routes/landing'
 import { Route as EventosRouteImport } from './routes/eventos'
 import { Route as DiarioRouteImport } from './routes/diario'
 import { Route as ContactoRouteImport } from './routes/contacto'
@@ -42,6 +43,11 @@ const ServiciosRoute = ServiciosRouteImport.update({
 const RecursosRoute = RecursosRouteImport.update({
   id: '/recursos',
   path: '/recursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingRoute = LandingRouteImport.update({
+  id: '/landing',
+  path: '/landing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EventosRoute = EventosRouteImport.update({
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRoute
   '/eventos': typeof EventosRoute
+  '/landing': typeof LandingRoute
   '/recursos': typeof RecursosRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-mi': typeof SobreMiRoute
@@ -117,6 +124,7 @@ export interface FileRoutesByTo {
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRoute
   '/eventos': typeof EventosRoute
+  '/landing': typeof LandingRoute
   '/recursos': typeof RecursosRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-mi': typeof SobreMiRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/contacto': typeof ContactoRoute
   '/diario': typeof DiarioRoute
   '/eventos': typeof EventosRoute
+  '/landing': typeof LandingRoute
   '/recursos': typeof RecursosRoute
   '/servicios': typeof ServiciosRoute
   '/sobre-mi': typeof SobreMiRoute
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/diario'
     | '/eventos'
+    | '/landing'
     | '/recursos'
     | '/servicios'
     | '/sobre-mi'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/diario'
     | '/eventos'
+    | '/landing'
     | '/recursos'
     | '/servicios'
     | '/sobre-mi'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/contacto'
     | '/diario'
     | '/eventos'
+    | '/landing'
     | '/recursos'
     | '/servicios'
     | '/sobre-mi'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   ContactoRoute: typeof ContactoRoute
   DiarioRoute: typeof DiarioRoute
   EventosRoute: typeof EventosRoute
+  LandingRoute: typeof LandingRoute
   RecursosRoute: typeof RecursosRoute
   ServiciosRoute: typeof ServiciosRoute
   SobreMiRoute: typeof SobreMiRoute
@@ -234,6 +247,13 @@ declare module '@tanstack/react-router' {
       path: '/recursos'
       fullPath: '/recursos'
       preLoaderRoute: typeof RecursosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/landing': {
+      id: '/landing'
+      path: '/landing'
+      fullPath: '/landing'
+      preLoaderRoute: typeof LandingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eventos': {
@@ -329,6 +349,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactoRoute: ContactoRoute,
   DiarioRoute: DiarioRoute,
   EventosRoute: EventosRoute,
+  LandingRoute: LandingRoute,
   RecursosRoute: RecursosRoute,
   ServiciosRoute: ServiciosRoute,
   SobreMiRoute: SobreMiRoute,

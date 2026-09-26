@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SiteHeader } from "@/components/SiteHeader";
 import { AppLandingBody } from "@/components/app/AppLandingBody";
+import { LandingBar } from "@/components/app/LandingBar";
+import { LandingFooter } from "@/components/app/LandingFooter";
 
-export const Route = createFileRoute("/app")({
+export const Route = createFileRoute("/landing")({
   head: () => ({
     meta: [
       { title: "Venus App · Cuéntale a Venus" },
@@ -18,14 +19,15 @@ export const Route = createFileRoute("/app")({
       },
     ],
   }),
-  component: VenusAppPage,
+  component: LandingPage,
 });
 
-function VenusAppPage() {
+function LandingPage() {
   return (
     <>
-      <SiteHeader />
+      <LandingBar />
       <AppLandingBody />
+      <LandingFooter />
     </>
   );
 }

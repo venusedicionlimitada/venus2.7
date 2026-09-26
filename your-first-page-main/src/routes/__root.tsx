@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -114,8 +115,9 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const router = useRouter();
-  const queryClient = new QueryClient(); // Definimos el cliente aquí
+  const queryClient = new QueryClient();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isStandaloneLanding = pathname === "/landing";
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -124,7 +126,7 @@ function RootComponent() {
           <main className="flex-1">
             <Outlet />
           </main>
-          <SiteFooter />
+          {!isStandaloneLanding && <SiteFooter />}
         </div>
       </AuthProvider>
     </QueryClientProvider>
