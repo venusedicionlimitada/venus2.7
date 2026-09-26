@@ -171,8 +171,9 @@ export function AppLandingBody() {
         />
         <div className="absolute inset-0 bg-[#1c3329]/78" />
         <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24">
-          <h2 className="mx-auto max-w-md text-center font-display text-4xl leading-tight sm:text-5xl">
-            Tu carta, o la de dos
+          <h2 className="mx-auto max-w-md text-center font-sans text-4xl leading-tight sm:text-5xl md:font-display">
+            <span className="block md:inline">Tu carta,</span>{" "}
+            <span className="block md:inline">o la de dos</span>
           </h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2">
             <article className="border border-cream/25 bg-[#1c3329]/45 p-6 sm:p-8">
