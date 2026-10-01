@@ -361,11 +361,36 @@ export type Database = {
         }
         Relationships: []
       }
+      app_gallery_lines: {
+        Row: {
+          body: string
+          created_at: string
+          id: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          id?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       app_photos: {
         Row: {
           alt: string | null
           id: string
           image_url: string
+          slot: string
           sort_order: number
           updated_at: string
         }
@@ -373,6 +398,7 @@ export type Database = {
           alt?: string | null
           id?: string
           image_url: string
+          slot?: string
           sort_order?: number
           updated_at?: string
         }
@@ -380,6 +406,7 @@ export type Database = {
           alt?: string | null
           id?: string
           image_url?: string
+          slot?: string
           sort_order?: number
           updated_at?: string
         }

@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { LandingVideo } from "@/components/app/LandingVideo";
 import { useSectionActive } from "@/lib/hooks/useSectionActive";
-import { useAppContent, type AppCapture, type AppReview } from "@/lib/hooks/useAppContent";
+import { useAppContent, type AppCapture, type AppGalleryLine, type AppReview } from "@/lib/hooks/useAppContent";
 import silkGold from "@/assets/app/silk-gold.png";
 import silkGreen from "@/assets/app/silk-green.png";
 import portrait from "@/assets/app/claridad-movil.jpg";
@@ -23,6 +23,10 @@ const STEPS = [
 
 /** Tiempo que cada reseña permanece antes del fundido. */
 const REVIEW_HOLD_MS = 3600;
+
+/** Las frases y las fotos de la galería no comparten ritmo. */
+const GALLERY_LINE_MS = 6200;
+const GALLERY_PHOTO_MS = 7600;
 
 function AccountLink({ className, children }: { className: string; children: string }) {
   return (
@@ -70,16 +74,173 @@ function ReviewsFade({ reviews }: { reviews: AppReview[] }) {
   );
 }
 
+function PauseIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+      <path fill="currentColor" d="M1.5 1h3.2v10H1.5V1zm5.8 0h3.2v10H7.3V1z" />
+    </svg>
+  );
+}
+
+function PlayIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+      <path fill="currentColor" d="M2.5 1.2v9.6L11 6 2.5 1.2z" />
+    </svg>
+  );
+}
+
+function NextIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true">
+      <path fill="currentColor" d="M1.2 1.4v9.2L8 6 1.2 1.4zM9.2 1.4H11v9.2H9.2V1.4z" />
+    </svg>
+  );
+}
+
+function galleryOffset(index: number, current: number, total: number) {
+  if (total <= 1) return 0;
+  let diff = index - current;
+  const half = total / 2;
+  if (diff > half) diff -= total;
+  if (diff < -half) diff += total;
+  return diff;
+}
+
+function galleryPose(offset: number): CSSProperties {
+  const shift = offset === 0 ? 0 : offset * 70;
+  const tilt = offset === 0 ? 0 : offset * 9;
+  const drop = Math.abs(offset) === 1 ? 5 : Math.abs(offset) > 1 ? 8 : 0;
+  const scale = offset === 0 ? 1 : 0.86;
+  return {
+    transform: `translateX(calc(-50% + ${shift}%)) translateY(${drop}%) rotate(${tilt}deg) scale(${scale})`,
+    opacity: offset === 0 ? 1 : Math.abs(offset) === 1 ? 0.42 : 0,
+    zIndex: offset === 0 ? 2 : Math.abs(offset) === 1 ? 1 : 0,
+  };
+}
+
+function MobileHeroLines({ lines }: { lines: AppGalleryLine[] }) {
+  const [index, setIndex] = useState(0);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [lines]);
+
+  useEffect(() => {
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  useEffect(() => {
+    if (reduced || lines.length < 2) return;
+    const id = window.setInterval(() => {
+      setIndex((current) => (current + 1) % lines.length);
+    }, GALLERY_LINE_MS);
+    return () => window.clearInterval(id);
+  }, [reduced, lines.length]);
+
+  if (lines.length === 0) return null;
+
+  return (
+    <div className="mx-auto mt-16 grid max-w-xl sm:mt-20 md:mt-6 md:w-full md:max-w-none md:translate-y-3 md:text-center">
+      {lines.map((line, i) => (
+        <p
+          key={line.id ?? line.body}
+          aria-hidden={i !== index}
+          className={`col-start-1 row-start-1 text-balance font-sans text-[1.25rem] font-light lowercase leading-[1.22] text-cream/50 transition-opacity duration-700 ease-in-out motion-reduce:transition-none sm:text-[1.05rem] md:text-center md:text-[1.35rem] ${
+            i === index ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
+          {line.body}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+function GalleryBlock({ lines, photos }: { lines: AppGalleryLine[]; photos: AppCapture[] }) {
+  const [photoIndex, setPhotoIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reduced, setReduced] = useState(false);
+
+  useEffect(() => {
+    setPhotoIndex(0);
+  }, [photos]);
+
+  useEffect(() => {
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  useEffect(() => {
+    if (paused || reduced || photos.length < 2) return;
+    const id = window.setInterval(() => {
+      setPhotoIndex((current) => (current + 1) % photos.length);
+    }, GALLERY_PHOTO_MS);
+    return () => window.clearInterval(id);
+  }, [paused, reduced, photos.length, photoIndex]);
+
+  if (lines.length === 0 && photos.length === 0) return null;
+
+  return (
+    <section className="overflow-x-hidden bg-background">
+      <div className="mx-auto max-w-3xl px-6 pb-4 pt-8 text-center sm:pb-6 sm:pt-10 md:max-w-6xl lg:max-w-7xl">
+        {photos.length > 0 && (
+          <div className="mx-auto md:w-[34rem]">
+            <div className="relative mx-auto aspect-[436/939] w-full max-w-[22rem] md:aspect-[9/16] md:w-[22rem] md:max-w-none">
+              {photos.map((photo, i) => {
+                const offset = galleryOffset(i, photoIndex, photos.length);
+                return (
+                  <img
+                    key={photo.id}
+                    src={photo.src}
+                    alt={offset === 0 ? photo.alt : ""}
+                    style={galleryPose(offset)}
+                    className={`absolute left-1/2 top-0 h-full w-full object-contain transition-[transform,opacity] duration-700 ease-out motion-reduce:transition-none ${
+                      offset === 0 ? "" : "pointer-events-none"
+                    }`}
+                  />
+                );
+              })}
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-8">
+              <button
+                type="button"
+                onClick={() => setPaused((current) => !current)}
+                aria-label={paused ? "Seguir" : "Pausa"}
+                className="text-ink/35 transition-colors hover:text-ink/70"
+              >
+                {paused ? <PlayIcon /> : <PauseIcon />}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPhotoIndex((current) => (current + 1) % photos.length)}
+                aria-label="Siguiente"
+                className="text-ink/35 transition-colors hover:text-ink/70"
+              >
+                <NextIcon />
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /** Cuerpo compartido por /app y /landing. El header y el pie los pone cada ruta. */
 export function AppLandingBody() {
   const sectionActive = useSectionActive("app");
-  const { reviews, captures } = useAppContent();
+  const { reviews, captures, cartaCaptures, galleryCaptures, galleryLines } = useAppContent();
   const frames: AppCapture[] = [
     { id: "splash", src: splash, alt: "Venus, edición limitada. Consulta personalizada de astrología emocional." },
     { id: "carta", src: chatCarta, alt: "Conversación sobre los patrones de pareja en la carta." },
     { id: "preguntas", src: chatPreguntas, alt: "Venus devuelve preguntas para seguir la consulta." },
     ...captures,
   ];
+  const cartaFrames: AppCapture[] =
+    cartaCaptures.length > 0
+      ? cartaCaptures
+      : [{ id: "carta-fallback", src: chatCarta, alt: "Conversación sobre los patrones de pareja en la carta." }];
 
   if (sectionActive === false) {
     return (
@@ -92,7 +253,7 @@ export function AppLandingBody() {
   return (
     <>
       <section className="bg-[#1c3329] text-cream">
-        <div className="mx-auto max-w-3xl px-6 pb-16 pt-6 text-center sm:pb-20 sm:pt-10 md:flex md:max-w-6xl md:items-center md:gap-24 md:pb-14 md:pt-12 md:text-left lg:max-w-7xl lg:gap-32">
+        <div className="mx-auto max-w-3xl px-6 pb-8 pt-8 text-center sm:pb-12 sm:pt-12 md:flex md:max-w-6xl md:items-center md:gap-24 md:pb-14 md:pt-12 md:text-left lg:max-w-7xl lg:gap-32">
           <div className="md:w-fit md:shrink-0">
             <div className="mx-auto w-fit md:border md:border-gold/45 md:px-10 md:py-8">
               <p className="flex w-fit flex-col items-end py-10 sm:py-14 md:py-0">
@@ -105,28 +266,20 @@ export function AppLandingBody() {
               </p>
             </div>
             <div className="md:mt-6 md:text-center">
-              <p className="eyebrow text-[0.9rem] text-gold sm:text-[1rem]">Tu consulta</p>
-              <p className="eyebrow text-[0.9rem] text-gold sm:text-[1rem]">personalizada de</p>
-              <p className="eyebrow text-[0.9rem] text-gold sm:text-[1rem]">Astrología emocional</p>
+              <p className="eyebrow text-[0.78rem] text-gold sm:text-[0.85rem] md:text-[1rem]">Tu consulta</p>
+              <p className="eyebrow text-[0.78rem] text-gold sm:text-[0.85rem] md:text-[1rem]">personalizada de</p>
+              <p className="eyebrow text-[0.78rem] text-gold sm:text-[0.85rem] md:text-[1rem]">Astrología emocional</p>
             </div>
           </div>
           <div className="md:min-w-0 md:flex-1">
-            <h1 className="mt-10 font-display font-light text-[2.55rem] leading-[1.05] text-cream/80 sm:mt-12 sm:text-4xl md:mt-0 md:translate-y-6 md:text-5xl md:text-center">
+            <h1
+              className="mt-10 text-[2.8rem] font-light leading-[1.05] text-cream/80 sm:mt-12 sm:text-[2.5rem] md:mt-0 md:translate-y-6 md:text-[3.1rem] md:text-center"
+              style={{ fontFamily: '"Cormorant Garamond", Georgia, serif', fontWeight: 300, fontStyle: "italic" }}
+            >
               Cuéntale a Venus
             </h1>
-            <p className="mt-3 font-sans text-xl leading-tight tracking-[0.04em] text-cream/90 sm:text-2xl md:translate-y-6 md:text-2xl md:text-center">
-              a tu propio ritmo
-            </p>
-            <p
-              aria-hidden="true"
-              className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-cream/75 sm:max-w-md sm:text-base md:ml-auto md:mr-0 md:w-fit md:max-w-none md:translate-y-8 md:text-center"
-            >
-              <span className="md:hidden">{"\u00A0"}</span>
-              <span className="hidden md:block">{"\u00A0"}</span>
-              <span className="hidden md:block">{"\u00A0"}</span>
-              <span className="hidden md:block">{"\u00A0"}</span>
-            </p>
-            <AccountLink className="app-cta-loop app-cta-loop-strong mt-8 inline-flex w-full max-w-xs items-center justify-center whitespace-nowrap rounded-xl border border-gold bg-granate px-6 py-4 text-xs uppercase tracking-[0.28em] text-cream transition-colors md:mt-12 md:w-auto md:max-w-none md:px-12 md:py-5 md:text-sm md:hover:bg-gold md:hover:text-granate">
+            <MobileHeroLines lines={galleryLines} />
+            <AccountLink className="app-cta-loop app-cta-loop-strong mt-16 inline-flex w-full max-w-xs items-center justify-center whitespace-nowrap rounded-xl border border-gold bg-granate px-6 py-4 text-xs uppercase tracking-[0.28em] text-cream transition-colors sm:mt-20 md:mt-12 md:translate-y-10 md:w-auto md:max-w-none md:px-12 md:py-5 md:text-sm md:hover:bg-gold md:hover:text-granate">
               Conoce la App
             </AccountLink>
             <p className="mx-auto mt-4 max-w-xs text-[0.68rem] uppercase leading-relaxed tracking-[0.16em] text-cream/55 md:mx-0 md:max-w-none md:translate-y-10 md:whitespace-nowrap">
@@ -170,47 +323,41 @@ export function AppLandingBody() {
           className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
         />
         <div className="absolute inset-0 bg-[#1c3329]/78" />
-        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24">
-          <h2 className="mx-auto max-w-md text-center font-sans text-4xl leading-tight sm:text-5xl md:font-display">
-            <span className="block md:inline">Tu carta,</span>{" "}
-            <span className="block md:inline">o la de dos</span>
-          </h2>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            <article className="border border-cream/25 bg-[#1c3329]/45 p-6 sm:p-8">
-              <p className="eyebrow text-gold">Tu carta</p>
-              <h3 className="mt-4 font-display text-3xl">Una consulta que espera</h3>
-              <p className="mt-4 text-sm leading-relaxed text-cream/80">
-                Venus lee tu carta y conversa sobre lo que estás viviendo. Escribes cuando quieres.
-                La respuesta sale de tu mapa, no de un texto genérico.
-              </p>
-            </article>
-            <article className="border border-cream/25 bg-[#1c3329]/45 p-6 sm:p-8">
-              <p className="eyebrow text-gold">Sinastría</p>
-              <h3 className="mt-4 font-display text-3xl">La carta de dos</h3>
-              <p className="mt-4 text-sm leading-relaxed text-cream/80">
-                Cuando la pregunta es un vínculo. Venus cruza tu carta con la de otra persona y mira
-                lo que ese encuentro activa: patrones de pareja, tensiones y el modo en que os habláis.
-              </p>
-            </article>
+        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24 md:flex md:max-w-6xl md:flex-row-reverse md:items-center md:gap-20 md:py-28 lg:gap-28">
+          <div className="min-w-0 md:flex-1">
+            <h2 className="mx-auto max-w-md text-center font-display text-4xl leading-tight sm:text-5xl md:mx-0 md:max-w-none md:text-left">
+              <span className="block md:inline">Tu carta,</span>{" "}
+              <span className="block md:inline">o la de dos</span>
+            </h2>
+            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+              <article className="border border-cream/25 bg-[#1c3329]/45 p-6 sm:p-8">
+                <p className="eyebrow text-gold">Tu carta</p>
+                <h3 className="mt-4 font-display text-3xl">Una consulta que espera</h3>
+                <p className="mt-4 text-sm leading-relaxed text-cream/80">
+                  Venus lee tu carta y conversa sobre lo que estás viviendo. Escribes cuando quieres.
+                  La respuesta sale de tu mapa, no de un texto genérico.
+                </p>
+              </article>
+              <article className="border border-cream/25 bg-[#1c3329]/45 p-6 sm:p-8">
+                <p className="eyebrow text-gold">Sinastría</p>
+                <h3 className="mt-4 font-display text-3xl">La carta de dos</h3>
+                <p className="mt-4 text-sm leading-relaxed text-cream/80">
+                  Cuando la pregunta es un vínculo. Venus cruza tu carta con la de otra persona y mira
+                  lo que ese encuentro activa: patrones de pareja, tensiones y el modo en que os habláis.
+                </p>
+              </article>
+            </div>
+          </div>
+          <div className="mt-10 w-full md:mt-0 md:w-[22rem] md:shrink-0">
+            <LandingVideo
+              poster={cartaFrames[0].src}
+              frames={cartaFrames.map(({ src, alt }) => ({ src, alt }))}
+            />
           </div>
         </div>
       </section>
 
-      <section className="bg-background">
-        <div className="mx-auto max-w-3xl px-6 pb-12 pt-8 text-center sm:pb-20 sm:pt-12 md:max-w-5xl">
-          <ol className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 text-left md:snap-none md:items-stretch md:gap-8 md:overflow-visible">
-            {STEPS.map(([n, title, body]) => (
-              <li key={n} className="w-[82%] shrink-0 snap-center md:w-auto md:min-w-0 md:flex-1 md:snap-align-none">
-                <p className="eyebrow text-wine">{n}</p>
-                <h3 className="mt-2 font-display text-2xl text-ink">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink/75">{body}</p>
-              </li>
-            ))}
-          </ol>
-          <h2 className="mt-8 text-left font-sans text-xl text-gold sm:mt-10 md:text-2xl">Forman parte del Mundo Venus</h2>
-          <ReviewsFade reviews={reviews} />
-        </div>
-      </section>
+      <GalleryBlock lines={galleryLines} photos={galleryCaptures} />
 
       <section className="relative">
         <div className="relative w-full">
@@ -237,6 +384,23 @@ export function AppLandingBody() {
             </div>
           </div>
         </div>
+      </section>
+
+      <section className="bg-background">
+        <div className="mx-auto max-w-3xl px-6 pb-12 pt-8 text-center sm:pb-20 sm:pt-12 md:max-w-5xl">
+          <ol className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 text-left md:snap-none md:items-stretch md:gap-8 md:overflow-visible">
+            {STEPS.map(([n, title, body]) => (
+              <li key={n} className="w-[82%] shrink-0 snap-center md:w-auto md:min-w-0 md:flex-1 md:snap-align-none">
+                <p className="eyebrow text-wine">{n}</p>
+                <h3 className="mt-2 font-display text-2xl text-ink">{title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-ink/75">{body}</p>
+              </li>
+            ))}
+          </ol>
+          <h2 className="mt-8 text-left font-sans text-xl text-gold sm:mt-10 md:text-2xl">Forman parte del Mundo Venus</h2>
+          <ReviewsFade reviews={reviews} />
+        </div>
+        <div className="section-forest h-8" aria-hidden="true" />
       </section>
     </>
   );
