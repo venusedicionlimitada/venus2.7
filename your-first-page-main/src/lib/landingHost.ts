@@ -17,3 +17,11 @@ export function isLandingHost() {
 export function landingHostPathAllowed(pathname: string) {
   return OPEN_ON_LANDING_HOST.has(pathname);
 }
+
+/** La promo y el entorno local se ven sin clave. El resto pide el acceso de /admin. */
+const GATE_FREE_HOSTS = new Set([LANDING_HOST, "localhost", "127.0.0.1", "::1"]);
+
+export function siteRequiresGate() {
+  const host = currentHost().trim().toLowerCase();
+  return host.length > 0 && !GATE_FREE_HOSTS.has(host);
+}

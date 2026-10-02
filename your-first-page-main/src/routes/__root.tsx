@@ -16,7 +16,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { AuthProvider } from "../lib/use-auth";
 import { SiteFooter } from "../components/SiteFooter";
-import { isLandingHost, landingHostPathAllowed } from "@/lib/landingHost";
+import { isLandingHost, landingHostPathAllowed, siteRequiresGate } from "@/lib/landingHost";
+import { SiteGate } from "@/components/SiteGate";
 
 function NotFoundComponent() {
   return (
@@ -91,6 +92,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:description", content: "Terapias de acompañamiento que tejen yoga y astrología en un ritual sensorial." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      ...(siteRequiresGate() ? [{ name: "robots", content: "noindex, nofollow" }] : []),
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -130,12 +132,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <div className="flex min-h-screen flex-col">
-          <main className="flex-1">
-            <Outlet />
-          </main>
-          {!isStandaloneLanding && <SiteFooter />}
-        </div>
+        <SiteGate>
+          <div className="flex min-h-screen flex-col">
+            <main className="flex-1">
+              <Outlet />
+            </main>
+            {!isStandaloneLanding && <SiteFooter />}
+          </div>
+        </SiteGate>
       </AuthProvider>
     </QueryClientProvider>
   );
