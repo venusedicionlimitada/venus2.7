@@ -3,6 +3,7 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  redirect,
   useRouter,
   useRouterState,
   HeadContent,
@@ -15,6 +16,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { AuthProvider } from "../lib/use-auth";
 import { SiteFooter } from "../components/SiteFooter";
+import { isLandingHost, landingHostPathAllowed } from "@/lib/landingHost";
 
 function NotFoundComponent() {
   return (
@@ -72,6 +74,12 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+  beforeLoad: ({ location }) => {
+    if (!isLandingHost()) return;
+    if (location.pathname === "/landing" || !landingHostPathAllowed(location.pathname)) {
+      throw redirect({ to: "/", replace: true });
+    }
+  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -117,7 +125,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const queryClient = new QueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isStandaloneLanding = pathname === "/landing";
+  const isStandaloneLanding = pathname === "/landing" || isLandingHost();
 
   return (
     <QueryClientProvider client={queryClient}>

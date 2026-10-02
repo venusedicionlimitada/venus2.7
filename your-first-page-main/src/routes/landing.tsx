@@ -22,7 +22,7 @@ export const Route = createFileRoute("/landing")({
   component: LandingPage,
 });
 
-function LandingPage() {
+export function LandingPage() {
   return (
     <>
       <LandingBar />

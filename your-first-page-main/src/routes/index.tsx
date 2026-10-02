@@ -10,6 +10,8 @@ import { HomeFeatureCard } from "@/components/cards/HomeFeatureCard";
 import { supabase } from "@/integrations/supabase/client";
 import { EmotionalCategoryCard, tarjetasDeEmocion, type EmotionFicha } from "@/components/events/EmotionalCategoryCard";
 import { sectionIsOpen, useSectionFlags } from "@/lib/hooks/useSectionActive";
+import { LandingPage } from "@/routes/landing";
+import { isLandingHost } from "@/lib/landingHost";
 import { LandingVideo } from "@/components/app/LandingVideo";
 import silkGreen from "@/assets/app/silk-green.png";
 import splash from "@/assets/app/splash.jpg";
@@ -18,12 +20,26 @@ import chatPreguntas from "@/assets/app/chat-preguntas.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
-    meta: [
-      { title: "VENUS Edición Limitada · Yoga, astrología y acompañamiento" },
-      { name: "description", content: "Un espacio ritual donde el yoga y la astrología se entrelazan para acompañarte en tu proceso de transformation." },
-      { property: "og:title", content: "VENUS Edición Limitada" },
-      { property: "og:description", content: "Terapias de acompañamiento desde el yoga y la astrología." },
-    ],
+    meta: isLandingHost()
+      ? [
+          { title: "Venus App · Cuéntale a Venus" },
+          {
+            name: "description",
+            content:
+              "Consulta personalizada de astrología emocional. Tu carta y la sinastría, en conversación. 14 días de demo gratuita.",
+          },
+          { property: "og:title", content: "Venus App · Conversa a tu Ritmo" },
+          {
+            property: "og:description",
+            content: "Tu carta y la sinastría, a tu ritmo. 14 días de demo gratuita.",
+          },
+        ]
+      : [
+          { title: "VENUS Edición Limitada · Yoga, astrología y acompañamiento" },
+          { name: "description", content: "Un espacio ritual donde el yoga y la astrología se entrelazan para acompañarte en tu proceso de transformation." },
+          { property: "og:title", content: "VENUS Edición Limitada" },
+          { property: "og:description", content: "Terapias de acompañamiento desde el yoga y la astrología." },
+        ],
   }),
   component: Index,
 });
@@ -81,6 +97,11 @@ function toPost(row: Record<string, unknown>, seccion: Seccion): Post {
 }
 
 function Index() {
+  if (isLandingHost()) return <LandingPage />;
+  return <HomeIndex />;
+}
+
+function HomeIndex() {
   const [lunarCoverUrl, setLunarCoverUrl] = useState<string | null>(null);
   const [api, setApi] = useState<any>();
   const [currentIndex, setCurrentIndex] = useState(0);
