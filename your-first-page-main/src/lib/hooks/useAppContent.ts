@@ -19,14 +19,69 @@ export type AppGalleryLine = {
   body: string;
 };
 
+export type AppStep = {
+  id?: string;
+  marker: string;
+  title: string;
+  body: string;
+};
+
 const FALLBACK_GALLERY_LINES: AppGalleryLine[] = [
   { body: "Clima Astral" },
-  { body: "Así está el cielo hoy para ti" },
-  { body: "Lee los tránsitos de tu carta" },
   { body: "Tu carta natal" },
+  { body: "Clima Astral Personalizado" },
+  { body: "organiza tu día según los tránsitos" },
+  { body: "descubre tus talentos innatos" },
   { body: "Informes de tu carta natal personalizados" },
-  { body: "Aprende sobre tu manera de amar, tu vocación o tus raíces" },
-  { body: "Descubre las lecturas que Venus realiza a tu carta" },
+  { body: "tu lenguaje del amor" },
+  { body: "informes natales personalizados" },
+  { body: "sinastrías" },
+  { body: "descubre el lenguaje del amor de tu pareja" },
+  { body: "compatibilidad de amistades" },
+  { body: "¿tienes un evento importante? descubre la energía de ese día" },
+  { body: "a tu propio ritmo" },
+  { body: "resuelve tus dudas" },
+  { body: "te ayuda a tomar decisiones" },
+  { body: "tu carta natal en la palma de tu mano" },
+  { body: "compatibilidad de pareja" },
+];
+
+const FALLBACK_STEPS: AppStep[] = [
+  {
+    marker: "01",
+    title: "Consulta astrológica con tu carta",
+    body: "Pregunta tus inquietudes",
+  },
+  {
+    marker: "02",
+    title: "Tu configuración astral",
+    body: "Siempre disponible",
+  },
+  {
+    marker: "03",
+    title: "Informes personalizados de tu carta natal",
+    body: "Tu mapa al detalle",
+  },
+  {
+    marker: "04",
+    title: "Sinastrías",
+    body: "Compatibilidad con tus vínculos",
+  },
+  {
+    marker: "05",
+    title: "Consulta de sinastrías",
+    body: "Pregúntale al instante acerca de vuestra relación",
+  },
+  {
+    marker: "06",
+    title: "Clima Astral",
+    body: "La energía del día que quieras",
+  },
+  {
+    marker: "07",
+    title: "Clima Astral Personalizado",
+    body: "Descubre la energía disponible para ti",
+  },
 ];
 
 const FALLBACK_REVIEWS: AppReview[] = [
@@ -60,16 +115,16 @@ export function useAppContent() {
   const [captures, setCaptures] = useState<AppCapture[]>([]);
   const [cartaCaptures, setCartaCaptures] = useState<AppCapture[]>([]);
   const [galleryCaptures, setGalleryCaptures] = useState<AppCapture[]>([]);
-  const [galleryLines, setGalleryLines] = useState<AppGalleryLine[]>(FALLBACK_GALLERY_LINES);
+  const [steps, setSteps] = useState<AppStep[]>(FALLBACK_STEPS);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      const [photoRes, reviewRes, lineRes] = await Promise.all([
+      const [photoRes, reviewRes, stepRes] = await Promise.all([
         supabase.from("app_photos").select("id, image_url, alt, sort_order, slot").order("sort_order", { ascending: true }),
         supabase.from("app_reviews").select("id, quote, name, label, sort_order").order("sort_order", { ascending: true }),
-        supabase.from("app_gallery_lines").select("id, body, sort_order").order("sort_order", { ascending: true }),
+        supabase.from("app_steps").select("id, marker, title, body, sort_order").order("sort_order", { ascending: true }),
       ]);
 
       if (cancelled) return;
@@ -90,8 +145,20 @@ export function useAppContent() {
         if (!legacy.error && legacy.data) setCaptures(legacy.data.map(toCapture));
       }
 
-      if (!lineRes.error && lineRes.data && lineRes.data.length > 0) {
-        setGalleryLines(lineRes.data.map((row) => ({ id: row.id, body: row.body })));
+      if (!stepRes.error && stepRes.data) {
+        const extra = stepRes.data
+          .map((row) => ({
+            id: row.id,
+            marker: row.marker,
+            title: row.title,
+            body: row.body,
+          }))
+          .filter(
+            (row) =>
+              row.title !== "Tu configuración astral siempre disponible" &&
+              !FALLBACK_STEPS.some((step) => step.title === row.title && step.body === row.body),
+          );
+        setSteps([...FALLBACK_STEPS, ...extra]);
       }
 
       if (!reviewRes.error && reviewRes.data && reviewRes.data.length > 0) {
@@ -112,5 +179,5 @@ export function useAppContent() {
     };
   }, []);
 
-  return { reviews, captures, cartaCaptures, galleryCaptures, galleryLines };
+  return { reviews, captures, cartaCaptures, galleryCaptures, galleryLines: FALLBACK_GALLERY_LINES, steps };
 }

@@ -22,7 +22,7 @@
 
 .venus-pixel .mockframe .screen {
   z-index: 3;
-  background: #000;
+  background: var(--verdejoya);
   width: 100%;
   height: 100%;
   display: block;

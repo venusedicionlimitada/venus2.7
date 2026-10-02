@@ -45,7 +45,7 @@ export function LandingVideo({
 
   return (
     <PixelFrame>
-      <div className="relative h-full w-full bg-black">
+      <div className="relative h-full w-full bg-verdejoya">
         {file ? (
           <video
             ref={videoRef}

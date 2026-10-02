@@ -23,8 +23,10 @@ type ReviewRow = {
   sort_order: number;
 };
 
-type GalleryLineRow = {
+type StepRow = {
   id: string;
+  marker: string;
+  title: string;
   body: string;
   sort_order: number;
 };
@@ -134,8 +136,8 @@ export function AppSection() {
   const [newAlt, setNewAlt] = useState("");
   const [newCartaAlt, setNewCartaAlt] = useState("");
   const [newGalleryAlt, setNewGalleryAlt] = useState("");
-  const [lines, setLines] = useState<GalleryLineRow[] | null>(null);
-  const [lineForm, setLineForm] = useState<Partial<GalleryLineRow> | null>(null);
+  const [steps, setSteps] = useState<StepRow[] | null>(null);
+  const [stepForm, setStepForm] = useState<Partial<StepRow> | null>(null);
   const [reviewForm, setReviewForm] = useState<Partial<ReviewRow> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
@@ -161,13 +163,13 @@ export function AppSection() {
     setAlts(Object.fromEntries(rows.map((row) => [row.id, row.alt ?? ""])));
     setReviews((reviewRes.data ?? []) as ReviewRow[]);
 
-    const lineRes = await supabase.from("app_gallery_lines").select("*").order("sort_order", { ascending: true });
-    if (lineRes.error) {
-      setLines([]);
-      setError(lineRes.error.message);
+    const stepRes = await supabase.from("app_steps").select("*").order("sort_order", { ascending: true });
+    if (stepRes.error) {
+      setSteps([]);
+      setError(stepRes.error.message);
       return;
     }
-    setLines((lineRes.data ?? []) as GalleryLineRow[]);
+    setSteps((stepRes.data ?? []) as StepRow[]);
     setError(null);
   }
 
@@ -231,6 +233,49 @@ export function AppSection() {
     else await load();
   }
 
+  async function saveStep(e: React.FormEvent) {
+    e.preventDefault();
+    if (!stepForm) return;
+    setBusy("step");
+    const payload = {
+      marker: stepForm.marker?.trim() ?? "",
+      title: stepForm.title?.trim() ?? "",
+      body: stepForm.body?.trim() ?? "",
+      sort_order: stepForm.sort_order ?? (steps?.length ?? 0) + 1,
+    };
+    const res = stepForm.id
+      ? await supabase.from("app_steps").update(payload).eq("id", stepForm.id)
+      : await supabase.from("app_steps").insert(payload);
+    setBusy(null);
+    if (res.error) {
+      setError(res.error.message);
+      return;
+    }
+    setStepForm(null);
+    await load();
+  }
+
+  async function removeStep(id: string) {
+    if (!confirm("¿Borrar este paso?")) return;
+    const { error: deleteError } = await supabase.from("app_steps").delete().eq("id", id);
+    if (deleteError) setError(deleteError.message);
+    else await load();
+  }
+
+  async function moveStep(index: number, direction: -1 | 1) {
+    if (!steps) return;
+    const next = index + direction;
+    if (next < 0 || next >= steps.length) return;
+    const current = steps[index];
+    const other = steps[next];
+    setBusy("step-order");
+    const first = await supabase.from("app_steps").update({ sort_order: other.sort_order }).eq("id", current.id);
+    const second = await supabase.from("app_steps").update({ sort_order: current.sort_order }).eq("id", other.id);
+    setBusy(null);
+    if (first.error || second.error) setError(first.error?.message ?? second.error?.message ?? "No se pudo reordenar");
+    else await load();
+  }
+
   async function saveReview(e: React.FormEvent) {
     e.preventDefault();
     if (!reviewForm) return;
@@ -274,47 +319,6 @@ export function AppSection() {
     else await load();
   }
 
-  async function saveLine(e: React.FormEvent) {
-    e.preventDefault();
-    if (!lineForm) return;
-    setBusy("line");
-    const payload = {
-      body: lineForm.body?.trim() ?? "",
-      sort_order: lineForm.sort_order ?? (lines?.length ?? 0) + 1,
-    };
-    const res = lineForm.id
-      ? await supabase.from("app_gallery_lines").update(payload).eq("id", lineForm.id)
-      : await supabase.from("app_gallery_lines").insert(payload);
-    setBusy(null);
-    if (res.error) {
-      setError(res.error.message);
-      return;
-    }
-    setLineForm(null);
-    await load();
-  }
-
-  async function removeLine(id: string) {
-    if (!confirm("¿Borrar esta frase?")) return;
-    const { error: deleteError } = await supabase.from("app_gallery_lines").delete().eq("id", id);
-    if (deleteError) setError(deleteError.message);
-    else await load();
-  }
-
-  async function moveLine(index: number, direction: -1 | 1) {
-    if (!lines) return;
-    const next = index + direction;
-    if (next < 0 || next >= lines.length) return;
-    const current = lines[index];
-    const other = lines[next];
-    setBusy("line-order");
-    const first = await supabase.from("app_gallery_lines").update({ sort_order: other.sort_order }).eq("id", current.id);
-    const second = await supabase.from("app_gallery_lines").update({ sort_order: current.sort_order }).eq("id", other.id);
-    setBusy(null);
-    if (first.error || second.error) setError(first.error?.message ?? second.error?.message ?? "No se pudo reordenar");
-    else await load();
-  }
-
   return (
     <div>
       <SectionPauseControl section="app" />
@@ -322,7 +326,7 @@ export function AppSection() {
         <div>
           <h2 className="font-display text-2xl text-ink">Venus App</h2>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink/70">
-            Cada marco tiene sus capturas. Las de «Así responde Venus» salen detrás de las tres de la página. Las de «Tu carta, o la de dos» solo se ven en ese bloque. La galería tiene sus frases y sus fotos, y rotan por separado. Las fotos de cabecera no se cambian desde aquí.
+            «Así responde Venus» ya no tiene marco: lo que subas en ese hueco no se ve. «Tu carta, o la de dos» tiene el suyo. La galería muestra la portada, la bienvenida de las preguntas y las fotos que subas ahí.
           </p>
         </div>
         <Link to="/app" className="text-[0.7rem] uppercase tracking-[0.25em] text-ink/60 hover:text-gold">
@@ -334,9 +338,9 @@ export function AppSection() {
 
       <CaptureList
         title="Capturas de «Así responde Venus»"
-        empty="Todavía no hay capturas añadidas. El marco sigue con las tres de la página."
+        empty="Este hueco ya no se muestra en la página. Sube las fotos en la galería o en el bloque de las dos cartas."
         photos={photos?.filter((row) => row.slot === "responde")}
-        indexOffset={4}
+        indexOffset={3}
         alts={alts}
         onAlt={(id, value) => setAlts({ ...alts, [id]: value })}
         newAlt={newAlt}
@@ -350,9 +354,9 @@ export function AppSection() {
       />
       <CaptureList
         title="Capturas de «Tu carta, o la de dos»"
-        empty="Todavía no hay capturas. El marco enseña una foto del bloque anterior hasta que subas la primera."
+        empty="El marco ya muestra las capturas de las dos cartas. Las que subas aquí se añaden al final."
         photos={photos?.filter((row) => row.slot === "carta")}
-        indexOffset={1}
+        indexOffset={17}
         alts={alts}
         onAlt={(id, value) => setAlts({ ...alts, [id]: value })}
         newAlt={newCartaAlt}
@@ -366,9 +370,9 @@ export function AppSection() {
       />
       <CaptureList
         title="Fotos de la galería"
-        empty="Todavía no hay fotos. La galería muestra solo las frases hasta que subas la primera."
+        empty="La galería ya muestra la portada y la bienvenida. Las que subas aquí se añaden al final."
         photos={photos?.filter((row) => row.slot === "galeria")}
-        indexOffset={1}
+        indexOffset={3}
         alts={alts}
         onAlt={(id, value) => setAlts({ ...alts, [id]: value })}
         newAlt={newGalleryAlt}
@@ -382,32 +386,37 @@ export function AppSection() {
       />
 
       <div className="mt-12 flex items-center justify-between">
-        <h3 className="font-display text-xl text-ink">Frases de la galería</h3>
-        <PrimaryButton type="button" onClick={() => setLineForm({ body: "" })}>
-          + Nueva
+        <h3 className="font-display text-xl text-ink">Pasos</h3>
+        <PrimaryButton type="button" onClick={() => setStepForm({ marker: "", title: "", body: "" })}>
+          + Nuevo
         </PrimaryButton>
       </div>
       <div className="mt-4 space-y-px bg-border/40">
-        {lines === null && <p className="bg-background p-6 text-sm text-ink/60">Cargando…</p>}
-        {lines?.length === 0 && <p className="bg-background p-6 text-sm text-ink/60">Ninguna frase todavía.</p>}
-        {lines?.map((line, index) => (
-          <div key={line.id} className="flex items-center justify-between gap-4 bg-background p-5">
-            <p className="min-w-0 font-display text-lg text-ink">{line.body}</p>
+        {steps === null && <p className="bg-background p-6 text-sm text-ink/60">Cargando…</p>}
+        {steps?.length === 0 && <p className="bg-background p-6 text-sm text-ink/60">Ningún paso todavía.</p>}
+        {steps?.map((step, index) => (
+          <div key={step.id} className="flex items-center justify-between gap-4 bg-background p-5">
+            <div className="min-w-0">
+              <p className="truncate font-display text-lg text-ink">
+                {step.marker} {step.title}
+              </p>
+              <p className="mt-0.5 line-clamp-2 text-sm text-ink/70">{step.body}</p>
+            </div>
             <div className="flex shrink-0 gap-2">
-              <GhostButton type="button" disabled={busy === "line-order" || index === 0} onClick={() => moveLine(index, -1)}>
+              <GhostButton type="button" disabled={busy === "step-order" || index === 0} onClick={() => moveStep(index, -1)}>
                 Subir
               </GhostButton>
               <GhostButton
                 type="button"
-                disabled={busy === "line-order" || index === lines.length - 1}
-                onClick={() => moveLine(index, 1)}
+                disabled={busy === "step-order" || index === steps.length - 1}
+                onClick={() => moveStep(index, 1)}
               >
                 Bajar
               </GhostButton>
-              <GhostButton type="button" onClick={() => setLineForm(line)}>
+              <GhostButton type="button" onClick={() => setStepForm(step)}>
                 Editar
               </GhostButton>
-              <GhostButton type="button" onClick={() => removeLine(line.id)}>
+              <GhostButton type="button" onClick={() => removeStep(step.id)}>
                 Borrar
               </GhostButton>
             </div>
@@ -415,23 +424,40 @@ export function AppSection() {
         ))}
       </div>
 
-      {lineForm && (
-        <form onSubmit={saveLine} className="mt-6 max-w-2xl space-y-5 border border-border p-5">
-          <h4 className="font-display text-lg text-ink">{lineForm.id ? "Editar frase" : "Nueva frase"}</h4>
+      {stepForm && (
+        <form onSubmit={saveStep} className="mt-6 max-w-2xl space-y-5 border border-border p-5">
+          <h4 className="font-display text-lg text-ink">{stepForm.id ? "Editar paso" : "Nuevo paso"}</h4>
+          <div>
+            <Label>Número</Label>
+            <TextInput
+              required
+              value={stepForm.marker ?? ""}
+              onChange={(e) => setStepForm({ ...stepForm, marker: e.target.value })}
+              placeholder="01"
+            />
+          </div>
+          <div>
+            <Label>Título</Label>
+            <TextInput
+              required
+              value={stepForm.title ?? ""}
+              onChange={(e) => setStepForm({ ...stepForm, title: e.target.value })}
+            />
+          </div>
           <div>
             <Label>Texto</Label>
             <TextArea
               required
-              rows={2}
-              value={lineForm.body ?? ""}
-              onChange={(e) => setLineForm({ ...lineForm, body: e.target.value })}
+              rows={3}
+              value={stepForm.body ?? ""}
+              onChange={(e) => setStepForm({ ...stepForm, body: e.target.value })}
             />
           </div>
           <div className="flex gap-2">
-            <PrimaryButton type="submit" disabled={busy === "line"}>
-              {busy === "line" ? "Guardando…" : "Guardar"}
+            <PrimaryButton type="submit" disabled={busy === "step"}>
+              {busy === "step" ? "Guardando…" : "Guardar"}
             </PrimaryButton>
-            <GhostButton type="button" onClick={() => setLineForm(null)}>
+            <GhostButton type="button" onClick={() => setStepForm(null)}>
               Cancelar
             </GhostButton>
           </div>

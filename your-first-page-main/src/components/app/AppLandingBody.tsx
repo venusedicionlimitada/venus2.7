@@ -1,4 +1,5 @@
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
+import { DOS_CARTA_FRAMES } from "@/components/app/dosCartas";
 import { LandingVideo } from "@/components/app/LandingVideo";
 import { useSectionActive } from "@/lib/hooks/useSectionActive";
 import { useAppContent, type AppCapture, type AppGalleryLine, type AppReview } from "@/lib/hooks/useAppContent";
@@ -7,19 +8,9 @@ import silkGreen from "@/assets/app/silk-green.png";
 import portrait from "@/assets/app/claridad-movil.jpg";
 import portraitDesktop from "@/assets/app/claridad-r270.jpg";
 import splash from "@/assets/app/splash.jpg";
-import chatCarta from "@/assets/app/chat-carta.jpg";
-import chatPreguntas from "@/assets/app/chat-preguntas.jpg";
+import respondeProposito from "@/assets/app/dos/06.jpg";
 
 const APP_URL = "https://app.venusedicionlimitada.com";
-
-/** Vacío: el marco enseña las capturas. Con una URL o un archivo, reproduce el vídeo. */
-const APP_VIDEO_SRC = "";
-
-const STEPS = [
-  ["01", "Cuenta", "Entras en la app y creas tu cuenta. Los 14 días de demo empiezan ahí."],
-  ["02", "Datos", "Fecha, hora y lugar de nacimiento. Si abres una sinastría, también los de la otra carta."],
-  ["03", "Conversación", "Escribes a tu ritmo. Venus no tiene prisa, y puedes volver cuando quieras seguir."],
-] as const;
 
 /** Tiempo que cada reseña permanece antes del fundido. */
 const REVIEW_HOLD_MS = 3600;
@@ -59,12 +50,12 @@ function ReviewsFade({ reviews }: { reviews: AppReview[] }) {
       {reviews.map((review, i) => (
         <figure
           key={review.id ?? review.name}
-          className={`col-start-1 row-start-1 border border-ink/15 px-5 py-4 transition-opacity duration-700 ease-in-out motion-reduce:transition-none md:px-8 md:py-5 ${
+          className={`col-start-1 row-start-1 flex h-full flex-col border border-ink/15 px-5 py-4 transition-opacity duration-700 ease-in-out motion-reduce:transition-none md:px-8 md:py-5 ${
             i === index ? "opacity-100" : "pointer-events-none opacity-0"
           }`}
         >
-          <blockquote className="font-sans text-xl font-normal leading-snug text-ink">{review.quote}</blockquote>
-          <figcaption className="mt-4 flex items-end justify-between gap-4 text-[0.7rem] uppercase tracking-[0.22em] text-wine">
+          <blockquote className="font-sans text-[1.05rem] font-normal leading-snug text-ink">{review.quote}</blockquote>
+          <figcaption className="mt-auto flex items-end justify-between gap-4 pt-4 text-[0.7rem] uppercase tracking-[0.22em] text-wine">
             <span>{review.name}</span>
             <span>{review.label}</span>
           </figcaption>
@@ -227,20 +218,66 @@ function GalleryBlock({ lines, photos }: { lines: AppGalleryLine[]; photos: AppC
   );
 }
 
+function ContentRail({ children }: { children: ReactNode }) {
+  const ref = useRef<HTMLOListElement>(null);
+  const drag = useRef<{ id: number; x: number; left: number; locked: boolean } | null>(null);
+
+  function onPointerDown(event: PointerEvent<HTMLOListElement>) {
+    drag.current = {
+      id: event.pointerId,
+      x: event.clientX,
+      left: event.currentTarget.scrollLeft,
+      locked: false,
+    };
+  }
+
+  function onPointerMove(event: PointerEvent<HTMLOListElement>) {
+    const current = drag.current;
+    const el = ref.current;
+    if (!current || !el || event.pointerId !== current.id) return;
+    const dx = event.clientX - current.x;
+    if (!current.locked) {
+      if (Math.abs(dx) < 8) return;
+      current.locked = true;
+      el.setPointerCapture(event.pointerId);
+    }
+    el.scrollLeft = current.left - dx;
+  }
+
+  function endDrag() {
+    drag.current = null;
+  }
+
+  return (
+    <ol
+      ref={ref}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      className="mt-8 flex cursor-grab snap-x snap-mandatory gap-5 overflow-x-auto pb-4 text-left touch-pan-y active:cursor-grabbing md:mt-8 md:grid md:cursor-auto md:grid-cols-2 md:gap-8 md:overflow-visible md:pb-0 lg:grid-cols-3"
+    >
+      {children}
+    </ol>
+  );
+}
+
 /** Cuerpo compartido por /app y /landing. El header y el pie los pone cada ruta. */
 export function AppLandingBody() {
   const sectionActive = useSectionActive("app");
-  const { reviews, captures, cartaCaptures, galleryCaptures, galleryLines } = useAppContent();
-  const frames: AppCapture[] = [
-    { id: "splash", src: splash, alt: "Venus, edición limitada. Consulta personalizada de astrología emocional." },
-    { id: "carta", src: chatCarta, alt: "Conversación sobre los patrones de pareja en la carta." },
-    { id: "preguntas", src: chatPreguntas, alt: "Venus devuelve preguntas para seguir la consulta." },
-    ...captures,
-  ];
-  const cartaFrames: AppCapture[] =
-    cartaCaptures.length > 0
-      ? cartaCaptures
-      : [{ id: "carta-fallback", src: chatCarta, alt: "Conversación sobre los patrones de pareja en la carta." }];
+  const { reviews, cartaCaptures, galleryCaptures, galleryLines, steps } = useAppContent();
+  const portada: AppCapture = {
+    id: "splash",
+    src: splash,
+    alt: "Venus, edición limitada. Consulta personalizada de astrología emocional.",
+  };
+  const preguntas: AppCapture = {
+    id: "proposito",
+    src: respondeProposito,
+    alt: "Bienvenida al chat, con preguntas sobre el propósito.",
+  };
+  const cartaFrames: AppCapture[] = [...DOS_CARTA_FRAMES, portada, ...cartaCaptures];
+  const galleryPhotos: AppCapture[] = [portada, preguntas, ...galleryCaptures];
 
   if (sectionActive === false) {
     return (
@@ -293,26 +330,24 @@ export function AppLandingBody() {
         <img
           src={silkGold}
           alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
+          className="pointer-events-none absolute inset-0 h-full w-full scale-150 object-cover blur-md"
         />
         <div className="absolute inset-0 bg-cream/25" aria-hidden="true" />
-        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24 md:flex md:max-w-6xl md:items-center md:justify-center md:gap-20 md:py-28 md:[zoom:0.92] lg:gap-28">
-          <div className="mx-auto max-w-md text-center md:mx-0 md:max-w-sm md:-translate-x-20 lg:max-w-md">
-            <h2 className="font-display text-4xl leading-tight text-ink sm:text-5xl md:-translate-y-12">
-              Así responde Venus
-            </h2>
-            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink/80 sm:text-base md:mx-0 md:mt-8 md:max-w-none md:text-[1.65rem] md:leading-[1.3] md:text-ink lg:text-[1.85rem]">
-              Lees tu carta en conversación. Preguntas por un vínculo, una decisión o esa tensión
-              entre lo que piensas y lo que sientes. Ella responde, y te deja la siguiente pregunta.
-            </p>
-          </div>
-          <div className="mt-10 w-full md:mt-0 md:w-[22rem] md:shrink-0">
-            <LandingVideo
-              src={APP_VIDEO_SRC}
-              poster={frames[0].src}
-              frames={frames.map(({ src, alt }) => ({ src, alt }))}
-            />
-          </div>
+        <div className="relative mx-auto max-w-3xl px-6 py-16 text-center sm:py-20 md:py-24">
+          <h2 className="font-display text-4xl leading-tight text-ink sm:text-5xl">Clima Astral</h2>
+          <p className="mx-auto mt-6 max-w-xl text-[1.075rem] font-normal leading-relaxed text-ink sm:text-[1.2rem] md:mt-8 md:text-[1.65rem] md:leading-[1.3]">
+            ¿Tienes un evento importante?
+          </p>
+          <p className="mx-auto mt-3 max-w-xl text-[1.075rem] font-normal leading-relaxed text-ink sm:text-[1.2rem] md:text-[1.65rem] md:leading-[1.3]">
+            Venus te dice al instante, cómo será para ti la energía de ese día
+          </p>
+          <p className="mx-auto mt-8 max-w-md text-[0.68rem] font-normal uppercase leading-relaxed tracking-[0.12em] text-ink/70 md:tracking-[0.16em]">
+            <span className="md:hidden">
+              <span className="block">La energía del día</span>
+              <span className="mt-1 block">y la energía aplicada a tu carta</span>
+            </span>
+            <span className="hidden md:inline">La energía del día — La energía aplicada a tu carta</span>
+          </p>
         </div>
       </section>
 
@@ -323,7 +358,7 @@ export function AppLandingBody() {
           className="pointer-events-none absolute inset-0 h-full w-full scale-125 object-cover"
         />
         <div className="absolute inset-0 bg-[#1c3329]/78" />
-        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24 md:flex md:max-w-6xl md:flex-row-reverse md:items-center md:gap-20 md:py-28 lg:gap-28">
+        <div className="relative mx-auto max-w-5xl px-6 py-16 sm:py-24 md:flex md:max-w-6xl md:flex-row-reverse md:items-start md:gap-20 md:py-28 lg:gap-28">
           <div className="min-w-0 md:flex-1">
             <h2 className="mx-auto max-w-md text-center font-display text-4xl leading-tight sm:text-5xl md:mx-0 md:max-w-none md:text-left">
               <span className="block md:inline">Tu carta,</span>{" "}
@@ -347,17 +382,44 @@ export function AppLandingBody() {
                 </p>
               </article>
             </div>
+            <p className="mx-auto mt-16 hidden max-w-none text-left font-extralight leading-relaxed text-cream md:block md:text-[1.05rem] md:leading-[1.4] lg:text-[1.1rem]">
+              Lees tu carta en conversación. Preguntas por un vínculo, una decisión o esa tensión
+              entre lo que piensas y lo que sientes. Ella responde, y te deja la siguiente pregunta.
+            </p>
           </div>
           <div className="mt-10 w-full md:mt-0 md:w-[22rem] md:shrink-0">
             <LandingVideo
               poster={cartaFrames[0].src}
               frames={cartaFrames.map(({ src, alt }) => ({ src, alt }))}
             />
+            <p className="mx-auto mt-8 max-w-xl text-center text-[1.075rem] font-normal leading-relaxed text-cream sm:text-[1.2rem] md:hidden">
+              Lees tu carta en conversación. Preguntas por un vínculo, una decisión o esa tensión
+              entre lo que piensas y lo que sientes. Ella responde, y te deja la siguiente pregunta.
+            </p>
           </div>
         </div>
       </section>
 
-      <GalleryBlock lines={galleryLines} photos={galleryCaptures} />
+      <section className="bg-background">
+        <div className="mx-auto max-w-3xl px-6 pb-10 pt-10 sm:pb-14 sm:pt-12 md:max-w-5xl md:pb-20 md:pt-12">
+          <h2 className="text-left font-display text-3xl leading-tight text-ink sm:text-4xl">
+            Con tus datos de nacimiento tendrás
+          </h2>
+          <ContentRail>
+            {steps.map((step) => (
+              <li key={step.id ?? step.marker} className="w-[82%] shrink-0 snap-center md:w-auto md:min-w-0">
+                <p className="eyebrow tracking-[0.14em] text-wine">{step.marker}</p>
+                <h3 className="mt-2 font-sans text-xl font-semibold leading-snug text-ink">{step.title}</h3>
+                {step.body ? (
+                  <p className="mt-2 font-sans text-base font-light leading-relaxed text-ink md:text-ink/75">{step.body}</p>
+                ) : null}
+              </li>
+            ))}
+          </ContentRail>
+        </div>
+      </section>
+
+      <GalleryBlock lines={galleryLines} photos={galleryPhotos} />
 
       <section className="relative">
         <div className="relative w-full">
@@ -388,16 +450,7 @@ export function AppLandingBody() {
 
       <section className="bg-background">
         <div className="mx-auto max-w-3xl px-6 pb-12 pt-8 text-center sm:pb-20 sm:pt-12 md:max-w-5xl">
-          <ol className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 text-left md:snap-none md:items-stretch md:gap-8 md:overflow-visible">
-            {STEPS.map(([n, title, body]) => (
-              <li key={n} className="w-[82%] shrink-0 snap-center md:w-auto md:min-w-0 md:flex-1 md:snap-align-none">
-                <p className="eyebrow text-wine">{n}</p>
-                <h3 className="mt-2 font-display text-2xl text-ink">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-ink/75">{body}</p>
-              </li>
-            ))}
-          </ol>
-          <h2 className="mt-8 text-left font-sans text-xl text-gold sm:mt-10 md:text-2xl">Forman parte del Mundo Venus</h2>
+          <h2 className="text-left font-sans text-[1.15rem] text-gold sm:mt-10 md:text-[1.4rem]">Forman parte del Mundo Venus</h2>
           <ReviewsFade reviews={reviews} />
         </div>
         <div className="section-forest h-8" aria-hidden="true" />

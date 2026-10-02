@@ -45,11 +45,21 @@ INSERT INTO public.app_gallery_lines (body, sort_order)
 SELECT body, sort_order
 FROM (VALUES
   ('Clima Astral', 1),
-  ('Así está el cielo hoy para ti', 2),
-  ('Lee los tránsitos de tu carta', 3),
-  ('Tu carta natal', 4),
-  ('Informes de tu carta natal personalizados', 5),
-  ('Aprende sobre tu manera de amar, tu vocación o tus raíces', 6),
-  ('Descubre las lecturas que Venus realiza a tu carta', 7)
+  ('Tu carta natal', 2),
+  ('Clima Astral Personalizado', 3),
+  ('organiza tu día según los tránsitos', 4),
+  ('descubre tus talentos innatos', 5),
+  ('Informes de tu carta natal personalizados', 6),
+  ('tu lenguaje del amor', 7),
+  ('informes natales personalizados', 8),
+  ('sinastrías', 9),
+  ('descubre el lenguaje del amor de tu pareja', 10),
+  ('compatibilidad de amistades', 11),
+  ('¿tienes un evento importante? descubre la energía de ese día', 12),
+  ('a tu propio ritmo', 13),
+  ('resuelve tus dudas', 14),
+  ('te ayuda a tomar decisiones', 15),
+  ('tu carta natal en la palma de tu mano', 16),
+  ('compatibilidad de pareja', 17)
 ) AS seed(body, sort_order)
 WHERE NOT EXISTS (SELECT 1 FROM public.app_gallery_lines);
