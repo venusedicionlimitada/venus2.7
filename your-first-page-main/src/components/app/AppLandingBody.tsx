@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
 import { DOS_CARTA_FRAMES } from "@/components/app/dosCartas";
+import { GALLERY_FRAMES } from "@/components/app/galeria";
 import { LandingVideo, useReelSwipe } from "@/components/app/LandingVideo";
 import { useSectionActive } from "@/lib/hooks/useSectionActive";
 import { useAppContent, type AppCapture, type AppGalleryLine, type AppReview } from "@/lib/hooks/useAppContent";
@@ -8,7 +9,6 @@ import silkGreen from "@/assets/app/silk-green.png";
 import portrait from "@/assets/app/claridad-movil.jpg";
 import portraitDesktop from "@/assets/app/claridad-r270.jpg";
 import splash from "@/assets/app/splash.jpg";
-import respondeProposito from "@/assets/app/dos/06.jpg";
 
 const APP_URL = "https://app.venusedicionlimitada.com";
 
@@ -278,13 +278,8 @@ export function AppLandingBody() {
     src: splash,
     alt: "Venus, edición limitada. Consulta personalizada de astrología emocional.",
   };
-  const preguntas: AppCapture = {
-    id: "proposito",
-    src: respondeProposito,
-    alt: "Bienvenida al chat, con preguntas sobre el propósito.",
-  };
   const cartaFrames: AppCapture[] = [...DOS_CARTA_FRAMES, portada, ...cartaCaptures];
-  const galleryPhotos: AppCapture[] = [portada, preguntas, ...galleryCaptures];
+  const galleryPhotos: AppCapture[] = [...GALLERY_FRAMES, ...galleryCaptures];
 
   if (sectionActive === false) {
     return (
@@ -399,7 +394,7 @@ export function AppLandingBody() {
               poster={cartaFrames[0].src}
               frames={cartaFrames.map(({ src, alt }) => ({ src, alt }))}
             />
-            <p className="mx-auto mt-8 max-w-xl text-center text-[1.075rem] font-normal leading-relaxed text-cream sm:text-[1.2rem] md:hidden">
+            <p className="mx-auto mt-8 max-w-xl text-center text-[0.975rem] font-normal leading-relaxed text-cream sm:text-[1.1rem] md:hidden">
               Lees tu carta en conversación. Preguntas por un vínculo, una decisión o esa tensión
               entre lo que piensas y lo que sientes. Ella responde, y te deja la siguiente pregunta.
             </p>

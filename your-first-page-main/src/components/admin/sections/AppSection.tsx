@@ -326,7 +326,7 @@ export function AppSection() {
         <div>
           <h2 className="font-display text-2xl text-ink">Venus App</h2>
           <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink/70">
-            «Así responde Venus» ya no tiene marco: lo que subas en ese hueco no se ve. «Tu carta, o la de dos» tiene el suyo. La galería muestra la portada, la bienvenida de las preguntas y las fotos que subas ahí.
+            «Así responde Venus» ya no tiene marco: lo que subas en ese hueco no se ve. «Tu carta, o la de dos» tiene el suyo. La galería ya muestra la portada, la carta, los informes, los tránsitos y dos sinastrías. Las fotos que subas se añaden al final.
           </p>
         </div>
         <Link to="/app" className="text-[0.7rem] uppercase tracking-[0.25em] text-ink/60 hover:text-gold">
@@ -370,9 +370,9 @@ export function AppSection() {
       />
       <CaptureList
         title="Fotos de la galería"
-        empty="La galería ya muestra la portada y la bienvenida. Las que subas aquí se añaden al final."
+        empty="La galería ya muestra las capturas del código. Las que subas aquí se añaden al final."
         photos={photos?.filter((row) => row.slot === "galeria")}
-        indexOffset={3}
+        indexOffset={26}
         alts={alts}
         onAlt={(id, value) => setAlts({ ...alts, [id]: value })}
         newAlt={newGalleryAlt}
