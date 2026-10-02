@@ -1,5 +1,42 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent } from "react";
 import { PixelFrame } from "@/components/app/PixelFrame";
+
+export function useReelSwipe(onStep: (direction: 1 | -1) => void) {
+  const drag = useRef<{ id: number; x: number; y: number; locked: boolean } | null>(null);
+
+  function onPointerDown(event: ReactPointerEvent<HTMLElement>) {
+    drag.current = { id: event.pointerId, x: event.clientX, y: event.clientY, locked: false };
+  }
+
+  function onPointerMove(event: ReactPointerEvent<HTMLElement>) {
+    const current = drag.current;
+    if (!current || event.pointerId !== current.id || current.locked) return;
+    const dx = event.clientX - current.x;
+    const dy = event.clientY - current.y;
+    if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
+    if (Math.abs(dx) <= Math.abs(dy)) {
+      drag.current = null;
+      return;
+    }
+    current.locked = true;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function onPointerUp(event: ReactPointerEvent<HTMLElement>) {
+    const current = drag.current;
+    drag.current = null;
+    if (!current?.locked || event.pointerId !== current.id) return;
+    const dx = event.clientX - current.x;
+    if (Math.abs(dx) < 36) return;
+    onStep(dx < 0 ? 1 : -1);
+  }
+
+  function onPointerCancel() {
+    drag.current = null;
+  }
+
+  return { onPointerDown, onPointerMove, onPointerUp, onPointerCancel };
+}
 
 type Frame = { src: string; alt: string };
 
@@ -18,6 +55,9 @@ export function LandingVideo({
   const [reduced, setReduced] = useState(false);
   const file = src?.trim() ?? "";
   const reel = frames.length > 0 ? frames : [{ src: poster, alt: "Venus App" }];
+  const swipe = useReelSwipe((direction) => {
+    setIndex((current) => (current + direction + reel.length) % reel.length);
+  });
 
   useEffect(() => {
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
@@ -45,7 +85,10 @@ export function LandingVideo({
 
   return (
     <PixelFrame>
-      <div className="relative h-full w-full bg-verdejoya">
+      <div
+        className="relative h-full w-full touch-pan-y bg-verdejoya"
+        {...(!file && reel.length > 1 ? swipe : {})}
+      >
         {file ? (
           <video
             ref={videoRef}

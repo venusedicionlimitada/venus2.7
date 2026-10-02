@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
 import { DOS_CARTA_FRAMES } from "@/components/app/dosCartas";
-import { LandingVideo } from "@/components/app/LandingVideo";
+import { LandingVideo, useReelSwipe } from "@/components/app/LandingVideo";
 import { useSectionActive } from "@/lib/hooks/useSectionActive";
 import { useAppContent, type AppCapture, type AppGalleryLine, type AppReview } from "@/lib/hooks/useAppContent";
 import silkGold from "@/assets/app/silk-gold.png";
@@ -162,6 +162,10 @@ function GalleryBlock({ lines, photos }: { lines: AppGalleryLine[]; photos: AppC
     setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
+  const swipe = useReelSwipe((direction) => {
+    setPhotoIndex((current) => (current + direction + photos.length) % photos.length);
+  });
+
   useEffect(() => {
     if (paused || reduced || photos.length < 2) return;
     const id = window.setInterval(() => {
@@ -177,7 +181,10 @@ function GalleryBlock({ lines, photos }: { lines: AppGalleryLine[]; photos: AppC
       <div className="mx-auto max-w-3xl px-6 pb-4 pt-8 text-center sm:pb-6 sm:pt-10 md:max-w-6xl lg:max-w-7xl">
         {photos.length > 0 && (
           <div className="mx-auto md:w-[34rem]">
-            <div className="relative mx-auto aspect-[436/939] w-full max-w-[22rem] md:aspect-[9/16] md:w-[22rem] md:max-w-none">
+            <div
+              className="relative mx-auto aspect-[436/939] w-full max-w-[22rem] touch-pan-y md:aspect-[9/16] md:w-[22rem] md:max-w-none"
+              {...(photos.length > 1 ? swipe : {})}
+            >
               {photos.map((photo, i) => {
                 const offset = galleryOffset(i, photoIndex, photos.length);
                 return (
