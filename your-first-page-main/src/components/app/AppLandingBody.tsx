@@ -16,7 +16,7 @@ const APP_URL = "https://app.venusedicionlimitada.com";
 const REVIEW_HOLD_MS = 3600;
 
 /** Las frases y las fotos de la galería no comparten ritmo. */
-const GALLERY_LINE_MS = 6200;
+const GALLERY_LINE_MS = 2500;
 const GALLERY_PHOTO_MS = 7600;
 
 function AccountLink({ className, children }: { className: string; children: string }) {
