@@ -95,6 +95,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       ...(siteRequiresGate() ? [{ name: "robots", content: "noindex, nofollow" }] : []),
     ],
     links: [
+      { rel: "icon", type: "image/png", sizes: "480x480", href: "/favicon.png" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
