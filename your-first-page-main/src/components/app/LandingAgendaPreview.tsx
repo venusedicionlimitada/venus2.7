@@ -168,7 +168,7 @@ function MonthGrid({ year, month, today }: { year: number; month: number; today:
   return (
     <div className="overflow-hidden rounded-md border border-forest/20 bg-white shadow-[0_28px_80px_-45px] shadow-forest/40">
       <div className="border-b border-forest/15 px-4 py-4 sm:px-5 sm:py-5">
-        <p className="text-[0.6rem] uppercase tracking-[0.16em] text-ink/45">Calendario astral</p>
+        <p className="text-[0.6rem] uppercase tracking-[0.16em] text-ink/45">Agenda astral</p>
         <h3 className="mt-1 font-display text-2xl text-forest sm:text-3xl">
           {MONTHS[month]} {year}
         </h3>
@@ -337,13 +337,12 @@ export function LandingAgendaPreview() {
           <div className="relative order-1 flex min-h-[280px] flex-col overflow-hidden pb-6 md:min-h-0 md:overflow-visible md:pb-2">
             <div className="relative z-10 max-w-md">
               <h2 className="font-display text-[clamp(2.8rem,10vw,4.4rem)] font-normal leading-[0.82] text-forest">
-                Calendario
+                Agenda
                 <br />
-                <span className="italic text-wine">Astral</span>
+                <span className="text-[0.9em] italic text-wine">Astral</span>
               </h2>
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink/60 sm:text-[0.95rem]">
-                Tu mes, con los tránsitos a la vista. Abre un día y la agenda te cuenta qué energía
-                hay.
+                Calendario de efemérides, interpretación diaria del clima astral, agenda personalizada e introspección, tránsitos en tu carta natal, y mucho más.
               </p>
             </div>
             <OrbitBackdrop />

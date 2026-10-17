@@ -379,7 +379,7 @@ export function AppLandingBody() {
                 <p className="eyebrow text-gold">Tu carta</p>
                 <h3 className="mt-4 font-display text-3xl">Una consulta que espera</h3>
                 <p className="mt-4 text-sm leading-relaxed text-cream/80">
-                  Venus lee tu carta y conversa sobre lo que estás viviendo. Escribes cuando quieres.
+                  Venus conversa sobre lo que estás viviendo. No necesitas saber nada de astrología,
                   La respuesta sale de tu mapa, no de un texto genérico.
                 </p>
               </article>
@@ -387,14 +387,14 @@ export function AppLandingBody() {
                 <p className="eyebrow text-gold">Sinastría</p>
                 <h3 className="mt-4 font-display text-3xl">La carta de dos</h3>
                 <p className="mt-4 text-sm leading-relaxed text-cream/80">
-                  Cuando la pregunta es un vínculo. Venus cruza tu carta con la de otra persona y mira
-                  lo que ese encuentro activa: patrones de pareja, tensiones y el modo en que os habláis.
+                  Cuando la pregunta es un vínculo, Venus interpreta cómo os relacionais, vuestra compatibilidad y
+                  lo que ese encuentro activa.
                 </p>
               </article>
             </div>
             <p className="mx-auto mt-16 hidden max-w-none text-left font-extralight leading-relaxed text-cream md:block md:text-[1.05rem] md:leading-[1.4] lg:text-[1.1rem]">
-              Lees tu carta en conversación. Preguntas por un vínculo, una decisión o esa tensión
-              entre lo que piensas y lo que sientes. Ella responde, y te deja la siguiente pregunta.
+              Preguntas por un vínculo, una decisión o esa tensión
+              entre lo que piensas y lo que sientes. Ella responde, y te guía con la siguiente pregunta. Lees tu carta en conversación.
             </p>
           </div>
           <div className="mt-10 w-full md:mt-0 md:w-[22rem] md:shrink-0">
