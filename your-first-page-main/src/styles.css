@@ -594,3 +594,36 @@
     animation: none;
   }
 }
+
+@keyframes landing-agenda-orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.landing-agenda-orbit {
+  animation: landing-agenda-orbit 28s linear infinite;
+}
+
+@keyframes landing-agenda-ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.landing-agenda-ticker {
+  animation: landing-agenda-ticker 55s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-agenda-orbit,
+  .landing-agenda-ticker {
+    animation: none;
+  }
+}

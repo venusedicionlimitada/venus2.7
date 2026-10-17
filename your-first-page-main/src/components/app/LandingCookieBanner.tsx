@@ -24,8 +24,7 @@ export function LandingCookieBanner() {
     <div className="fixed inset-x-0 bottom-0 z-50 border-t border-gold/40 bg-[#2c241c]/95 px-4 py-4 text-cream shadow-[0_-8px_30px_rgba(0,0,0,0.25)] backdrop-blur-sm sm:px-6">
       <div className="mx-auto flex max-w-3xl flex-col gap-4 md:max-w-5xl md:flex-row md:items-center md:justify-between">
         <p className="text-left text-[0.8rem] leading-relaxed text-cream/90 sm:text-[0.85rem]">
-          Usamos cookies para entender la campaña: cuánta gente entra, cuánto se queda y cuántas
-          pulsan “Conoce la App”.{" "}
+          Usamos cookies para mejorar el funcionamiento de la web.”{" "}
           <Link to="/cookies" className="underline decoration-gold/70 underline-offset-2 hover:text-gold">
             Política de cookies
           </Link>

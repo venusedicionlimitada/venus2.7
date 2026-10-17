@@ -10,6 +10,7 @@ import portrait from "@/assets/app/claridad-movil.jpg";
 import portraitDesktop from "@/assets/app/claridad-r270.jpg";
 import splash from "@/assets/app/splash.jpg";
 import { trackLandingAppClick } from "@/lib/landingAnalytics";
+import { LandingAgendaPreview } from "@/components/app/LandingAgendaPreview";
 
 const APP_URL = "https://app.venusedicionlimitada.com";
 
@@ -332,6 +333,8 @@ export function AppLandingBody() {
           </div>
         </div>
       </section>
+
+      <LandingAgendaPreview />
 
       <section className="relative overflow-hidden">
         <img
