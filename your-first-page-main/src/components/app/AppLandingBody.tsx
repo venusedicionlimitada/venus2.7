@@ -9,6 +9,7 @@ import silkGreen from "@/assets/app/silk-green.png";
 import portrait from "@/assets/app/claridad-movil.jpg";
 import portraitDesktop from "@/assets/app/claridad-r270.jpg";
 import splash from "@/assets/app/splash.jpg";
+import { trackLandingAppClick } from "@/lib/landingAnalytics";
 
 const APP_URL = "https://app.venusedicionlimitada.com";
 
@@ -21,7 +22,11 @@ const GALLERY_PHOTO_MS = 7600;
 
 function AccountLink({ className, children }: { className: string; children: string }) {
   return (
-    <a href={APP_URL} className={className}>
+    <a
+      href={APP_URL}
+      className={className}
+      onClick={() => trackLandingAppClick(children)}
+    >
       {children}
     </a>
   );

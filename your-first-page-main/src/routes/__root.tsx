@@ -18,6 +18,7 @@ import { AuthProvider } from "../lib/use-auth";
 import { SiteFooter } from "../components/SiteFooter";
 import { isLandingHost, landingHostPathAllowed, siteRequiresGate } from "@/lib/landingHost";
 import { SiteGate } from "@/components/SiteGate";
+import { LandingCookieBanner } from "@/components/app/LandingCookieBanner";
 
 function NotFoundComponent() {
   return (
@@ -140,6 +141,7 @@ function RootComponent() {
             </main>
             {!isStandaloneLanding && <SiteFooter />}
           </div>
+          {isLandingHost() ? <LandingCookieBanner /> : null}
         </SiteGate>
       </AuthProvider>
     </QueryClientProvider>
