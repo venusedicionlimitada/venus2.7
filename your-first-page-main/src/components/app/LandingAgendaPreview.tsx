@@ -342,7 +342,7 @@ export function LandingAgendaPreview() {
                 <span className="text-[0.9em] italic text-wine">Astral</span>
               </h2>
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink/60 sm:text-[0.95rem]">
-                Calendario de efemérides, interpretación diaria del clima astral, agenda personalizada e introspección, tránsitos en tu carta natal, y mucho más.
+                Ágenda Personalizada, Calendario de Efemérides, Interpretación diaria del Clima Astral, Diario, Tránsitos Personalizados, y mucho más.
               </p>
             </div>
             <OrbitBackdrop />
